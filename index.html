@@ -706,14 +706,19 @@ function calcOfferingTotal() {
     total += v;
     var row = document.getElementById(f.row);
     row.style.display = '';
-    row.querySelector('.gl-cr').textContent = '$' + v.toFixed(2);
+    row.querySelector('.gl-cr').textContent = fmtCurrency(v);
   });
-  var fmt = '$' + total.toFixed(2);
-  document.getElementById('offering-total').textContent = fmt;
+  var fmt = fmtCurrency(total);
+  document.getElementById('offering-total').textContent = fmtCurrency(tot);
   document.getElementById('gl-debit').textContent = fmt;
   document.getElementById('gl-total-dr').textContent = fmt;
   document.getElementById('gl-total-cr').textContent = fmt;
   document.getElementById('gl-preview').style.display = 'block';
+}
+
+
+function fmtCurrency(n) {
+  return '$' + parseFloat(n || 0).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
 }
 
 var CU = null;
@@ -782,13 +787,13 @@ function saveRec(type) {
     tr.innerHTML =
       '<td>' + id + '</td>' +
       '<td>' + date + '</td>' +
-      '<td class="ta">$' + ss.toFixed(2) + '</td>' +
-      '<td class="ta">$' + benv.toFixed(2) + '</td>' +
-      '<td class="ta">$' + bldg.toFixed(2) + '</td>' +
-      '<td class="ta">$' + gen.toFixed(2) + '</td>' +
-      '<td class="ta">$' + yth.toFixed(2) + '</td>' +
-      '<td class="ta">$' + yedu.toFixed(2) + '</td>' +
-      '<td style="font-weight:700;color:var(--blue)">$' + total.toFixed(2) + '</td>' +
+      '<td class="ta">' + fmtCurrency(ss)   + '</td>' +
+      '<td class="ta">' + fmtCurrency(benv) + '</td>' +
+      '<td class="ta">' + fmtCurrency(bldg) + '</td>' +
+      '<td class="ta">' + fmtCurrency(gen)  + '</td>' +
+      '<td class="ta">' + fmtCurrency(yth)  + '</td>' +
+      '<td class="ta">' + fmtCurrency(yedu) + '</td>' +
+      '<td style="font-weight:700;color:var(--blue)">' + fmtCurrency(total) + '</td>' +
       '<td>' + rcvd + '</td>' +
       '<td class="saved-status"><span class="sb2 sp">Pending</span></td>';
     tb.appendChild(tr);
@@ -1037,7 +1042,7 @@ function showAddPayroll() {
 function calcNet() {
   var w = parseFloat(document.getElementById('prwages').value) || 0;
   var t = parseFloat(document.getElementById('prftax').value) || 0;
-  document.getElementById('prnet').value = '$' + (w - t).toFixed(2);
+  document.getElementById('prnet').value = fmtCurrency((w - t));
 }
 
 function savePayroll() {
@@ -1053,7 +1058,7 @@ function savePayroll() {
   var ph = tb.querySelector('td[colspan="7"]');
   if (ph) ph.closest('tr').remove();
   var tr = document.createElement('tr');
-  tr.innerHTML = '<td>'+id+'</td><td>'+eid+'</td><td>'+date+'</td><td class="ta">$'+parseFloat(wages).toFixed(2)+'</td><td class="ta ex">$'+parseFloat(ftax||0).toFixed(2)+'</td><td><span class="br2 bt">'+type+'</span></td><td style="font-weight:700;color:var(--green)">'+net+'</td>';
+  tr.innerHTML = '<td>'+id+'</td><td>'+eid+'</td><td>'+date+'</td><td class="ta">'+fmtCurrency(wages)+'</td><td class="ta ex">'+fmtCurrency(ftax||0)+'</td><td><span class="br2 bt">'+type+'</span></td><td style="font-weight:700;color:var(--green)">'+net+'</td>';
   tb.appendChild(tr);
   ['prwages','prftax','prnet'].forEach(function(i){ document.getElementById(i).value=''; });
   document.getElementById('preid').value=''; document.getElementById('prtype').value='';
@@ -1163,7 +1168,7 @@ function saveBill() {
   var ph = tb.querySelector('td[colspan="10"]');
   if (ph) ph.closest('tr').remove();
   var tr = document.createElement('tr');
-  tr.innerHTML = '<td>'+id+'</td><td>'+(chkno||'—')+'</td><td>'+date+'</td><td>'+payee+'</td><td class="ta">$'+parseFloat(amt).toFixed(2)+'</td><td style="font-size:.78rem">'+(words||'—')+'</td><td>'+(fund||'—')+'</td><td>'+(acct||'—')+'</td><td>'+(memo||'—')+'</td><td>'+(type||'—')+'</td>';
+  tr.innerHTML = '<td>'+id+'</td><td>'+(chkno||'—')+'</td><td>'+date+'</td><td>'+payee+'</td><td class="ta">'+fmtCurrency(amt)+'</td><td style="font-size:.78rem">'+(words||'—')+'</td><td>'+(fund||'—')+'</td><td>'+(acct||'—')+'</td><td>'+(memo||'—')+'</td><td>'+(type||'—')+'</td>';
   tb.appendChild(tr);
   ['blchkno','blpayee','blamt','blwords','blacct','blmemo'].forEach(function(i){ document.getElementById(i).value=''; });
   document.getElementById('blfund').value=''; document.getElementById('bltype').value='';
