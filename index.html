@@ -151,7 +151,7 @@ nav{flex:1;padding:10px 0;}
       <div class="ns">Income</div>
       <div class="ni" onclick="sv('tithes',this)">💵 Offerings</div>
       <div class="ni" onclick="sv('tithes-members',this)">🙏 Tithes by Members</div>
-      <div class="ni" onclick="sv('giveify-donors',this)">📱 Giveify by Donors</div>
+      <div class="ni" onclick="sv('giveify-donors',this)">📱 giveify by Donors</div>
       <div class="ni" onclick="sv('other-offerings',this)">🎁 Other Offerings &amp; Donations</div>
       <div class="ns">Expenses</div>
       <div class="ni" onclick="sv('payroll-view',this)">💼 Payroll</div>
@@ -167,7 +167,7 @@ nav{flex:1;padding:10px 0;}
       <div class="ni tonly" onclick="sv('employees',this)">👤 Employees</div>
       <div class="ni tonly" onclick="sv('payroll-table',this)">💵 Payroll Table</div>
       <div class="ni tonly" onclick="sv('type-of-bill',this)">🗂️ Type of Bill</div>
-      <div class="ni tonly" onclick="sv('giveify-table',this)">📱 Giveify</div>
+      <div class="ni tonly" onclick="sv('giveify-table',this)">📱 giveify</div>
       <div class="ni" onclick="sv('bills',this)">🧾 Bills</div>
       <div class="ni" onclick="sv('coa',this)">📋 Chart of Accounts</div>
     </nav>
@@ -238,22 +238,26 @@ nav{flex:1;padding:10px 0;}
           <div class="fg3"><label>Date</label><input type="date" id="to-date"></div>
         </div>
         <div class="fr">
-          <div class="fg3"><label>Sunday School ($)</label><input type="number" id="amt-ss" placeholder="0.00" min="0" step="0.01" oninput="calcOfferingTotal()"></div>
-          <div class="fg3"><label>Benevolent ($)</label><input type="number" id="amt-benv" placeholder="0.00" min="0" step="0.01" oninput="calcOfferingTotal()"></div>
+          <div class="fg3"><label>Tithes ($)</label><input type="number" id="amt-tithes" placeholder="0.00" min="0" step="0.01" oninput="calcOfferingTotal()"></div>
+          <div class="fg3"><label>Youth ($)</label><input type="number" id="amt-youth" placeholder="0.00" min="0" step="0.01" oninput="calcOfferingTotal()"></div>
         </div>
         <div class="fr">
           <div class="fg3"><label>Building Fund ($)</label><input type="number" id="amt-bldg" placeholder="0.00" min="0" step="0.01" oninput="calcOfferingTotal()"></div>
-          <div class="fg3"><label>General Offering ($)</label><input type="number" id="amt-gen" placeholder="0.00" min="0" step="0.01" oninput="calcOfferingTotal()"></div>
+          <div class="fg3"><label>Benevolent ($)</label><input type="number" id="amt-benv" placeholder="0.00" min="0" step="0.01" oninput="calcOfferingTotal()"></div>
         </div>
         <div class="fr">
-          <div class="fg3"><label>Youth ($)</label><input type="number" id="amt-youth" placeholder="0.00" min="0" step="0.01" oninput="calcOfferingTotal()"></div>
           <div class="fg3"><label>Youth Education ($)</label><input type="number" id="amt-youthedu" placeholder="0.00" min="0" step="0.01" oninput="calcOfferingTotal()"></div>
+          <div class="fg3"><label>Offering ($)</label><input type="number" id="amt-offering" placeholder="0.00" min="0" step="0.01" oninput="calcOfferingTotal()"></div>
+        </div>
+        <div class="fr">
+          <div class="fg3"><label>Special Event ($)</label><input type="number" id="amt-special" placeholder="0.00" min="0" step="0.01" oninput="calcOfferingTotal()"></div>
+          <div class="fg3"><label>Other ($)</label><input type="number" id="amt-other" placeholder="0.00" min="0" step="0.01" oninput="calcOfferingTotal()"></div>
         </div>
 
         <!-- Total -->
         <div class="fg3" style="background:#f0f9ff;border:1.5px solid #bfdbfe;border-radius:9px;padding:14px 16px;">
           <div style="display:flex;justify-content:space-between;align-items:center;">
-            <label style="margin:0;font-size:.85rem;color:var(--navy);">TOTAL DEPOSIT</label>
+            <label style="margin:0;font-size:.85rem;color:var(--navy);">TOTAL OFFERINGS</label>
             <span id="offering-total" style="font-family:'Lora',serif;font-size:1.5rem;font-weight:700;color:var(--blue);">$0.00</span>
           </div>
         </div>
@@ -304,7 +308,7 @@ nav{flex:1;padding:10px 0;}
         <div id="sheet-status" style="display:none;margin-bottom:10px;padding:10px 14px;border-radius:8px;font-size:.82rem;"></div>
         <div style="overflow-x:auto">
           <table class="vt" id="saved-offerings-table">
-            <tr><th>Offering ID</th><th>Date</th><th>Sunday School</th><th>Benevolent</th><th>Building Fund</th><th>General Offering</th><th>Youth</th><th>Youth Education</th><th>Total Deposit</th><th>Received By</th><th>Saved?</th></tr>
+            <tr><th>Offering ID</th><th>Date</th><th>Tithes</th><th>Youth</th><th>Building Fund</th><th>Benevolent</th><th>Youth Education</th><th>Offering</th><th>Special Event</th><th>Other</th><th>Total Individual Tithes</th><th>Received By</th><th>Saved?</th></tr>
           </table>
         </div>
         <div style="margin-top:12px;padding:11px 14px;background:#fef9c3;border-left:4px solid #ca8a04;border-radius:8px;font-size:.8rem;color:#854d0e;">
@@ -319,39 +323,271 @@ nav{flex:1;padding:10px 0;}
 
     <!-- TITHES BY MEMBERS -->
     <div id="view-tithes-members" class="vw">
-      <div class="ph"><h1>Tithes by Members</h1><p>Individual member tithe contribution breakdown</p></div>
-      <table class="vt"><tr><th>Member</th><th>Jan 2024</th><th>Feb 2024</th><th>YTD Total</th></tr>
-      <tr><td>John Smith</td><td class="ta">$1,000</td><td>—</td><td class="ta">$1,000</td></tr>
-      <tr><td>Grace Lee</td><td class="ta">$200</td><td>—</td><td class="ta">$200</td></tr>
-      <tr><td>Robert Brown</td><td class="ta">$350</td><td class="ta">$350</td><td class="ta">$700</td></tr>
-      <tr><td>Susan White</td><td class="ta">$150</td><td>—</td><td class="ta">$150</td></tr>
-      <tr><td>David Mensah</td><td class="ta">$400</td><td>—</td><td class="ta">$400</td></tr>
-      <tr><td>Linda Asante</td><td class="ta">$300</td><td>—</td><td class="ta">$300</td></tr>
-      <tr><td>Anonymous</td><td class="ta">$100</td><td>—</td><td class="ta">$100</td></tr>
-      <tr style="font-weight:700;background:#f8faff"><td>Total</td><td class="ta">$2,500</td><td class="ta">$350</td><td class="ta">$2,850</td></tr>
-      </table>
+      <div class="ph"><h1>Tithes by Members</h1><p>Record weekly Sunday School, Benevolent, Building Fund, General, Youth and Youth Education Offerings by Member</p></div>
+      <div class="fcd">
+        <div class="fr">
+          <div class="fg3"><label>Offering ID</label><input value="TM-001" readonly style="background:#f1f5f9;color:#64748b" id="tm-id"></div>
+          <div class="fg3"><label>Date</label><input type="date" id="tm-date"></div>
+        </div>
+        <div class="fg3"><label>Member Name</label><select id="tm-member">
+          <option value="">Select member...</option>
+          <option>John Smith</option>
+          <option>Grace Lee</option>
+          <option>Robert Brown</option>
+          <option>Susan White</option>
+          <option>David Mensah</option>
+          <option>Linda Asante</option>
+          <option>James Owusu</option>
+          <option>Abena Poku</option>
+          <option>Anonymous</option>
+        </select></div>
+        <div class="fr">
+          <div class="fg3"><label>Tithes ($)</label><input type="number" id="tm-tithes" placeholder="0.00" min="0" step="0.01" oninput="calcTMTotal()"></div>
+          <div class="fg3"><label>Youth ($)</label><input type="number" id="tm-youth" placeholder="0.00" min="0" step="0.01" oninput="calcTMTotal()"></div>
+        </div>
+        <div class="fr">
+          <div class="fg3"><label>Building Fund ($)</label><input type="number" id="tm-bldg" placeholder="0.00" min="0" step="0.01" oninput="calcTMTotal()"></div>
+          <div class="fg3"><label>Benevolent ($)</label><input type="number" id="tm-benv" placeholder="0.00" min="0" step="0.01" oninput="calcTMTotal()"></div>
+        </div>
+        <div class="fr">
+          <div class="fg3"><label>Youth Education ($)</label><input type="number" id="tm-yedu" placeholder="0.00" min="0" step="0.01" oninput="calcTMTotal()"></div>
+          <div class="fg3"><label>Offering ($)</label><input type="number" id="tm-offering" placeholder="0.00" min="0" step="0.01" oninput="calcTMTotal()"></div>
+        </div>
+        <div class="fr">
+          <div class="fg3"><label>Special Event ($)</label><input type="number" id="tm-special" placeholder="0.00" min="0" step="0.01" oninput="calcTMTotal()"></div>
+          <div class="fg3"><label>Other ($)</label><input type="number" id="tm-other" placeholder="0.00" min="0" step="0.01" oninput="calcTMTotal()"></div>
+        </div>
+
+        <!-- Total -->
+        <div class="fg3" style="background:#f0f9ff;border:1.5px solid #bfdbfe;border-radius:9px;padding:14px 16px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <label style="margin:0;font-size:.85rem;color:var(--navy);">TOTAL INDIVIDUAL TITHES</label>
+            <span id="tm-total" style="font-family:'Lora',serif;font-size:1.5rem;font-weight:700;color:var(--blue);">$0.00</span>
+          </div>
+        </div>
+
+        <!-- GL Entry Preview -->
+        <div style="background:#f8faff;border:1.5px solid var(--light);border-radius:9px;padding:16px;margin-bottom:13px;">
+          <div style="font-family:'Lora',serif;font-size:.88rem;font-weight:700;color:var(--navy);margin-bottom:12px;">GL Entry Preview</div>
+          <table style="width:100%;border-collapse:collapse;font-size:.82rem;">
+            <tr style="border-bottom:2px solid var(--light)">
+              <th style="text-align:left;padding:5px 8px;color:var(--gray);font-size:.72rem;text-transform:uppercase;letter-spacing:.5px;">Account</th>
+              <th style="text-align:right;padding:5px 8px;color:var(--gray);font-size:.72rem;text-transform:uppercase;letter-spacing:.5px;">Debit</th>
+              <th style="text-align:right;padding:5px 8px;color:var(--gray);font-size:.72rem;text-transform:uppercase;letter-spacing:.5px;">Credit</th>
+            </tr>
+            <tr style="background:#dbeafe20">
+              <td style="padding:6px 8px;font-weight:600;">1010 — General Checking Account</td>
+              <td style="text-align:right;padding:6px 8px;font-weight:700;color:var(--green);" id="tm-gl-dr">$0.00</td>
+              <td style="text-align:right;padding:6px 8px;">—</td>
+            </tr>
+            <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4010 — Tithes Fund</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="tm-gl-tithes">$0.00</td></tr>
+            <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4040 — Youth Fund</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="tm-gl-yth">$0.00</td></tr>
+            <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4080 — Building Fund Offerings</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="tm-gl-bldg">$0.00</td></tr>
+            <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">3020 — Benevolent Offering Fund</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="tm-gl-benv">$0.00</td></tr>
+            <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4050 — Youth Education Fund</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="tm-gl-yedu">$0.00</td></tr>
+            <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4070 — Offering / General</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="tm-gl-offering">$0.00</td></tr>
+            <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4060 — Special Event / Programs</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="tm-gl-special">$0.00</td></tr>
+            <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4070 — Other / Miscellaneous</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="tm-gl-other">$0.00</td></tr>
+            <tr style="border-top:2px solid var(--light);font-weight:700;">
+              <td style="padding:7px 8px;">Totals</td>
+              <td style="text-align:right;padding:7px 8px;color:var(--green);" id="tm-gl-tdr">$0.00</td>
+              <td style="text-align:right;padding:7px 8px;color:var(--red);" id="tm-gl-tcr">$0.00</td>
+            </tr>
+          </table>
+          <div style="margin-top:10px;font-size:.75rem;color:var(--green);font-weight:600;">✅ Debits = Credits — Entry is balanced</div>
+        </div>
+
+        <div class="fg3"><label>Received By</label><input id="tm-received-by" readonly style="background:#f1f5f9;color:#64748b"></div>
+        <div class="fg3"><label>Notes (optional)</label><textarea rows="3" placeholder="Any additional notes..."></textarea></div>
+        <button class="bsv" onclick="saveTMRec()">Save Offering</button>
+        <button class="bcc" onclick="sv('dashboard',null)">Cancel</button>
+      </div>
+
+      <!-- Saved Records -->
+      <div id="tm-saved-wrap" style="display:none;margin-top:28px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+          <div style="font-family:'Lora',serif;font-size:1.1rem;font-weight:700;color:var(--navy);">📋 Saved Tithes by Members</div>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="vt" id="tm-saved-table">
+            <tr><th>ID</th><th>Date</th><th>Member</th><th>Tithes</th><th>Youth</th><th>Building Fund</th><th>Benevolent</th><th>Youth Education</th><th>Offering</th><th>Special Event</th><th>Other</th><th>Total</th><th>Received By</th></tr>
+          </table>
+        </div>
+      </div>
     </div>
 
     <!-- GIVEIFY BY DONORS -->
     <div id="view-giveify-donors" class="vw">
-      <div class="ph"><h1>Giveify by Donors</h1><p>Online Giveify platform contributions by donor</p></div>
-      <div class="kg" style="grid-template-columns:repeat(2,1fr)">
-        <div class="kc bl2"><div class="kl">Giveify This Month</div><div class="kv">$400</div><div class="ks">1 transaction</div><div class="ki">📱</div></div>
-        <div class="kc gn"><div class="kl">Total Donors</div><div class="kv">1</div><div class="ks">Active this period</div><div class="ki">👤</div></div>
+      <div class="ph"><h1>giveify by Donors</h1><p>Record weekly giveify contributions by donor</p></div>
+      <div class="fcd">
+        <div class="fr">
+          <div class="fg3"><label>giveify ID</label><input value="GD-001" readonly style="background:#f1f5f9;color:#64748b" id="gd-id"></div>
+          <div class="fg3"><label>Date</label><input type="date" id="gd-date"></div>
+        </div>
+        <div class="fg3"><label>Donor Name</label><select id="gd-donor">
+          <option value="">Select donor...</option>
+          <option>John Smith</option>
+          <option>Grace Lee</option>
+          <option>Robert Brown</option>
+          <option>Susan White</option>
+          <option>David Mensah</option>
+          <option>Linda Asante</option>
+          <option>James Owusu</option>
+          <option>Abena Poku</option>
+          <option>Anonymous</option>
+        </select></div>
+        <div class="fr">
+          <div class="fg3"><label>Sunday School ($)</label><input type="number" id="gd-ss" placeholder="0.00" min="0" step="0.01" oninput="calcGDTotal()"></div>
+          <div class="fg3"><label>Building Fund ($)</label><input type="number" id="gd-bldg" placeholder="0.00" min="0" step="0.01" oninput="calcGDTotal()"></div>
+        </div>
+        <div class="fr">
+          <div class="fg3"><label>Benevolent ($)</label><input type="number" id="gd-benv" placeholder="0.00" min="0" step="0.01" oninput="calcGDTotal()"></div>
+          <div class="fg3"><label>Tithe ($)</label><input type="number" id="gd-tithes" placeholder="0.00" min="0" step="0.01" oninput="calcGDTotal()"></div>
+        </div>
+        <div class="fr">
+          <div class="fg3"><label>Youth ($)</label><input type="number" id="gd-youth" placeholder="0.00" min="0" step="0.01" oninput="calcGDTotal()"></div>
+          <div class="fg3"><label>Offering ($)</label><input type="number" id="gd-offering" placeholder="0.00" min="0" step="0.01" oninput="calcGDTotal()"></div>
+        </div>
+        <div class="fr">
+          <div class="fg3"><label>Youth Education ($)</label><input type="number" id="gd-yedu" placeholder="0.00" min="0" step="0.01" oninput="calcGDTotal()"></div>
+          <div class="fg3"><label>Church Anniversary ($)</label><input type="number" id="gd-anniv" placeholder="0.00" min="0" step="0.01" oninput="calcGDTotal()"></div>
+        </div>
+
+        <!-- Total -->
+        <div class="fg3" style="background:#f0f9ff;border:1.5px solid #bfdbfe;border-radius:9px;padding:14px 16px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <label style="margin:0;font-size:.85rem;color:var(--navy);">TOTAL GIVEIFY</label>
+            <span id="gd-total" style="font-family:'Lora',serif;font-size:1.5rem;font-weight:700;color:var(--blue);">$0.00</span>
+          </div>
+        </div>
+
+        <!-- GL Entry Preview -->
+        <div style="background:#f8faff;border:1.5px solid var(--light);border-radius:9px;padding:16px;margin-bottom:13px;">
+          <div style="font-family:'Lora',serif;font-size:.88rem;font-weight:700;color:var(--navy);margin-bottom:12px;">GL Entry Preview</div>
+          <table style="width:100%;border-collapse:collapse;font-size:.82rem;">
+            <tr style="border-bottom:2px solid var(--light)">
+              <th style="text-align:left;padding:5px 8px;color:var(--gray);font-size:.72rem;text-transform:uppercase;letter-spacing:.5px;">Account</th>
+              <th style="text-align:right;padding:5px 8px;color:var(--gray);font-size:.72rem;text-transform:uppercase;letter-spacing:.5px;">Debit</th>
+              <th style="text-align:right;padding:5px 8px;color:var(--gray);font-size:.72rem;text-transform:uppercase;letter-spacing:.5px;">Credit</th>
+            </tr>
+            <tr style="background:#dbeafe20">
+              <td style="padding:6px 8px;font-weight:600;">1010 — General Checking Account</td>
+              <td style="text-align:right;padding:6px 8px;font-weight:700;color:var(--green);" id="gd-gl-dr">$0.00</td>
+              <td style="text-align:right;padding:6px 8px;">—</td>
+            </tr>
+            <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4030 — Sunday School Fund</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="gd-gl-ss">$0.00</td></tr>
+            <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4080 — Building Fund Offerings</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="gd-gl-bldg">$0.00</td></tr>
+            <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">3020 — Benevolent Offering Fund</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="gd-gl-benv">$0.00</td></tr>
+            <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4010 — Tithes Fund</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="gd-gl-tithes">$0.00</td></tr>
+            <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4040 — Youth Fund</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="gd-gl-yth">$0.00</td></tr>
+            <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4070 — Offering / General</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="gd-gl-offering">$0.00</td></tr>
+            <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4050 — Youth Education Fund</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="gd-gl-yedu">$0.00</td></tr>
+            <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4060 — Church Anniversary</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="gd-gl-anniv">$0.00</td></tr>
+            <tr style="border-top:2px solid var(--light);font-weight:700;">
+              <td style="padding:7px 8px;">Totals</td>
+              <td style="text-align:right;padding:7px 8px;color:var(--green);" id="gd-gl-tdr">$0.00</td>
+              <td style="text-align:right;padding:7px 8px;color:var(--red);" id="gd-gl-tcr">$0.00</td>
+            </tr>
+          </table>
+          <div style="margin-top:10px;font-size:.75rem;color:var(--green);font-weight:600;">✅ Debits = Credits — Entry is balanced</div>
+        </div>
+
+        <div class="fg3"><label>Received By</label><input id="gd-received-by" readonly style="background:#f1f5f9;color:#64748b"></div>
+        <div class="fg3"><label>Notes (optional)</label><textarea rows="3" placeholder="Any additional notes..."></textarea></div>
+        <button class="bsv" onclick="saveGDRec()">Save giveify</button>
+        <button class="bcc" onclick="sv('dashboard',null)">Cancel</button>
       </div>
-      <table class="vt"><tr><th>Date</th><th>Donor</th><th>Type</th><th>Method</th><th>Amount</th></tr>
-      <tr><td>Jan 28, 2024</td><td>David Mensah</td><td>Tithe</td><td><span class="tb tmb">Mobile</span></td><td class="ta">$400</td></tr>
-      </table>
+
+      <!-- Saved Records -->
+      <div id="gd-saved-wrap" style="display:none;margin-top:28px;">
+        <div style="font-family:'Lora',serif;font-size:1.1rem;font-weight:700;color:var(--navy);margin-bottom:12px;">📋 Saved giveify by Donors</div>
+        <div style="overflow-x:auto">
+          <table class="vt" id="gd-saved-table">
+            <tr><th>ID</th><th>Date</th><th>Donor</th><th>Sunday School</th><th>Building Fund</th><th>Benevolent</th><th>Tithe</th><th>Youth</th><th>Offering</th><th>Youth Education</th><th>Church Anniversary</th><th>Total</th><th>Received By</th></tr>
+          </table>
+        </div>
+      </div>
     </div>
 
     <!-- OTHER OFFERINGS -->
     <div id="view-other-offerings" class="vw">
-      <div class="ph"><h1>Other Offerings &amp; Special Donations</h1><p>Non-tithe and special purpose contributions</p></div>
-      <table class="vt"><tr><th>Date</th><th>Donor</th><th>Fund</th><th>Method</th><th>Notes</th><th>Amount</th></tr>
-      <tr><td>Jan 14, 2024</td><td>Anonymous</td><td>Missions Fund</td><td><span class="tb tca">Cash</span></td><td>—</td><td class="ta">$100</td></tr>
-      <tr><td>Jan 7, 2024</td><td>Grace Lee</td><td>Building Fund</td><td><span class="tb tch">Cheque</span></td><td>Cheque #1023</td><td class="ta">$200</td></tr>
-      <tr><td>Jan 21, 2024</td><td>Grace Lee</td><td>Missions Fund</td><td><span class="tb tch">Cheque</span></td><td>Cheque #1024</td><td class="ta">$250</td></tr>
-      </table>
+      <div class="ph"><h1>Other Offerings &amp; Donations</h1><p>Record weekly Sunday School, Benevolent, Building Fund, General, Youth and Youth Education Offerings</p></div>
+      <div class="fcd">
+        <div class="fr">
+          <div class="fg3"><label>Offering ID</label><input value="OD-001" readonly style="background:#f1f5f9;color:#64748b" id="od-id"></div>
+          <div class="fg3"><label>Date</label><input type="date" id="od-date"></div>
+        </div>
+        <div class="fr">
+          <div class="fg3"><label>Tithes ($)</label><input type="number" id="od-tithes" placeholder="0.00" min="0" step="0.01" oninput="calcODTotal()"></div>
+          <div class="fg3"><label>Youth ($)</label><input type="number" id="od-youth" placeholder="0.00" min="0" step="0.01" oninput="calcODTotal()"></div>
+        </div>
+        <div class="fr">
+          <div class="fg3"><label>Building Fund ($)</label><input type="number" id="od-bldg" placeholder="0.00" min="0" step="0.01" oninput="calcODTotal()"></div>
+          <div class="fg3"><label>Benevolent ($)</label><input type="number" id="od-benv" placeholder="0.00" min="0" step="0.01" oninput="calcODTotal()"></div>
+        </div>
+        <div class="fr">
+          <div class="fg3"><label>Youth Education ($)</label><input type="number" id="od-yedu" placeholder="0.00" min="0" step="0.01" oninput="calcODTotal()"></div>
+          <div class="fg3"><label>Offering ($)</label><input type="number" id="od-offering" placeholder="0.00" min="0" step="0.01" oninput="calcODTotal()"></div>
+        </div>
+        <div class="fr">
+          <div class="fg3"><label>Special Event ($)</label><input type="number" id="od-special" placeholder="0.00" min="0" step="0.01" oninput="calcODTotal()"></div>
+          <div class="fg3"><label>Other ($)</label><input type="number" id="od-other" placeholder="0.00" min="0" step="0.01" oninput="calcODTotal()"></div>
+        </div>
+
+        <!-- Total -->
+        <div class="fg3" style="background:#f0f9ff;border:1.5px solid #bfdbfe;border-radius:9px;padding:14px 16px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <label style="margin:0;font-size:.85rem;color:var(--navy);">TOTAL OTHER OFFERINGS &amp; DONATIONS</label>
+            <span id="od-total" style="font-family:'Lora',serif;font-size:1.5rem;font-weight:700;color:var(--blue);">$0.00</span>
+          </div>
+        </div>
+
+        <!-- GL Entry Preview -->
+        <div style="background:#f8faff;border:1.5px solid var(--light);border-radius:9px;padding:16px;margin-bottom:13px;">
+          <div style="font-family:'Lora',serif;font-size:.88rem;font-weight:700;color:var(--navy);margin-bottom:12px;">GL Entry Preview</div>
+          <table style="width:100%;border-collapse:collapse;font-size:.82rem;">
+            <tr style="border-bottom:2px solid var(--light)">
+              <th style="text-align:left;padding:5px 8px;color:var(--gray);font-size:.72rem;text-transform:uppercase;letter-spacing:.5px;">Account</th>
+              <th style="text-align:right;padding:5px 8px;color:var(--gray);font-size:.72rem;text-transform:uppercase;letter-spacing:.5px;">Debit</th>
+              <th style="text-align:right;padding:5px 8px;color:var(--gray);font-size:.72rem;text-transform:uppercase;letter-spacing:.5px;">Credit</th>
+            </tr>
+            <tr style="background:#dbeafe20">
+              <td style="padding:6px 8px;font-weight:600;">1010 — General Checking Account</td>
+              <td style="text-align:right;padding:6px 8px;font-weight:700;color:var(--green);" id="od-gl-dr">$0.00</td>
+              <td style="text-align:right;padding:6px 8px;">—</td>
+            </tr>
+            <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4010 — Tithes Fund</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="od-gl-tithes">$0.00</td></tr>
+            <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4040 — Youth Fund</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="od-gl-yth">$0.00</td></tr>
+            <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4080 — Building Fund Offerings</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="od-gl-bldg">$0.00</td></tr>
+            <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">3020 — Benevolent Offering Fund</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="od-gl-benv">$0.00</td></tr>
+            <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4050 — Youth Education Fund</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="od-gl-yedu">$0.00</td></tr>
+            <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4070 — Offering / General</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="od-gl-offering">$0.00</td></tr>
+            <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4060 — Special Event / Programs</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="od-gl-special">$0.00</td></tr>
+            <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4070 — Other / Miscellaneous</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="od-gl-other">$0.00</td></tr>
+            <tr style="border-top:2px solid var(--light);font-weight:700;">
+              <td style="padding:7px 8px;">Totals</td>
+              <td style="text-align:right;padding:7px 8px;color:var(--green);" id="od-gl-tdr">$0.00</td>
+              <td style="text-align:right;padding:7px 8px;color:var(--red);" id="od-gl-tcr">$0.00</td>
+            </tr>
+          </table>
+          <div style="margin-top:10px;font-size:.75rem;color:var(--green);font-weight:600;">✅ Debits = Credits — Entry is balanced</div>
+        </div>
+
+        <div class="fg3"><label>Received By</label><input id="od-received-by" readonly style="background:#f1f5f9;color:#64748b"></div>
+        <div class="fg3"><label>Notes (optional)</label><textarea rows="3" placeholder="Any additional notes..."></textarea></div>
+        <button class="bsv" onclick="saveODRec()">Save Offering</button>
+        <button class="bcc" onclick="sv('dashboard',null)">Cancel</button>
+      </div>
+
+      <!-- Saved Records -->
+      <div id="od-saved-wrap" style="display:none;margin-top:28px;">
+        <div style="font-family:'Lora',serif;font-size:1.1rem;font-weight:700;color:var(--navy);margin-bottom:12px;">📋 Saved Other Offerings &amp; Donations</div>
+        <div style="overflow-x:auto">
+          <table class="vt" id="od-saved-table">
+            <tr><th>ID</th><th>Date</th><th>Tithes</th><th>Youth</th><th>Building Fund</th><th>Benevolent</th><th>Youth Education</th><th>Offering</th><th>Special Event</th><th>Other</th><th>Total</th><th>Received By</th></tr>
+          </table>
+        </div>
+      </div>
     </div>
 
     <!-- PAYROLL VIEW -->
@@ -403,7 +639,7 @@ nav{flex:1;padding:10px 0;}
         </div>
         <div class="fg3"><label>Member Name</label><select><option>Select member...</option><option>John Smith</option><option>Grace Lee</option><option>Robert Brown</option><option>Susan White</option><option>David Mensah</option><option>Linda Asante</option><option>Anonymous</option></select></div>
         <div class="fr">
-          <div class="fg3"><label>Fund</label><select><option value="">Select fund...</option><option>General Offering Fund</option><option>Building Fund</option><option>Youth Fund</option><option>Benevolent Offering Fund</option><option>Tithes Fund</option><option>Giveify Fund</option><option>Sunday School Fund</option><option>Youth Education Fund</option><option>Special Programs Fund</option><option>Miscellaneous Funds</option></select></div>
+          <div class="fg3"><label>Fund</label><select><option value="">Select fund...</option><option>General Offering Fund</option><option>Building Fund</option><option>Youth Fund</option><option>Benevolent Offering Fund</option><option>Tithes Fund</option><option>giveify Fund</option><option>Sunday School Fund</option><option>Youth Education Fund</option><option>Special Programs Fund</option><option>Miscellaneous Funds</option></select></div>
           <div class="fg3"><label>Amount ($)</label><input type="number" placeholder="0.00" min="0" step="0.01"></div>
         </div>
         <div class="fg3"><label>Payment Method</label><select><option>Select...</option><option>Cash</option><option>Cheque</option><option>Bank Transfer</option><option>Mobile Money</option></select></div>
@@ -450,7 +686,7 @@ nav{flex:1;padding:10px 0;}
       <tr><td>FD-003</td><td>Youth Fund</td><td>Missionary support</td><td>$20,000</td><td>$0</td></tr>
       <tr><td>FD-004</td><td>Benevolent Offering Fund</td><td>Benevolent offerings</td><td>—</td><td>—</td></tr>
       <tr><td>FD-005</td><td>Tithes Fund</td><td>Weekly tithe contributions</td><td>—</td><td>—</td></tr>
-      <tr><td>FD-006</td><td>Giveify Fund</td><td>Giveify contributions</td><td>—</td><td>—</td></tr>
+      <tr><td>FD-006</td><td>giveify Fund</td><td>giveify contributions</td><td>—</td><td>—</td></tr>
       <tr><td>FD-007</td><td>Sunday School Fund</td><td>Sunday school offerings</td><td>—</td><td>—</td></tr>
       <tr><td>FD-008</td><td>Youth Fund</td><td>Youth department contributions</td><td>—</td><td>—</td></tr>
       <tr><td>FD-009</td><td>Youth Education Fund</td><td>Youth education contributions</td><td>—</td><td>—</td></tr>
@@ -568,10 +804,10 @@ nav{flex:1;padding:10px 0;}
 
     <!-- GIVEIFY TABLE -->
     <div id="view-giveify-table" class="vw">
-      <div class="ph"><h1>Giveify</h1><p>Giveify donation category reference table — 8 types</p></div>
-      <div class="tbar"><div class="sbox"><span>🔍</span><input placeholder="Search giveify types..." oninput="filterGiveify(this.value)"></div><button class="bp" onclick="showAddGiveify()">+ Add Giveify Type</button></div>
+      <div class="ph"><h1>giveify</h1><p>giveify donation category reference table — 8 types</p></div>
+      <div class="tbar"><div class="sbox"><span>🔍</span><input placeholder="Search giveify types..." oninput="filtergiveify(this.value)"></div><button class="bp" onclick="showAddgiveify()">+ Add giveify Type</button></div>
       <table class="vt" id="giveify-ref-table">
-        <tr><th>Giveify ID</th><th>Type</th></tr>
+        <tr><th>giveify ID</th><th>Type</th></tr>
         <tr><td>GV-001</td><td>Sunday School</td></tr>
         <tr><td>GV-002</td><td>Benevolent</td></tr>
         <tr><td>GV-003</td><td>Youth</td></tr>
@@ -581,9 +817,9 @@ nav{flex:1;padding:10px 0;}
         <tr><td>GV-007</td><td>Offering</td></tr>
         <tr><td>GV-008</td><td>Other</td></tr>
       </table>
-      <div id="agf" style="display:none;margin-top:20px"><div class="fcd"><h3>Add Giveify Type</h3>
-        <div class="fr"><div class="fg3"><label>Giveify ID</label><input type="text" id="gvid" readonly style="background:#f1f5f9;color:#64748b"></div><div class="fg3"><label>Type</label><input type="text" id="gvtype" placeholder="e.g. Special Offering"></div></div>
-        <button class="bsv" onclick="saveGiveify()">Save</button><button class="bcc" onclick="document.getElementById('agf').style.display='none'">Cancel</button>
+      <div id="agf" style="display:none;margin-top:20px"><div class="fcd"><h3>Add giveify Type</h3>
+        <div class="fr"><div class="fg3"><label>giveify ID</label><input type="text" id="gvid" readonly style="background:#f1f5f9;color:#64748b"></div><div class="fg3"><label>Type</label><input type="text" id="gvtype" placeholder="e.g. Special Offering"></div></div>
+        <button class="bsv" onclick="savegiveify()">Save</button><button class="bcc" onclick="document.getElementById('agf').style.display='none'">Cancel</button>
       </div></div>
     </div>
 
@@ -649,7 +885,7 @@ nav{flex:1;padding:10px 0;}
         <tr><td>3030</td><td>Building Fund</td><td>Building Fund</td><td>Equity</td><td>Credit</td></tr>
         <tr style="background:#E8F8F5"><td colspan="5" style="font-weight:700;color:#1e8449;font-size:.77rem;">INCOME</td></tr>
         <tr><td>4010</td><td>Tithes Fund</td><td>General Fund</td><td>Income</td><td>Credit</td></tr>
-        <tr><td>4020</td><td>Giveify Fund</td><td>General Fund</td><td>Income</td><td>Credit</td></tr>
+        <tr><td>4020</td><td>giveify Fund</td><td>General Fund</td><td>Income</td><td>Credit</td></tr>
         <tr><td>4030</td><td>Sunday School Fund</td><td>General Fund</td><td>Income</td><td>Credit</td></tr>
         <tr><td>4040</td><td>Youth Fund</td><td>General Fund</td><td>Income</td><td>Credit</td></tr>
         <tr><td>4050</td><td>Youth Education Fund</td><td>General Fund</td><td>Income</td><td>Credit</td></tr>
@@ -691,6 +927,209 @@ const USERS = {
   'willie':  {name:'Willie',    role:'Trustee Board', init:'WI', pw:'password'},
   'viewonly':{name:'View Only', role:'View Only',     init:'VO', pw:'password'}
 };
+function calcODTotal() {
+  var tithes   = parseFloat(document.getElementById('od-tithes').value) || 0;
+  var yth      = parseFloat(document.getElementById('od-youth').value) || 0;
+  var bldg     = parseFloat(document.getElementById('od-bldg').value) || 0;
+  var benv     = parseFloat(document.getElementById('od-benv').value) || 0;
+  var yedu     = parseFloat(document.getElementById('od-yedu').value) || 0;
+  var offering = parseFloat(document.getElementById('od-offering').value) || 0;
+  var special  = parseFloat(document.getElementById('od-special').value) || 0;
+  var other    = parseFloat(document.getElementById('od-other').value) || 0;
+  var tot = tithes + yth + bldg + benv + yedu + offering + special + other;
+  document.getElementById('od-total').textContent         = fmtCurrency(tot);
+  document.getElementById('od-gl-dr').textContent         = fmtCurrency(tot);
+  document.getElementById('od-gl-tdr').innerHTML          = '<strong>' + fmtCurrency(tot) + '</strong>';
+  document.getElementById('od-gl-tcr').innerHTML          = '<strong>' + fmtCurrency(tot) + '</strong>';
+  document.getElementById('od-gl-tithes').textContent     = fmtCurrency(tithes);
+  document.getElementById('od-gl-yth').textContent        = fmtCurrency(yth);
+  document.getElementById('od-gl-bldg').textContent       = fmtCurrency(bldg);
+  document.getElementById('od-gl-benv').textContent       = fmtCurrency(benv);
+  document.getElementById('od-gl-yedu').textContent       = fmtCurrency(yedu);
+  document.getElementById('od-gl-offering').textContent   = fmtCurrency(offering);
+  document.getElementById('od-gl-special').textContent    = fmtCurrency(special);
+  document.getElementById('od-gl-other').textContent      = fmtCurrency(other);
+}
+
+function saveODRec() {
+  var id       = document.getElementById('od-id').value;
+  var date     = document.getElementById('od-date').value || '—';
+  var tithes   = parseFloat(document.getElementById('od-tithes').value) || 0;
+  var yth      = parseFloat(document.getElementById('od-youth').value) || 0;
+  var bldg     = parseFloat(document.getElementById('od-bldg').value) || 0;
+  var benv     = parseFloat(document.getElementById('od-benv').value) || 0;
+  var yedu     = parseFloat(document.getElementById('od-yedu').value) || 0;
+  var offering = parseFloat(document.getElementById('od-offering').value) || 0;
+  var special  = parseFloat(document.getElementById('od-special').value) || 0;
+  var other    = parseFloat(document.getElementById('od-other').value) || 0;
+  var total    = tithes + yth + bldg + benv + yedu + offering + special + other;
+  var rcvd     = document.getElementById('od-received-by').value || '—';
+
+  var tb = document.getElementById('od-saved-table');
+  var tr = document.createElement('tr');
+  tr.innerHTML =
+    '<td>' + id + '</td>' +
+    '<td>' + date + '</td>' +
+    '<td class="ta">' + fmtCurrency(tithes)   + '</td>' +
+    '<td class="ta">' + fmtCurrency(yth)       + '</td>' +
+    '<td class="ta">' + fmtCurrency(bldg)      + '</td>' +
+    '<td class="ta">' + fmtCurrency(benv)      + '</td>' +
+    '<td class="ta">' + fmtCurrency(yedu)      + '</td>' +
+    '<td class="ta">' + fmtCurrency(offering)  + '</td>' +
+    '<td class="ta">' + fmtCurrency(special)   + '</td>' +
+    '<td class="ta">' + fmtCurrency(other)     + '</td>' +
+    '<td style="font-weight:700;color:var(--blue)">' + fmtCurrency(total) + '</td>' +
+    '<td>' + rcvd + '</td>';
+  tb.appendChild(tr);
+
+  document.getElementById('od-saved-wrap').style.display = 'block';
+  var nextNum = tb.querySelectorAll('tr').length;
+  document.getElementById('od-id').value = 'OD-' + String(nextNum).padStart(3,'0');
+  ['od-tithes','od-youth','od-bldg','od-benv','od-yedu','od-offering','od-special','od-other'].forEach(function(i) {
+    document.getElementById(i).value = '';
+  });
+  calcODTotal();
+  showToast('Other offering saved!');
+}
+
+function calcGDTotal() {
+  var ss       = parseFloat(document.getElementById('gd-ss').value) || 0;
+  var bldg     = parseFloat(document.getElementById('gd-bldg').value) || 0;
+  var benv     = parseFloat(document.getElementById('gd-benv').value) || 0;
+  var tithes   = parseFloat(document.getElementById('gd-tithes').value) || 0;
+  var yth      = parseFloat(document.getElementById('gd-youth').value) || 0;
+  var offering = parseFloat(document.getElementById('gd-offering').value) || 0;
+  var yedu     = parseFloat(document.getElementById('gd-yedu').value) || 0;
+  var anniv    = parseFloat(document.getElementById('gd-anniv').value) || 0;
+  var tot = ss + bldg + benv + tithes + yth + offering + yedu + anniv;
+  document.getElementById('gd-total').textContent       = fmtCurrency(tot);
+  document.getElementById('gd-gl-dr').textContent       = fmtCurrency(tot);
+  document.getElementById('gd-gl-tdr').innerHTML        = '<strong>' + fmtCurrency(tot) + '</strong>';
+  document.getElementById('gd-gl-tcr').innerHTML        = '<strong>' + fmtCurrency(tot) + '</strong>';
+  document.getElementById('gd-gl-ss').textContent       = fmtCurrency(ss);
+  document.getElementById('gd-gl-bldg').textContent     = fmtCurrency(bldg);
+  document.getElementById('gd-gl-benv').textContent     = fmtCurrency(benv);
+  document.getElementById('gd-gl-tithes').textContent   = fmtCurrency(tithes);
+  document.getElementById('gd-gl-yth').textContent      = fmtCurrency(yth);
+  document.getElementById('gd-gl-offering').textContent = fmtCurrency(offering);
+  document.getElementById('gd-gl-yedu').textContent     = fmtCurrency(yedu);
+  document.getElementById('gd-gl-anniv').textContent    = fmtCurrency(anniv);
+}
+
+function saveGDRec() {
+  var id       = document.getElementById('gd-id').value;
+  var date     = document.getElementById('gd-date').value || '—';
+  var donor    = document.getElementById('gd-donor').value || 'Anonymous';
+  var ss       = parseFloat(document.getElementById('gd-ss').value) || 0;
+  var bldg     = parseFloat(document.getElementById('gd-bldg').value) || 0;
+  var benv     = parseFloat(document.getElementById('gd-benv').value) || 0;
+  var tithes   = parseFloat(document.getElementById('gd-tithes').value) || 0;
+  var yth      = parseFloat(document.getElementById('gd-youth').value) || 0;
+  var offering = parseFloat(document.getElementById('gd-offering').value) || 0;
+  var yedu     = parseFloat(document.getElementById('gd-yedu').value) || 0;
+  var anniv    = parseFloat(document.getElementById('gd-anniv').value) || 0;
+  var total    = ss + bldg + benv + tithes + yth + offering + yedu + anniv;
+  var rcvd     = document.getElementById('gd-received-by').value || '—';
+
+  var tb = document.getElementById('gd-saved-table');
+  var tr = document.createElement('tr');
+  tr.innerHTML =
+    '<td>' + id + '</td>' +
+    '<td>' + date + '</td>' +
+    '<td>' + donor + '</td>' +
+    '<td class="ta">' + fmtCurrency(ss)       + '</td>' +
+    '<td class="ta">' + fmtCurrency(bldg)     + '</td>' +
+    '<td class="ta">' + fmtCurrency(benv)     + '</td>' +
+    '<td class="ta">' + fmtCurrency(tithes)   + '</td>' +
+    '<td class="ta">' + fmtCurrency(yth)      + '</td>' +
+    '<td class="ta">' + fmtCurrency(offering) + '</td>' +
+    '<td class="ta">' + fmtCurrency(yedu)     + '</td>' +
+    '<td class="ta">' + fmtCurrency(anniv)    + '</td>' +
+    '<td style="font-weight:700;color:var(--blue)">' + fmtCurrency(total) + '</td>' +
+    '<td>' + rcvd + '</td>';
+  tb.appendChild(tr);
+
+  document.getElementById('gd-saved-wrap').style.display = 'block';
+  var nextNum = tb.querySelectorAll('tr').length;
+  document.getElementById('gd-id').value = 'GD-' + String(nextNum).padStart(3,'0');
+  ['gd-ss','gd-bldg','gd-benv','gd-tithes','gd-youth','gd-offering','gd-yedu','gd-anniv'].forEach(function(i) {
+    document.getElementById(i).value = '';
+  });
+  document.getElementById('gd-donor').value = '';
+  calcGDTotal();
+  showToast('giveify entry saved!');
+}
+
+function calcTMTotal() {
+  var tithes   = parseFloat(document.getElementById('tm-tithes').value) || 0;
+  var yth      = parseFloat(document.getElementById('tm-youth').value) || 0;
+  var bldg     = parseFloat(document.getElementById('tm-bldg').value) || 0;
+  var benv     = parseFloat(document.getElementById('tm-benv').value) || 0;
+  var yedu     = parseFloat(document.getElementById('tm-yedu').value) || 0;
+  var offering = parseFloat(document.getElementById('tm-offering').value) || 0;
+  var special  = parseFloat(document.getElementById('tm-special').value) || 0;
+  var other    = parseFloat(document.getElementById('tm-other').value) || 0;
+  var tot = tithes + yth + bldg + benv + yedu + offering + special + other;
+  document.getElementById('tm-total').textContent          = fmtCurrency(tot);
+  document.getElementById('tm-gl-dr').textContent          = fmtCurrency(tot);
+  document.getElementById('tm-gl-tdr').innerHTML           = '<strong>' + fmtCurrency(tot) + '</strong>';
+  document.getElementById('tm-gl-tcr').innerHTML           = '<strong>' + fmtCurrency(tot) + '</strong>';
+  document.getElementById('tm-gl-tithes').textContent      = fmtCurrency(tithes);
+  document.getElementById('tm-gl-yth').textContent         = fmtCurrency(yth);
+  document.getElementById('tm-gl-bldg').textContent        = fmtCurrency(bldg);
+  document.getElementById('tm-gl-benv').textContent        = fmtCurrency(benv);
+  document.getElementById('tm-gl-yedu').textContent        = fmtCurrency(yedu);
+  document.getElementById('tm-gl-offering').textContent    = fmtCurrency(offering);
+  document.getElementById('tm-gl-special').textContent     = fmtCurrency(special);
+  document.getElementById('tm-gl-other').textContent       = fmtCurrency(other);
+}
+
+function saveTMRec() {
+  var id     = document.getElementById('tm-id').value;
+  var date   = document.getElementById('tm-date').value || '—';
+  var member = document.getElementById('tm-member').value || 'Anonymous';
+  var tithes   = parseFloat(document.getElementById('tm-tithes').value) || 0;
+  var yth      = parseFloat(document.getElementById('tm-youth').value) || 0;
+  var bldg     = parseFloat(document.getElementById('tm-bldg').value) || 0;
+  var benv     = parseFloat(document.getElementById('tm-benv').value) || 0;
+  var yedu     = parseFloat(document.getElementById('tm-yedu').value) || 0;
+  var offering = parseFloat(document.getElementById('tm-offering').value) || 0;
+  var special  = parseFloat(document.getElementById('tm-special').value) || 0;
+  var other    = parseFloat(document.getElementById('tm-other').value) || 0;
+  var total    = tithes + yth + bldg + benv + yedu + offering + special + other;
+  var rcvd   = document.getElementById('tm-received-by').value || '—';
+
+  var tb = document.getElementById('tm-saved-table');
+  var tr = document.createElement('tr');
+  tr.innerHTML =
+    '<td>' + id + '</td>' +
+    '<td>' + date + '</td>' +
+    '<td>' + member + '</td>' +
+    '<td class="ta">' + fmtCurrency(tithes)   + '</td>' +
+    '<td class="ta">' + fmtCurrency(yth)       + '</td>' +
+    '<td class="ta">' + fmtCurrency(bldg)      + '</td>' +
+    '<td class="ta">' + fmtCurrency(benv)      + '</td>' +
+    '<td class="ta">' + fmtCurrency(yedu)      + '</td>' +
+    '<td class="ta">' + fmtCurrency(offering)  + '</td>' +
+    '<td class="ta">' + fmtCurrency(special)   + '</td>' +
+    '<td class="ta">' + fmtCurrency(other)      + '</td>' +
+    '<td style="font-weight:700;color:var(--blue)">' + fmtCurrency(total) + '</td>' +
+    '<td>' + rcvd + '</td>';
+  tb.appendChild(tr);
+
+  document.getElementById('tm-saved-wrap').style.display = 'block';
+
+  var nextNum = tb.querySelectorAll('tr').length;
+  document.getElementById('tm-id').value = 'TM-' + String(nextNum).padStart(3,'0');
+
+  ['tm-tithes','tm-youth','tm-bldg','tm-benv','tm-yedu','tm-offering','tm-special','tm-other'].forEach(function(i) {
+    document.getElementById(i).value = '';
+  });
+  document.getElementById('tm-member').value = '';
+  calcTMTotal();
+  showToast('Tithe by member saved!');
+}
+
 function calcOfferingTotal() {
   var fields = [
     {id:'amt-ss',   row:'gl-ss'},
@@ -736,6 +1175,9 @@ function doLogin() {
     document.getElementById('uav').textContent = CU.init;
     document.getElementById('received-by').value = CU.name;
     document.getElementById('to-received-by').value = CU.name;
+    document.getElementById('tm-received-by').value = CU.name;
+    document.getElementById('gd-received-by').value = CU.name;
+    document.getElementById('od-received-by').value = CU.name;
     var h = new Date().getHours();
     var g = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
     document.getElementById('dg').textContent = g + ', ' + CU.name + ' — here\'s your financial overview';
@@ -748,6 +1190,9 @@ function doLogin() {
     document.getElementById('of-date').value = today;
     document.getElementById('ex-date').value = today;
     document.getElementById('to-date').value = today;
+    document.getElementById('tm-date').value = today;
+    document.getElementById('gd-date').value = today;
+    document.getElementById('od-date').value = today;
     buildChart();
   } else {
     err.style.display = 'block';
@@ -772,27 +1217,31 @@ function saveRec(type) {
   if (type === 'offering') {
     var id    = document.querySelector('#view-tithes .fcd input[readonly]').value;
     var date  = document.getElementById('to-date').value || '—';
-    var ss    = parseFloat(document.getElementById('amt-ss').value) || 0;
-    var benv  = parseFloat(document.getElementById('amt-benv').value) || 0;
-    var bldg  = parseFloat(document.getElementById('amt-bldg').value) || 0;
-    var gen   = parseFloat(document.getElementById('amt-gen').value) || 0;
-    var yth   = parseFloat(document.getElementById('amt-youth').value) || 0;
-    var yedu  = parseFloat(document.getElementById('amt-youthedu').value) || 0;
-    var total = ss + benv + bldg + gen + yth + yedu;
+    var tithes   = parseFloat(document.getElementById('amt-tithes').value) || 0;
+    var yth      = parseFloat(document.getElementById('amt-youth').value) || 0;
+    var bldg     = parseFloat(document.getElementById('amt-bldg').value) || 0;
+    var benv     = parseFloat(document.getElementById('amt-benv').value) || 0;
+    var yedu     = parseFloat(document.getElementById('amt-youthedu').value) || 0;
+    var offering = parseFloat(document.getElementById('amt-offering').value) || 0;
+    var special  = parseFloat(document.getElementById('amt-special').value) || 0;
+    var other    = parseFloat(document.getElementById('amt-other').value) || 0;
+    var total    = tithes + yth + bldg + benv + yedu + offering + special + other;
     var rcvd  = document.getElementById('to-received-by').value || '—';
 
     var tb = document.getElementById('saved-offerings-table');
     var tr = document.createElement('tr');
-    tr.setAttribute('data-record', JSON.stringify({id:id,date:date,ss:ss,benv:benv,bldg:bldg,gen:gen,yth:yth,yedu:yedu,total:total,rcvd:rcvd}));
+    tr.setAttribute('data-record', JSON.stringify({id:id,date:date,tithes:tithes,yth:yth,bldg:bldg,benv:benv,yedu:yedu,offering:offering,special:special,other:other,total:total,rcvd:rcvd}));
     tr.innerHTML =
       '<td>' + id + '</td>' +
       '<td>' + date + '</td>' +
-      '<td class="ta">' + fmtCurrency(ss)   + '</td>' +
-      '<td class="ta">' + fmtCurrency(benv) + '</td>' +
-      '<td class="ta">' + fmtCurrency(bldg) + '</td>' +
-      '<td class="ta">' + fmtCurrency(gen)  + '</td>' +
-      '<td class="ta">' + fmtCurrency(yth)  + '</td>' +
-      '<td class="ta">' + fmtCurrency(yedu) + '</td>' +
+      '<td class="ta">' + fmtCurrency(tithes)   + '</td>' +
+      '<td class="ta">' + fmtCurrency(yth)       + '</td>' +
+      '<td class="ta">' + fmtCurrency(bldg)      + '</td>' +
+      '<td class="ta">' + fmtCurrency(benv)      + '</td>' +
+      '<td class="ta">' + fmtCurrency(yedu)      + '</td>' +
+      '<td class="ta">' + fmtCurrency(offering)  + '</td>' +
+      '<td class="ta">' + fmtCurrency(special)   + '</td>' +
+      '<td class="ta">' + fmtCurrency(other)      + '</td>' +
       '<td style="font-weight:700;color:var(--blue)">' + fmtCurrency(total) + '</td>' +
       '<td>' + rcvd + '</td>' +
       '<td class="saved-status"><span class="sb2 sp">Pending</span></td>';
@@ -803,7 +1252,7 @@ function saveRec(type) {
     var nextNum = tb.querySelectorAll('tr').length;
     document.querySelector('#view-tithes .fcd input[readonly]').value = 'OF-' + String(nextNum).padStart(3,'0');
 
-    ['amt-ss','amt-benv','amt-bldg','amt-gen','amt-youth','amt-youthedu'].forEach(function(i) {
+    ['amt-tithes','amt-youth','amt-bldg','amt-benv','amt-youthedu','amt-offering','amt-special','amt-other'].forEach(function(i) {
       document.getElementById(i).value = '';
     });
     calcOfferingTotal();
@@ -873,12 +1322,14 @@ function saveAllToSheet() {
       '&callback=' + callbackName +
       '&offeringId=' + encodeURIComponent(d.id) +
       '&date=' + encodeURIComponent(d.date) +
-      '&sundaySchool=' + d.ss +
-      '&benevolent=' + d.benv +
-      '&buildingFund=' + d.bldg +
-      '&generalOffering=' + d.gen +
-      '&youth=' + d.yth +
-      '&youthEducation=' + d.yedu +
+      '&tithes=' + (d.tithes||0) +
+      '&youth=' + (d.yth||0) +
+      '&buildingFund=' + (d.bldg||0) +
+      '&benevolent=' + (d.benv||0) +
+      '&youthEducation=' + (d.yedu||0) +
+      '&offering=' + (d.offering||0) +
+      '&specialEvent=' + (d.special||0) +
+      '&other=' + (d.other||0) +
       '&totalDeposit=' + d.total +
       '&receivedBy=' + encodeURIComponent(d.rcvd);
 
@@ -1094,7 +1545,7 @@ function filterBillTypes(q) {
   });
 }
 
-function showAddGiveify() {
+function showAddgiveify() {
   var f = document.getElementById('agf');
   f.style.display = f.style.display === 'none' ? 'block' : 'none';
   if (f.style.display === 'block') {
@@ -1103,7 +1554,7 @@ function showAddGiveify() {
   }
 }
 
-function saveGiveify() {
+function savegiveify() {
   var id = document.getElementById('gvid').value;
   var type = document.getElementById('gvtype').value.trim();
   if (!type) { showToast('Type is required.'); return; }
@@ -1113,10 +1564,10 @@ function saveGiveify() {
   tb.appendChild(tr);
   document.getElementById('gvtype').value='';
   document.getElementById('agf').style.display='none';
-  showToast('Giveify type added!');
+  showToast('giveify type added!');
 }
 
-function filterGiveify(q) {
+function filtergiveify(q) {
   document.getElementById('giveify-ref-table').querySelectorAll('tr:not(:first-child)').forEach(function(r) {
     r.style.display = r.textContent.toLowerCase().indexOf(q.toLowerCase()) !== -1 ? '' : 'none';
   });
