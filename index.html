@@ -238,20 +238,16 @@ nav{flex:1;padding:10px 0;}
           <div class="fg3"><label>Date</label><input type="date" id="to-date"></div>
         </div>
         <div class="fr">
-          <div class="fg3"><label>Tithes ($)</label><input type="number" id="amt-tithes" placeholder="0.00" min="0" step="0.01" oninput="calcOfferingTotal()"></div>
-          <div class="fg3"><label>Youth ($)</label><input type="number" id="amt-youth" placeholder="0.00" min="0" step="0.01" oninput="calcOfferingTotal()"></div>
-        </div>
-        <div class="fr">
-          <div class="fg3"><label>Building Fund ($)</label><input type="number" id="amt-bldg" placeholder="0.00" min="0" step="0.01" oninput="calcOfferingTotal()"></div>
+          <div class="fg3"><label>Sunday School ($)</label><input type="number" id="amt-ss" placeholder="0.00" min="0" step="0.01" oninput="calcOfferingTotal()"></div>
           <div class="fg3"><label>Benevolent ($)</label><input type="number" id="amt-benv" placeholder="0.00" min="0" step="0.01" oninput="calcOfferingTotal()"></div>
         </div>
         <div class="fr">
-          <div class="fg3"><label>Youth Education ($)</label><input type="number" id="amt-youthedu" placeholder="0.00" min="0" step="0.01" oninput="calcOfferingTotal()"></div>
-          <div class="fg3"><label>Offering ($)</label><input type="number" id="amt-offering" placeholder="0.00" min="0" step="0.01" oninput="calcOfferingTotal()"></div>
+          <div class="fg3"><label>Building Fund ($)</label><input type="number" id="amt-bldg" placeholder="0.00" min="0" step="0.01" oninput="calcOfferingTotal()"></div>
+          <div class="fg3"><label>General Offering ($)</label><input type="number" id="amt-gen" placeholder="0.00" min="0" step="0.01" oninput="calcOfferingTotal()"></div>
         </div>
         <div class="fr">
-          <div class="fg3"><label>Special Event ($)</label><input type="number" id="amt-special" placeholder="0.00" min="0" step="0.01" oninput="calcOfferingTotal()"></div>
-          <div class="fg3"><label>Other ($)</label><input type="number" id="amt-other" placeholder="0.00" min="0" step="0.01" oninput="calcOfferingTotal()"></div>
+          <div class="fg3"><label>Youth ($)</label><input type="number" id="amt-youth" placeholder="0.00" min="0" step="0.01" oninput="calcOfferingTotal()"></div>
+          <div class="fg3"><label>Youth Education ($)</label><input type="number" id="amt-youthedu" placeholder="0.00" min="0" step="0.01" oninput="calcOfferingTotal()"></div>
         </div>
 
         <!-- Total -->
@@ -1217,31 +1213,27 @@ function saveRec(type) {
   if (type === 'offering') {
     var id    = document.querySelector('#view-tithes .fcd input[readonly]').value;
     var date  = document.getElementById('to-date').value || '—';
-    var tithes   = parseFloat(document.getElementById('amt-tithes').value) || 0;
-    var yth      = parseFloat(document.getElementById('amt-youth').value) || 0;
-    var bldg     = parseFloat(document.getElementById('amt-bldg').value) || 0;
-    var benv     = parseFloat(document.getElementById('amt-benv').value) || 0;
-    var yedu     = parseFloat(document.getElementById('amt-youthedu').value) || 0;
-    var offering = parseFloat(document.getElementById('amt-offering').value) || 0;
-    var special  = parseFloat(document.getElementById('amt-special').value) || 0;
-    var other    = parseFloat(document.getElementById('amt-other').value) || 0;
-    var total    = tithes + yth + bldg + benv + yedu + offering + special + other;
+    var ss    = parseFloat(document.getElementById('amt-ss').value) || 0;
+    var benv  = parseFloat(document.getElementById('amt-benv').value) || 0;
+    var bldg  = parseFloat(document.getElementById('amt-bldg').value) || 0;
+    var gen   = parseFloat(document.getElementById('amt-gen').value) || 0;
+    var yth   = parseFloat(document.getElementById('amt-youth').value) || 0;
+    var yedu  = parseFloat(document.getElementById('amt-youthedu').value) || 0;
+    var total = ss + benv + bldg + gen + yth + yedu;
     var rcvd  = document.getElementById('to-received-by').value || '—';
 
     var tb = document.getElementById('saved-offerings-table');
     var tr = document.createElement('tr');
-    tr.setAttribute('data-record', JSON.stringify({id:id,date:date,tithes:tithes,yth:yth,bldg:bldg,benv:benv,yedu:yedu,offering:offering,special:special,other:other,total:total,rcvd:rcvd}));
+    tr.setAttribute('data-record', JSON.stringify({id:id,date:date,ss:ss,benv:benv,bldg:bldg,gen:gen,yth:yth,yedu:yedu,total:total,rcvd:rcvd}));
     tr.innerHTML =
       '<td>' + id + '</td>' +
       '<td>' + date + '</td>' +
-      '<td class="ta">' + fmtCurrency(tithes)   + '</td>' +
-      '<td class="ta">' + fmtCurrency(yth)       + '</td>' +
-      '<td class="ta">' + fmtCurrency(bldg)      + '</td>' +
-      '<td class="ta">' + fmtCurrency(benv)      + '</td>' +
-      '<td class="ta">' + fmtCurrency(yedu)      + '</td>' +
-      '<td class="ta">' + fmtCurrency(offering)  + '</td>' +
-      '<td class="ta">' + fmtCurrency(special)   + '</td>' +
-      '<td class="ta">' + fmtCurrency(other)      + '</td>' +
+      '<td class="ta">' + fmtCurrency(ss)   + '</td>' +
+      '<td class="ta">' + fmtCurrency(benv) + '</td>' +
+      '<td class="ta">' + fmtCurrency(bldg) + '</td>' +
+      '<td class="ta">' + fmtCurrency(gen)  + '</td>' +
+      '<td class="ta">' + fmtCurrency(yth)  + '</td>' +
+      '<td class="ta">' + fmtCurrency(yedu) + '</td>' +
       '<td style="font-weight:700;color:var(--blue)">' + fmtCurrency(total) + '</td>' +
       '<td>' + rcvd + '</td>' +
       '<td class="saved-status"><span class="sb2 sp">Pending</span></td>';
@@ -1252,7 +1244,7 @@ function saveRec(type) {
     var nextNum = tb.querySelectorAll('tr').length;
     document.querySelector('#view-tithes .fcd input[readonly]').value = 'OF-' + String(nextNum).padStart(3,'0');
 
-    ['amt-tithes','amt-youth','amt-bldg','amt-benv','amt-youthedu','amt-offering','amt-special','amt-other'].forEach(function(i) {
+    ['amt-ss','amt-benv','amt-bldg','amt-gen','amt-youth','amt-youthedu'].forEach(function(i) {
       document.getElementById(i).value = '';
     });
     calcOfferingTotal();
@@ -1322,14 +1314,12 @@ function saveAllToSheet() {
       '&callback=' + callbackName +
       '&offeringId=' + encodeURIComponent(d.id) +
       '&date=' + encodeURIComponent(d.date) +
-      '&tithes=' + (d.tithes||0) +
-      '&youth=' + (d.yth||0) +
-      '&buildingFund=' + (d.bldg||0) +
+      '&sundaySchool=' + (d.ss||0) +
       '&benevolent=' + (d.benv||0) +
+      '&buildingFund=' + (d.bldg||0) +
+      '&generalOffering=' + (d.gen||0) +
+      '&youth=' + (d.yth||0) +
       '&youthEducation=' + (d.yedu||0) +
-      '&offering=' + (d.offering||0) +
-      '&specialEvent=' + (d.special||0) +
-      '&other=' + (d.other||0) +
       '&totalDeposit=' + d.total +
       '&receivedBy=' + encodeURIComponent(d.rcvd);
 
