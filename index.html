@@ -234,7 +234,7 @@ nav{flex:1;padding:10px 0;}
       <div class="ph"><h1>Offerings</h1><p>Record weekly Sunday School, Benevolent, Building Fund, General, Youth and Youth Education Offerings</p></div>
       <div class="fcd">
         <div class="fr">
-          <div class="fg3"><label>Offering ID</label><input value="OF-011" readonly style="background:#f1f5f9;color:#64748b"></div>
+          <div class="fg3"><label>Offering ID</label><input value="OF-001" readonly style="background:#f1f5f9;color:#64748b"></div>
           <div class="fg3"><label>Date</label><input type="date" id="to-date"></div>
         </div>
         <div class="fr">
@@ -398,7 +398,7 @@ nav{flex:1;padding:10px 0;}
       <div class="ph"><h1>Add New Offering</h1><p>Record a tithe, offering or donation</p></div>
       <div class="fcd">
         <div class="fr">
-          <div class="fg3"><label>Offering ID</label><input value="OF-011" readonly style="background:#f1f5f9;color:#64748b"></div>
+          <div class="fg3"><label>Offering ID</label><input value="OF-001" readonly style="background:#f1f5f9;color:#64748b"></div>
           <div class="fg3"><label>Date</label><input type="date" id="of-date"></div>
         </div>
         <div class="fg3"><label>Member Name</label><select><option>Select member...</option><option>John Smith</option><option>Grace Lee</option><option>Robert Brown</option><option>Susan White</option><option>David Mensah</option><option>Linda Asante</option><option>Anonymous</option></select></div>
@@ -796,7 +796,7 @@ function saveRec(type) {
     document.getElementById('saved-offerings-wrap').style.display = 'block';
 
     var nextNum = tb.querySelectorAll('tr').length;
-    document.querySelector('#view-tithes .fcd input[readonly]').value = 'OF-' + String(nextNum + 10).padStart(3,'0');
+    document.querySelector('#view-tithes .fcd input[readonly]').value = 'OF-' + String(nextNum).padStart(3,'0');
 
     ['amt-ss','amt-benv','amt-bldg','amt-gen','amt-youth','amt-youthedu'].forEach(function(i) {
       document.getElementById(i).value = '';
