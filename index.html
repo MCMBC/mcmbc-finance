@@ -1190,9 +1190,108 @@ function doLogin() {
     document.getElementById('gd-date').value = today;
     document.getElementById('od-date').value = today;
     buildChart();
+    loadDashboardData();
   } else {
     err.style.display = 'block';
   }
+}
+
+function loadDashboardData() {
+  var url = localStorage.getItem('mcmbc_sheet_url') || '';
+  if (!url || url.indexOf('script.google.com') === -1) return;
+
+  var callbackName = 'dashCb_' + Date.now();
+  var timeout = setTimeout(function() {
+    delete window[callbackName];
+  }, 12000);
+
+  window[callbackName] = function(data) {
+    clearTimeout(timeout);
+    delete window[callbackName];
+    if (!data || data.status !== 'success') return;
+
+    // ── KPI Cards ─────────────────────────────────────────────
+    var kpis = document.querySelectorAll('#view-dashboard .kc');
+    if (kpis[0]) {
+      kpis[0].querySelector('.kv').textContent = fmtCurrency(data.offeringsTotal);
+      kpis[0].querySelector('.ks').textContent = data.offeringsCount + ' record(s)';
+    }
+    if (kpis[1]) {
+      kpis[1].querySelector('.kv').textContent = fmtCurrency(data.expensesTotal);
+      kpis[1].querySelector('.ks').textContent = data.expensesCount + ' record(s)';
+    }
+    if (kpis[2]) {
+      kpis[2].querySelector('.kv').textContent = data.activeMembers;
+      kpis[2].querySelector('.ks').textContent = 'Active members';
+    }
+    if (kpis[3]) {
+      kpis[3].querySelector('.kv').textContent = data.pendingCount;
+      kpis[3].querySelector('.ks').textContent = fmtCurrency(data.pendingAmount) + ' awaiting approval';
+    }
+
+    // ── Fund Cards ────────────────────────────────────────────
+    var fundCards = document.querySelectorAll('#view-dashboard .fc');
+    data.funds.forEach(function(f, i) {
+      if (!fundCards[i]) return;
+      fundCards[i].querySelector('.fn').textContent = f.name;
+      fundCards[i].querySelector('.fb').textContent = fmtCurrency(f.balance);
+      var pct = f.budget > 0 ? Math.min(100, Math.round((f.expenses / f.budget) * 100)) : 0;
+      fundCards[i].querySelector('.ff').style.width = pct + '%';
+      var spans = fundCards[i].querySelectorAll('.fs strong');
+      if (spans[0]) spans[0].textContent = fmtCurrency(f.income);
+      if (spans[1]) spans[1].textContent = fmtCurrency(f.expenses);
+      if (spans[2]) spans[2].textContent = f.budget >= 1000 ? '$' + Math.round(f.budget/1000) + 'K' : fmtCurrency(f.budget);
+    });
+
+    // ── Pending Approvals ─────────────────────────────────────
+    var pendingContainer = document.querySelector('#view-dashboard .cd:last-child');
+    if (pendingContainer && data.pendingItems) {
+      var existing = pendingContainer.querySelectorAll('.pi');
+      existing.forEach(function(el) { el.remove(); });
+      if (data.pendingItems.length === 0) {
+        pendingContainer.innerHTML += '<div class="pi"><div style="color:var(--green);font-size:.85rem;padding:10px 0;">✅ No pending approvals</div></div>';
+      } else {
+        data.pendingItems.forEach(function(item) {
+          var div = document.createElement('div');
+          div.className = 'pi';
+          div.innerHTML = '<div class="pg">📄</div><div style="flex:1"><div class="pn">' + item.desc + '</div><div class="pm">' + item.fund + ' · ' + item.date + '</div></div><div><div class="pa">' + fmtCurrency(item.amount) + '</div><div class="ps">Pending</div></div>';
+          pendingContainer.appendChild(div);
+        });
+      }
+    }
+
+    // ── Chart ─────────────────────────────────────────────────
+    if (data.chart) {
+      var inc = data.chart.map(function(m) { return m.income; });
+      var exp = data.chart.map(function(m) { return m.expenses; });
+      var labs = data.chart.map(function(m) { return m.label; });
+      var mx = Math.max.apply(null, inc.concat(exp).concat([1]));
+      var c = document.getElementById('chart');
+      c.innerHTML = '';
+      data.chart.forEach(function(m, i) {
+        var ih = Math.round((m.income / mx) * 105);
+        var eh = Math.round((m.expenses / mx) * 105);
+        c.innerHTML += '<div class="cm"><div class="bg"><div class="barr bi" style="height:' + ih + 'px" title="Income: ' + fmtCurrency(m.income) + '"></div><div class="barr bex" style="height:' + eh + 'px" title="Expenses: ' + fmtCurrency(m.expenses) + '"></div></div><div class="cl">' + m.label + '</div></div>';
+      });
+    }
+
+    // ── Reports page KPIs ─────────────────────────────────────
+    var rptKpis = document.querySelectorAll('#view-reports .kc');
+    if (rptKpis[0]) rptKpis[0].querySelector('.kv').textContent = fmtCurrency(data.offeringsTotal);
+    if (rptKpis[1]) rptKpis[1].querySelector('.kv').textContent = fmtCurrency(data.expensesTotal);
+    if (rptKpis[2]) {
+      var net = data.offeringsTotal - data.expensesTotal;
+      var netEl = rptKpis[2].querySelector('.kv');
+      netEl.textContent = fmtCurrency(Math.abs(net));
+      netEl.style.color = net < 0 ? '#b91c1c' : '#15803d';
+    }
+    if (rptKpis[3]) rptKpis[3].querySelector('.kv').textContent = fmtCurrency(data.pendingAmount);
+  };
+
+  var script = document.createElement('script');
+  script.src = url + '?action=getDashboardData&callback=' + callbackName;
+  document.head.appendChild(script);
+  setTimeout(function() { if (script.parentNode) script.parentNode.removeChild(script); }, 14000);
 }
 
 function doLogout() {
