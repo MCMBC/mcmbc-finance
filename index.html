@@ -833,13 +833,14 @@ function saveAllToSheet() {
   });
 
   if (pending.length === 0) {
-    showSheetStatus('info', 'ℹ️ No pending records to save — all records already sent to Google Sheets.');
+    showSheetStatus('info', 'ℹ️ No pending records — all records already sent to Google Sheets.');
     return;
   }
 
   var btn = document.getElementById('btn-save-sheet');
   btn.textContent = '⏳ Saving...';
   btn.disabled = true;
+  showSheetStatus('info', '⏳ Sending ' + pending.length + ' record(s) to Google Sheets...');
 
   var saved = 0;
   var errors = 0;
@@ -849,16 +850,22 @@ function saveAllToSheet() {
       btn.textContent = '💾 Save to Google Sheet';
       btn.disabled = false;
       if (errors === 0) {
-        showSheetStatus('success', '✅ ' + saved + ' record(s) saved to Google Sheets successfully!');
+        showSheetStatus('success', '✅ ' + saved + ' record(s) saved to Google Sheets! Open your Sheets to confirm.');
       } else {
-        showSheetStatus('error', '⚠️ ' + saved + ' saved, ' + errors + ' failed. Check your Web App URL and try again.');
+        showSheetStatus('error', '⚠️ ' + saved + ' saved, ' + errors + ' failed. See instructions below.');
       }
       return;
     }
 
     var item = pending[i];
     var d = item.data;
-    var params = '?action=addOffering' +
+    var statusEl = item.row.querySelector('.saved-status');
+    statusEl.innerHTML = '<span class="sb2" style="background:#dbeafe;color:#1d4ed8">Sending...</span>';
+
+    var callbackName = 'cb_' + Date.now() + '_' + i;
+    var params = url +
+      '?action=addOffering' +
+      '&callback=' + callbackName +
       '&offeringId=' + encodeURIComponent(d.id) +
       '&date=' + encodeURIComponent(d.date) +
       '&sundaySchool=' + d.ss +
@@ -870,12 +877,19 @@ function saveAllToSheet() {
       '&totalDeposit=' + d.total +
       '&receivedBy=' + encodeURIComponent(d.rcvd);
 
-    var img = new Image();
-    img.onload = img.onerror = function(e) {
-      var statusEl = item.row.querySelector('.saved-status');
-      if (e.type === 'load' || true) {
+    var timeout = setTimeout(function() {
+      delete window[callbackName];
+      errors++;
+      statusEl.innerHTML = '<span class="sb2 si">Timeout</span>';
+      sendNext(i + 1);
+    }, 10000);
+
+    window[callbackName] = function(response) {
+      clearTimeout(timeout);
+      delete window[callbackName];
+      if (response && response.status === 'success') {
         saved++;
-        statusEl.innerHTML = '<span class="sb2 sa">Saved ✓</span>';
+        statusEl.innerHTML = '<span class="sb2 sa">✓ Saved</span>';
       } else {
         errors++;
         statusEl.innerHTML = '<span class="sb2 si">Failed</span>';
@@ -883,19 +897,19 @@ function saveAllToSheet() {
       sendNext(i + 1);
     };
 
-    fetch(url + params, {method: 'GET', mode: 'no-cors'})
-      .then(function() {
-        saved++;
-        var statusEl = item.row.querySelector('.saved-status');
-        statusEl.innerHTML = '<span class="sb2 sa">Saved ✓</span>';
-        sendNext(i + 1);
-      })
-      .catch(function() {
-        errors++;
-        var statusEl = item.row.querySelector('.saved-status');
-        statusEl.innerHTML = '<span class="sb2 si">Failed</span>';
-        sendNext(i + 1);
-      });
+    var script = document.createElement('script');
+    script.src = params;
+    script.onerror = function() {
+      clearTimeout(timeout);
+      delete window[callbackName];
+      errors++;
+      statusEl.innerHTML = '<span class="sb2 si">Error</span>';
+      sendNext(i + 1);
+    };
+    document.head.appendChild(script);
+    setTimeout(function() {
+      if (script.parentNode) script.parentNode.removeChild(script);
+    }, 12000);
   }
 
   sendNext(0);
