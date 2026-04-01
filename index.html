@@ -1759,26 +1759,66 @@ function showAddEmployee() {
 }
 
 function saveEmployee() {
-  var f1 = document.getElementById('ef1').value.trim();
-  var f2 = document.getElementById('ef2').value.trim();
-  var ssn = document.getElementById('efssn').value.trim();
-  var a1 = document.getElementById('efa1').value.trim();
-  var a2 = document.getElementById('efa2').value.trim();
-  var city = document.getElementById('efcity').value.trim();
+  var f1    = document.getElementById('ef1').value.trim();
+  var f2    = document.getElementById('ef2').value.trim();
+  var ssn   = document.getElementById('efssn').value.trim();
+  var a1    = document.getElementById('efa1').value.trim();
+  var a2    = document.getElementById('efa2').value.trim();
+  var city  = document.getElementById('efcity').value.trim();
   var state = document.getElementById('efstate').value.trim();
-  var zip = document.getElementById('efzip').value.trim();
+  var zip   = document.getElementById('efzip').value.trim();
   var phone = document.getElementById('efphone').value.trim();
   var email = document.getElementById('efemail').value.trim();
+  var ptype = document.getElementById('eftype') ? document.getElementById('eftype').value : '';
   if (!f1) { showToast('First Name is required.'); return; }
-  var tb = document.getElementById('emp-table');
+
+  var tb   = document.getElementById('emp-table');
   var rows = tb.querySelectorAll('tr').length;
-  var id = 'EMP-' + String(rows).padStart(3,'0');
+  var id   = 'EMP-' + String(rows).padStart(3,'0');
+
+  // Add to on-screen table
   var tr = document.createElement('tr');
   tr.innerHTML = '<td>'+id+'</td><td>'+f1+'</td><td>'+(f2||'—')+'</td><td><span class="sm" data-ssn="'+ssn+'">'+mSSN(ssn)+'</span></td><td>'+(a1||'—')+'</td><td>'+(a2||'—')+'</td><td>'+(city||'—')+'</td><td>'+(state||'—')+'</td><td>'+(zip||'—')+'</td><td>'+(phone||'—')+'</td><td>'+(email||'—')+'</td><td><button class="bac" onclick="toggleSSN(this)">Show</button></td>';
   tb.appendChild(tr);
-  ['ef1','ef2','efssn','efa1','efa2','efcity','efstate','efzip','efphone','efemail'].forEach(function(i){ document.getElementById(i).value=''; });
+
+  // Save to Google Sheets
+  var url = localStorage.getItem('mcmbc_sheet_url') || '';
+  if (url && url.indexOf('script.google.com') !== -1) {
+    var cb = 'empSaveCb_' + Date.now();
+    window[cb] = function(data) {
+      delete window[cb];
+      if (data && data.status === 'success') {
+        showToast('✅ Employee ' + data.employeeId + ' saved to Google Sheets!');
+        // Refresh payroll dropdown
+        loadEmployeeDropdown();
+      } else {
+        showToast('⚠️ Saved locally but could not reach Google Sheets.');
+      }
+    };
+    var s = document.createElement('script');
+    s.src = url + '?action=addEmployee&callback=' + cb
+      + '&employeeId=' + encodeURIComponent(id)
+      + '&firstName='  + encodeURIComponent(f1)
+      + '&lastName='   + encodeURIComponent(f2)
+      + '&ssn='        + encodeURIComponent(ssn)
+      + '&address1='   + encodeURIComponent(a1)
+      + '&address2='   + encodeURIComponent(a2)
+      + '&city='       + encodeURIComponent(city)
+      + '&state='      + encodeURIComponent(state)
+      + '&zip='        + encodeURIComponent(zip)
+      + '&phone='      + encodeURIComponent(phone)
+      + '&email='      + encodeURIComponent(email)
+      + '&payType='    + encodeURIComponent(ptype);
+    document.head.appendChild(s);
+    setTimeout(function() { if (s.parentNode) s.parentNode.removeChild(s); }, 12000);
+  } else {
+    showToast('Employee added locally. Connect Google Sheets to sync.');
+  }
+
+  ['ef1','ef2','efssn','efa1','efa2','efcity','efstate','efzip','efphone','efemail'].forEach(function(i){
+    document.getElementById(i).value='';
+  });
   document.getElementById('aef').style.display='none';
-  showToast('Employee added!');
 }
 
 // ── PAYROLL DATA ENTRY ───────────────────────────────────────────
