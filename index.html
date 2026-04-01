@@ -1140,7 +1140,7 @@ function calcOfferingTotal() {
     row.querySelector('.gl-cr').textContent = fmtCurrency(v);
   });
   var fmt = fmtCurrency(total);
-  document.getElementById('offering-total').textContent = fmtCurrency(tot);
+  document.getElementById('offering-total').textContent = fmtCurrency(total);
   document.getElementById('gl-debit').textContent = fmt;
   document.getElementById('gl-total-dr').textContent = fmt;
   document.getElementById('gl-total-cr').textContent = fmt;
