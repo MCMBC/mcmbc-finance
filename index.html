@@ -155,7 +155,7 @@ nav{flex:1;padding:10px 0;}
       <div class="ni" onclick="sv('giveify-donors',this)">📱 giveify by Donors</div>
       <div class="ni" onclick="sv('other-offerings',this)">🎁 Other Offerings &amp; Donations</div>
       <div class="ns">Expenses</div>
-      <div class="ni" onclick="sv('payroll-view',this)">💼 Payroll</div>
+      <div class="ni" onclick="sv('payroll-view',this);initPayrollForm()">💼 Payroll</div>
       <div class="ni" onclick="sv('pay-bills',this)">🧾 Pay Bills</div>
       <div class="ni" onclick="sv('misc-exp',this)">📦 Miscellaneous</div>
       <div class="ni" onclick="sv('add-offering',this)">➕ Add Offering</div>
@@ -609,15 +609,157 @@ nav{flex:1;padding:10px 0;}
 
     <!-- PAYROLL VIEW -->
     <div id="view-payroll-view" class="vw">
-      <div class="ph"><h1>Payroll</h1><p>Staff salary and payroll expense records</p></div>
-      <div class="kg" style="grid-template-columns:repeat(3,1fr)">
-        <div class="kc rd"><div class="kl">Payroll This Month</div><div class="kv">$1,500</div><div class="ks">1 payment</div><div class="ki">💼</div></div>
-        <div class="kc gd"><div class="kl">Payroll YTD</div><div class="kv">$1,500</div><div class="ks">Jan 2024</div><div class="ki">📅</div></div>
-        <div class="kc gn"><div class="kl">Employees</div><div class="kv">1</div><div class="ks">Active</div><div class="ki">👤</div></div>
+      <div class="ph"><h1>Payroll</h1><p>Enter staff salary and payroll payments — records saved to Google Sheets</p></div>
+
+      <!-- Summary KPIs -->
+      <div class="kg" style="grid-template-columns:repeat(4,1fr);margin-bottom:22px">
+        <div class="kc rd"><div class="kl">Gross Wages</div><div class="kv" id="pr-kpi-gross">$0.00</div><div class="ks">This entry</div><div class="ki">💼</div></div>
+        <div class="kc gd"><div class="kl">Total Deductions</div><div class="kv" id="pr-kpi-ded">$0.00</div><div class="ks">This entry</div><div class="ki">➖</div></div>
+        <div class="kc gn"><div class="kl">Net Pay</div><div class="kv" id="pr-kpi-net">$0.00</div><div class="ks">This entry</div><div class="ki">✅</div></div>
+        <div class="kc bl2"><div class="kl">Entries This Session</div><div class="kv" id="pr-kpi-count">0</div><div class="ks">Records added</div><div class="ki">📋</div></div>
       </div>
-      <table class="vt"><tr><th>Date</th><th>Employee</th><th>Category</th><th>Fund</th><th>Amount</th><th>Status</th></tr>
-      <tr><td>Jan 18, 2024</td><td>Pastor James</td><td>Pastor Salary</td><td>General Fund</td><td class="ta ex">$1,500</td><td><span class="sb2 sa">Paid</span></td></tr>
-      </table>
+
+      <!-- Data Entry Form -->
+      <div class="fcd">
+        <h3 style="margin:0 0 18px;font-family:'Lora',serif;color:var(--blue)">➕ New Payroll Entry</h3>
+
+        <!-- Row 1: ID + Date + Pay Period -->
+        <div class="fr" style="grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px">
+          <div class="fg3">
+            <label>Payroll ID</label>
+            <input type="text" id="pr-id" readonly style="background:#f1f5f9;color:#64748b;font-family:monospace;font-weight:700">
+          </div>
+          <div class="fg3">
+            <label>Date Paid</label>
+            <input type="date" id="pr-date">
+          </div>
+          <div class="fg3">
+            <label>Pay Period</label>
+            <select id="pr-period">
+              <option value="">Select pay period...</option>
+              <option>Weekly</option>
+              <option>Bi-Weekly</option>
+              <option>Semi-Monthly</option>
+              <option selected>Monthly</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Row 2: Employee + Fund -->
+        <div class="fr" style="grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+          <div class="fg3">
+            <label>Employee Name</label>
+            <select id="pr-employee" onchange="prFillId()">
+              <option value="">⏳ Loading employees...</option>
+            </select>
+          </div>
+          <div class="fg3">
+            <label>Employee ID</label>
+            <input type="text" id="pr-empid" placeholder="e.g. EMP-001">
+          </div>
+        </div>
+
+        <!-- Row 3: Pay Type + Fund -->
+        <div class="fr" style="grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+          <div class="fg3">
+            <label>Pay Type</label>
+            <select id="pr-type" onchange="togglePayrollFields()">
+              <option value="">Select type...</option>
+              <option value="W-2">W-2 (Employee)</option>
+              <option value="1099">1099 (Independent Contractor)</option>
+            </select>
+          </div>
+          <div class="fg3">
+            <label>Fund</label>
+            <select id="pr-fund">
+              <option value="General Offering Fund">General Offering Fund</option>
+              <option value="Building Fund">Building Fund</option>
+              <option value="Tithes Fund">Tithes Fund</option>
+              <option value="Youth Fund">Youth Fund</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Row 4: Wages only (deductions shown below for W-2) -->
+        <div class="fr" style="grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+          <div class="fg3">
+            <label>Gross Wages ($)</label>
+            <input type="number" id="pr-wages" placeholder="0.00" min="0" step="0.01" oninput="calcPayroll()">
+          </div>
+        </div>
+
+        <!-- W-2 only deductions -->
+        <div id="pr-w2-fields" style="display:none">
+        <div class="fr" style="grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+          <div class="fg3">
+            <label>Federal Tax W/H ($)</label>
+            <input type="number" id="pr-fedtax" placeholder="0.00" min="0" step="0.01" oninput="calcPayroll()">
+          </div>
+        </div>
+        </div>
+
+        <!-- Row 6: Check # + Memo -->
+        <div class="fr" style="grid-template-columns:1fr 2fr;gap:14px;margin-bottom:20px">
+          <div class="fg3">
+            <label>Check / Ref No.</label>
+            <input type="text" id="pr-checkno" placeholder="e.g. 1042">
+          </div>
+          <div class="fg3">
+            <label>Memo / Notes</label>
+            <input type="text" id="pr-memo" placeholder="e.g. January salary payment">
+          </div>
+        </div>
+
+        <!-- Net Pay Total Display -->
+        <div style="background:linear-gradient(135deg,#0F2744,#1e3a5f);border-radius:10px;padding:16px 22px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+          <div>
+            <div style="color:#94a3b8;font-size:.78rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase">NET PAY</div>
+            <div id="pr-net-display" style="font-family:'Lora',serif;font-size:2rem;font-weight:700;color:#f0c040">$0.00</div>
+          </div>
+          <div style="text-align:right;color:#94a3b8;font-size:.8rem">
+            <div>Gross Wages: <span id="pr-summary-gross" style="color:#fff">$0.00</span></div>
+            <div style="margin-top:4px">Total Deductions: <span id="pr-summary-ded" style="color:#f87171">$0.00</span></div>
+          </div>
+        </div>
+
+        <!-- GL Entry Preview -->
+        <div id="pr-gl-preview" style="background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;padding:16px;margin-bottom:20px">
+          <div style="font-weight:700;font-size:.82rem;color:var(--blue);margin-bottom:10px;text-transform:uppercase;letter-spacing:.05em">📒 GL Entry Preview</div>
+          <table style="width:100%;border-collapse:collapse;font-size:.8rem">
+            <tr style="background:#e8eef7">
+              <th style="padding:6px 8px;text-align:left;color:#475569">Account</th>
+              <th style="padding:6px 8px;text-align:right;color:#475569">Debit</th>
+              <th style="padding:6px 8px;text-align:right;color:#475569">Credit</th>
+            </tr>
+            <tr><td style="padding:6px 8px;color:#334155">5010 — Salary &amp; Wages Expense</td><td style="text-align:right;padding:6px 8px;font-weight:700;color:var(--green)" id="pr-gl-debit">$0.00</td><td style="text-align:right;padding:6px 8px">—</td></tr>
+            <tr id="pr-gl-fedtax-row" style="display:none"><td style="padding:5px 8px;padding-left:20px;color:#475569">2050 — Federal Tax Payable</td><td style="text-align:right;padding:5px 8px">—</td><td style="text-align:right;padding:5px 8px;color:var(--red)" id="pr-gl-fedtax-cr">$0.00</td></tr>
+            <tr style="border-top:2px solid #cbd5e1;font-weight:700">
+              <td style="padding:7px 8px;color:var(--blue)">1010 — Cash / Bank Account (Net Pay)</td>
+              <td style="text-align:right;padding:7px 8px">—</td>
+              <td style="text-align:right;padding:7px 8px;color:var(--red)" id="pr-gl-net-cr">$0.00</td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- Buttons -->
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <button class="bsv" onclick="savePayrollEntry()" style="font-size:.9rem;padding:12px 28px">💾 Save Payroll Entry</button>
+          <button class="bcc" onclick="clearPayrollForm()" style="font-size:.9rem;padding:12px 20px">✕ Clear Form</button>
+        </div>
+      </div>
+
+      <!-- Saved Records Table -->
+      <div id="pr-saved-section" style="display:none;margin-top:24px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+          <h3 style="margin:0;font-family:'Lora',serif;color:var(--blue)">📋 Payroll Entries — This Session</h3>
+          <button class="bp" onclick="savePayrollToSheets()" id="pr-save-sheet-btn" style="font-size:.8rem">💾 Save All to Google Sheet</button>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="vt" id="pr-saved-table">
+            <tr><th>ID</th><th>Date</th><th>Employee</th><th>Type</th><th>Fund</th><th>Gross</th><th>Fed Tax</th><th>State Tax</th><th>FICA</th><th>Medicare</th><th>Other Ded.</th><th>Net Pay</th><th>Saved?</th></tr>
+          </table>
+        </div>
+      </div>
     </div>
 
     <!-- PAY BILLS -->
@@ -1637,6 +1779,247 @@ function saveEmployee() {
   ['ef1','ef2','efssn','efa1','efa2','efcity','efstate','efzip','efphone','efemail'].forEach(function(i){ document.getElementById(i).value=''; });
   document.getElementById('aef').style.display='none';
   showToast('Employee added!');
+}
+
+// ── PAYROLL DATA ENTRY ───────────────────────────────────────────
+var prEntryCount = 0;
+var prSavedRows = [];
+
+function initPayrollForm() {
+  var today = new Date().toISOString().split('T')[0];
+  document.getElementById('pr-date').value = today;
+  prEntryCount = document.getElementById('pr-saved-table') ?
+    document.getElementById('pr-saved-table').querySelectorAll('tr').length - 1 : 0;
+  document.getElementById('pr-id').value = 'PR-' + String(prEntryCount + 1).padStart(3,'0');
+  calcPayroll();
+  loadEmployeeDropdown();
+}
+
+function loadEmployeeDropdown() {
+  var url = localStorage.getItem('mcmbc_sheet_url') || '';
+  var sel = document.getElementById('pr-employee');
+
+  if (!url || url.indexOf('script.google.com') === -1) {
+    sel.innerHTML = '<option value="">— No Sheets URL saved —</option><option value="OTHER">Enter name manually below</option>';
+    return;
+  }
+
+  sel.innerHTML = '<option value="">⏳ Loading...</option>';
+
+  var cb = 'empCb_' + Date.now();
+  var timeout = setTimeout(function() {
+    delete window[cb];
+    sel.innerHTML = '<option value="">⚠️ Could not load — check URL</option><option value="OTHER">Enter name manually below</option>';
+  }, 10000);
+
+  window[cb] = function(data) {
+    clearTimeout(timeout); delete window[cb];
+    sel.innerHTML = '<option value="">Select employee...</option>';
+    if (data && data.status === 'success' && data.employees && data.employees.length > 0) {
+      data.employees.forEach(function(e) {
+        var opt = document.createElement('option');
+        opt.value = e.id;
+        opt.textContent = e.name + ' (' + e.id + ')';
+        sel.appendChild(opt);
+      });
+    } else {
+      sel.innerHTML = '<option value="">No employees found in Sheets</option>';
+    }
+    var other = document.createElement('option');
+    other.value = 'OTHER'; other.textContent = '— Enter name manually below —';
+    sel.appendChild(other);
+  };
+
+  var s = document.createElement('script');
+  s.src = url + '?action=getEmployees&callback=' + cb;
+  document.head.appendChild(s);
+  setTimeout(function() { if (s.parentNode) s.parentNode.removeChild(s); }, 12000);
+}
+
+function prFillId() {
+  var sel = document.getElementById('pr-employee');
+  var val = sel.value;
+  if (val && val !== 'OTHER') {
+    document.getElementById('pr-empid').value = val;
+  } else {
+    document.getElementById('pr-empid').value = '';
+  }
+}
+
+function togglePayrollFields() {
+  var type = document.getElementById('pr-type').value;
+  var isW2 = (type === 'W-2');
+
+  document.getElementById('pr-w2-fields').style.display = isW2 ? '' : 'none';
+
+  if (!isW2) {
+    document.getElementById('pr-fedtax').value = '';
+  }
+
+  document.getElementById('pr-gl-fedtax-row').style.display = isW2 ? '' : 'none';
+
+  calcPayroll();
+}
+
+function calcPayroll() {
+  var gross    = parseFloat(document.getElementById('pr-wages').value)  || 0;
+  var fed      = parseFloat(document.getElementById('pr-fedtax').value) || 0;
+  var totalDed = fed;
+  var net      = gross - totalDed;
+
+  document.getElementById('pr-kpi-gross').textContent    = fmtCurrency(gross);
+  document.getElementById('pr-kpi-ded').textContent      = fmtCurrency(totalDed);
+  document.getElementById('pr-kpi-net').textContent      = fmtCurrency(net > 0 ? net : 0);
+  document.getElementById('pr-net-display').textContent  = fmtCurrency(net > 0 ? net : 0);
+  document.getElementById('pr-summary-gross').textContent= fmtCurrency(gross);
+  document.getElementById('pr-summary-ded').textContent  = fmtCurrency(totalDed);
+
+  document.getElementById('pr-gl-debit').textContent     = fmtCurrency(gross);
+  document.getElementById('pr-gl-fedtax-cr').textContent = fmtCurrency(fed);
+  document.getElementById('pr-gl-net-cr').textContent    = fmtCurrency(net > 0 ? net : 0);
+}
+
+function savePayrollEntry() {
+  var id       = document.getElementById('pr-id').value;
+  var date     = document.getElementById('pr-date').value;
+  var empName  = document.getElementById('pr-employee').options[document.getElementById('pr-employee').selectedIndex].text;
+  var empId    = document.getElementById('pr-empid').value.trim();
+  var period   = document.getElementById('pr-period').value;
+  var payType  = document.getElementById('pr-type').value;
+  var fund     = document.getElementById('pr-fund').value;
+  var gross    = parseFloat(document.getElementById('pr-wages').value)  || 0;
+  var fed      = parseFloat(document.getElementById('pr-fedtax').value) || 0;
+  var state    = 0, fica = 0, medicare = 0, other = 0;
+  var checkno  = document.getElementById('pr-checkno').value.trim();
+  var memo     = document.getElementById('pr-memo').value.trim();
+  var net      = gross - fed;
+
+  if (!date) { showToast('⚠️ Date is required.'); return; }
+  if (!empId && empName === 'Select employee...') { showToast('⚠️ Select an employee.'); return; }
+  if (!payType) { showToast('⚠️ Pay Type is required.'); return; }
+  if (gross <= 0) { showToast('⚠️ Gross Wages must be greater than $0.'); return; }
+
+  var displayEmp = (empName !== 'Select employee...' && empName !== 'Other / Enter Below') ? empName : empId;
+
+  // Add row to saved table
+  var tb = document.getElementById('pr-saved-table');
+  var row = document.createElement('tr');
+  row.setAttribute('data-id', id);
+  row.innerHTML = [
+    '<td style="font-family:monospace;font-size:.78rem">'+id+'</td>',
+    '<td>'+date+'</td>',
+    '<td>'+displayEmp+'</td>',
+    '<td><span class="br2 bt">'+payType+'</span></td>',
+    '<td style="font-size:.78rem">'+fund+'</td>',
+    '<td class="ta" style="font-weight:700">'+fmtCurrency(gross)+'</td>',
+    '<td class="ta ex">'+fmtCurrency(fed)+'</td>',
+    '<td class="ta ex">'+fmtCurrency(state)+'</td>',
+    '<td class="ta ex">'+fmtCurrency(fica)+'</td>',
+    '<td class="ta ex">'+fmtCurrency(medicare)+'</td>',
+    '<td class="ta ex">'+fmtCurrency(other)+'</td>',
+    '<td class="ta" style="font-weight:700;color:var(--green)">'+fmtCurrency(net)+'</td>',
+    '<td id="pr-status-'+id+'"><span class="sb2" style="background:#fef3c7;color:#92400e">⏳ Pending</span></td>'
+  ].join('');
+  tb.appendChild(row);
+
+  // Store for Google Sheets save
+  prSavedRows.push({id:id, date:date, empId:empId||displayEmp, empName:displayEmp,
+    period:period, payType:payType, fund:fund, gross:gross, fedTax:fed,
+    stateTax:state, fica:fica, medicare:medicare, other:other, net:net,
+    checkNo:checkno, memo:memo, savedBy: CU ? CU.name : ''});
+
+  prEntryCount++;
+  document.getElementById('pr-kpi-count').textContent = prEntryCount;
+
+  // Show table section
+  document.getElementById('pr-saved-section').style.display = 'block';
+
+  showToast('✅ Payroll entry ' + id + ' added — click Save to Google Sheet to sync.');
+
+  // Reset for next entry
+  document.getElementById('pr-id').value = 'PR-' + String(prEntryCount + 1).padStart(3,'0');
+  ['pr-wages','pr-fedtax','pr-checkno','pr-memo'].forEach(function(x){
+    document.getElementById(x).value = '';
+  });
+  document.getElementById('pr-employee').value = '';
+  document.getElementById('pr-empid').value = '';
+  document.getElementById('pr-type').value = '';
+  togglePayrollFields();
+}
+
+function clearPayrollForm() {
+  ['pr-wages','pr-fedtax','pr-checkno','pr-memo'].forEach(function(x){
+    document.getElementById(x).value = '';
+  });
+  document.getElementById('pr-employee').value = '';
+  document.getElementById('pr-empid').value = '';
+  document.getElementById('pr-type').value = '';
+  togglePayrollFields();
+}
+
+function savePayrollToSheets() {
+  var url = localStorage.getItem('mcmbc_sheet_url') || '';
+  if (!url || url.indexOf('script.google.com') === -1) {
+    showToast('⚠️ No Google Sheets URL saved. Enter URL on the Dashboard first.');
+    return;
+  }
+  if (prSavedRows.length === 0) { showToast('No entries to save.'); return; }
+  var btn = document.getElementById('pr-save-sheet-btn');
+  btn.textContent = '⏳ Saving...'; btn.disabled = true;
+
+  var pending = prSavedRows.filter(function(r) { return !r._saved; });
+  var saved = 0;
+
+  function saveNext(i) {
+    if (i >= pending.length) {
+      btn.textContent = '💾 Save All to Google Sheet';
+      btn.disabled = false;
+      showToast('✅ All ' + saved + ' payroll entries saved to Google Sheets!');
+      return;
+    }
+    var r = pending[i];
+    var cb = 'prCb_' + Date.now();
+    var t = setTimeout(function() {
+      delete window[cb];
+      showToast('⚠️ Save timed out for ' + r.id);
+      saveNext(i + 1);
+    }, 10000);
+    window[cb] = function(data) {
+      clearTimeout(t); delete window[cb];
+      var statusEl = document.getElementById('pr-status-' + r.id);
+      if (data && data.status === 'success') {
+        r._saved = true; saved++;
+        if (statusEl) statusEl.innerHTML = '<span class="sb2 sa">✓ Saved</span>';
+      } else {
+        if (statusEl) statusEl.innerHTML = '<span class="sb2" style="background:#fee2e2;color:#b91c1c">✗ Error</span>';
+      }
+      saveNext(i + 1);
+    };
+    var p = r;
+    var src = url + '?action=addPayroll'
+      + '&callback=' + cb
+      + '&payrollId=' + encodeURIComponent(p.id)
+      + '&employeeId=' + encodeURIComponent(p.empId)
+      + '&employeeName=' + encodeURIComponent(p.empName)
+      + '&datePaid=' + encodeURIComponent(p.date)
+      + '&payPeriod=' + encodeURIComponent(p.period)
+      + '&type=' + encodeURIComponent(p.payType)
+      + '&fund=' + encodeURIComponent(p.fund)
+      + '&wages=' + encodeURIComponent(p.gross)
+      + '&fedTaxWH=' + encodeURIComponent(p.fedTax)
+      + '&stateTaxWH=' + encodeURIComponent(p.stateTax)
+      + '&fica=' + encodeURIComponent(p.fica)
+      + '&medicare=' + encodeURIComponent(p.medicare)
+      + '&otherDed=' + encodeURIComponent(p.other)
+      + '&netPay=' + encodeURIComponent(p.net)
+      + '&checkNo=' + encodeURIComponent(p.checkNo)
+      + '&memo=' + encodeURIComponent(p.memo)
+      + '&savedBy=' + encodeURIComponent(p.savedBy);
+    var s = document.createElement('script'); s.src = src;
+    document.head.appendChild(s);
+    setTimeout(function() { if (s.parentNode) s.parentNode.removeChild(s); }, 12000);
+  }
+  saveNext(0);
 }
 
 function showAddPayroll() {
