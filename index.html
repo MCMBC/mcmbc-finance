@@ -184,7 +184,23 @@ nav{flex:1;padding:10px 0;}
 
     <!-- DASHBOARD -->
     <div id="view-dashboard" class="vw active">
-      <div class="ph"><h1>Dashboard</h1><p id="dg">Welcome — here's your financial overview</p></div>
+      <div class="ph" style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;">
+        <div><h1>Dashboard</h1><p id="dg">Welcome — here's your financial overview</p></div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
+          <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
+        </div>
+      </div>
+
+      <!-- Connection Setup Banner -->
+      <div id="conn-setup" style="margin-bottom:16px;padding:13px 16px;background:#fef9c3;border-left:4px solid #ca8a04;border-radius:8px;font-size:.82rem;color:#854d0e;">
+        <strong>⚙️ Connect to Google Sheets</strong> — paste your Apps Script Web App URL below to load live data.
+        <div style="margin-top:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <input type="text" id="dash-url" placeholder="https://script.google.com/macros/s/YOUR_ID/exec"
+            style="flex:1;min-width:260px;padding:7px 11px;border:1.5px solid #ca8a04;border-radius:7px;font-size:.8rem;font-family:'DM Sans',sans-serif;outline:none;color:#1e293b;">
+          <button onclick="saveDashUrl()" style="background:#ca8a04;color:#fff;border:none;padding:7px 16px;border-radius:7px;font-family:'DM Sans',sans-serif;font-size:.82rem;cursor:pointer;font-weight:700;white-space:nowrap;">Save &amp; Connect</button>
+        </div>
+      </div>
       <div class="kg">
         <div class="kc bl2"><div class="kl">Total Offerings</div><div class="kv">$0.00</div><div class="ks">No records yet</div><div class="ki">💰</div></div>
         <div class="kc rd"><div class="kl">Total Expenses</div><div class="kv">$0.00</div><div class="ks">No records yet</div><div class="ki">💸</div></div>
@@ -1192,86 +1208,121 @@ function doLogin() {
   }
 }
 
+function saveDashUrl() {
+  var url = document.getElementById('dash-url').value.trim();
+  if (!url || url.indexOf('script.google.com') === -1) {
+    showToast('Please paste a valid Google Apps Script Web App URL.');
+    return;
+  }
+  localStorage.setItem('mcmbc_sheet_url', url);
+  var ofField = document.getElementById('sheet-url');
+  if (ofField) ofField.value = url;
+  showToast('URL saved! Loading data...');
+  loadDashboardData();
+}
+
+function setConnBadge(state) {
+  var badge = document.getElementById('conn-badge');
+  var setup = document.getElementById('conn-setup');
+  if (!badge) return;
+  if (state === 'loading') {
+    badge.style.background = '#dbeafe'; badge.style.color = '#1d4ed8';
+    badge.textContent = '⏳ Loading...';
+  } else if (state === 'ok') {
+    badge.style.background = '#dcfce7'; badge.style.color = '#15803d';
+    badge.textContent = '🟢 Live data';
+    if (setup) setup.style.display = 'none';
+  } else if (state === 'error') {
+    badge.style.background = '#fee2e2'; badge.style.color = '#b91c1c';
+    badge.textContent = '🔴 Connection error';
+  } else {
+    badge.style.background = '#fee2e2'; badge.style.color = '#b91c1c';
+    badge.textContent = '⚫ Not connected';
+  }
+}
+
 function loadDashboardData() {
   var url = localStorage.getItem('mcmbc_sheet_url') || '';
-  if (!url || url.indexOf('script.google.com') === -1) return;
+  var dashUrlEl = document.getElementById('dash-url');
+  if (dashUrlEl && url) dashUrlEl.value = url;
+
+  if (!url || url.indexOf('script.google.com') === -1) {
+    setConnBadge('offline');
+    return;
+  }
+
+  setConnBadge('loading');
 
   var callbackName = 'dashCb_' + Date.now();
   var timeout = setTimeout(function() {
     delete window[callbackName];
+    setConnBadge('error');
+    showToast('⚠️ Timed out. Check your Apps Script URL and redeploy.');
   }, 12000);
 
   window[callbackName] = function(data) {
     clearTimeout(timeout);
     delete window[callbackName];
-    if (!data || data.status !== 'success') return;
+    if (!data || data.status !== 'success') {
+      setConnBadge('error');
+      showToast('⚠️ Error from Google Sheets: ' + (data && data.message ? data.message : 'unknown'));
+      return;
+    }
 
-    // ── KPI Cards ─────────────────────────────────────────────
+    setConnBadge('ok');
+
+    // KPI Cards
     var kpis = document.querySelectorAll('#view-dashboard .kc');
-    if (kpis[0]) {
-      kpis[0].querySelector('.kv').textContent = fmtCurrency(data.offeringsTotal);
-      kpis[0].querySelector('.ks').textContent = data.offeringsCount + ' record(s)';
-    }
-    if (kpis[1]) {
-      kpis[1].querySelector('.kv').textContent = fmtCurrency(data.expensesTotal);
-      kpis[1].querySelector('.ks').textContent = data.expensesCount + ' record(s)';
-    }
-    if (kpis[2]) {
-      kpis[2].querySelector('.kv').textContent = data.activeMembers;
-      kpis[2].querySelector('.ks').textContent = 'Active members';
-    }
-    if (kpis[3]) {
-      kpis[3].querySelector('.kv').textContent = data.pendingCount;
-      kpis[3].querySelector('.ks').textContent = fmtCurrency(data.pendingAmount) + ' awaiting approval';
-    }
+    if (kpis[0]) { kpis[0].querySelector('.kv').textContent = fmtCurrency(data.offeringsTotal); kpis[0].querySelector('.ks').textContent = data.offeringsCount + ' record(s)'; }
+    if (kpis[1]) { kpis[1].querySelector('.kv').textContent = fmtCurrency(data.expensesTotal); kpis[1].querySelector('.ks').textContent = data.expensesCount + ' record(s)'; }
+    if (kpis[2]) { kpis[2].querySelector('.kv').textContent = data.activeMembers; kpis[2].querySelector('.ks').textContent = 'Active members'; }
+    if (kpis[3]) { kpis[3].querySelector('.kv').textContent = data.pendingCount; kpis[3].querySelector('.ks').textContent = fmtCurrency(data.pendingAmount) + ' awaiting approval'; }
 
-    // ── Fund Cards ────────────────────────────────────────────
+    // Fund Cards
     var fundCards = document.querySelectorAll('#view-dashboard .fc');
-    data.funds.forEach(function(f, i) {
-      if (!fundCards[i]) return;
-      fundCards[i].querySelector('.fn').textContent = f.name;
-      fundCards[i].querySelector('.fb').textContent = fmtCurrency(f.balance);
-      var pct = f.budget > 0 ? Math.min(100, Math.round((f.expenses / f.budget) * 100)) : 0;
-      fundCards[i].querySelector('.ff').style.width = pct + '%';
-      var spans = fundCards[i].querySelectorAll('.fs strong');
-      if (spans[0]) spans[0].textContent = fmtCurrency(f.income);
-      if (spans[1]) spans[1].textContent = fmtCurrency(f.expenses);
-      if (spans[2]) spans[2].textContent = f.budget >= 1000 ? '$' + Math.round(f.budget/1000) + 'K' : fmtCurrency(f.budget);
-    });
+    if (data.funds && data.funds.length > 0) {
+      data.funds.forEach(function(f, i) {
+        if (!fundCards[i]) return;
+        fundCards[i].querySelector('.fn').textContent = f.name;
+        fundCards[i].querySelector('.fb').textContent = fmtCurrency(f.balance);
+        var pct = f.budget > 0 ? Math.min(100, Math.round((f.expenses / f.budget) * 100)) : 0;
+        fundCards[i].querySelector('.ff').style.width = pct + '%';
+        var spans = fundCards[i].querySelectorAll('.fs strong');
+        if (spans[0]) spans[0].textContent = fmtCurrency(f.income);
+        if (spans[1]) spans[1].textContent = fmtCurrency(f.expenses);
+        if (spans[2]) spans[2].textContent = f.budget >= 1000 ? '$' + Math.round(f.budget / 1000) + 'K' : fmtCurrency(f.budget);
+      });
+    }
 
-    // ── Pending Approvals ─────────────────────────────────────
+    // Pending Approvals
     var pendingContainer = document.querySelector('#view-dashboard .cd:last-child');
-    if (pendingContainer && data.pendingItems) {
-      var existing = pendingContainer.querySelectorAll('.pi');
-      existing.forEach(function(el) { el.remove(); });
+    if (pendingContainer && data.pendingItems !== undefined) {
+      pendingContainer.querySelectorAll('.pi').forEach(function(el) { el.remove(); });
       if (data.pendingItems.length === 0) {
-        pendingContainer.innerHTML += '<div class="pi"><div style="color:var(--green);font-size:.85rem;padding:10px 0;">✅ No pending approvals</div></div>';
+        var d = document.createElement('div'); d.className = 'pi';
+        d.innerHTML = '<div style="color:var(--green);font-size:.85rem;padding:10px 0;">✅ No pending approvals</div>';
+        pendingContainer.appendChild(d);
       } else {
         data.pendingItems.forEach(function(item) {
-          var div = document.createElement('div');
-          div.className = 'pi';
+          var div = document.createElement('div'); div.className = 'pi';
           div.innerHTML = '<div class="pg">📄</div><div style="flex:1"><div class="pn">' + item.desc + '</div><div class="pm">' + item.fund + ' · ' + item.date + '</div></div><div><div class="pa">' + fmtCurrency(item.amount) + '</div><div class="ps">Pending</div></div>';
           pendingContainer.appendChild(div);
         });
       }
     }
 
-    // ── Chart ─────────────────────────────────────────────────
+    // Chart
     if (data.chart) {
-      var inc = data.chart.map(function(m) { return m.income; });
-      var exp = data.chart.map(function(m) { return m.expenses; });
-      var labs = data.chart.map(function(m) { return m.label; });
-      var mx = Math.max.apply(null, inc.concat(exp).concat([1]));
-      var c = document.getElementById('chart');
-      c.innerHTML = '';
-      data.chart.forEach(function(m, i) {
+      var mx = Math.max.apply(null, data.chart.map(function(m) { return Math.max(m.income, m.expenses); }).concat([1]));
+      var c = document.getElementById('chart'); c.innerHTML = '';
+      data.chart.forEach(function(m) {
         var ih = Math.round((m.income / mx) * 105);
         var eh = Math.round((m.expenses / mx) * 105);
-        c.innerHTML += '<div class="cm"><div class="bg"><div class="barr bi" style="height:' + ih + 'px" title="Income: ' + fmtCurrency(m.income) + '"></div><div class="barr bex" style="height:' + eh + 'px" title="Expenses: ' + fmtCurrency(m.expenses) + '"></div></div><div class="cl">' + m.label + '</div></div>';
+        c.innerHTML += '<div class="cm"><div class="bg"><div class="barr bi" style="height:' + ih + 'px"></div><div class="barr bex" style="height:' + eh + 'px"></div></div><div class="cl">' + m.label + '</div></div>';
       });
     }
 
-    // ── Reports page KPIs ─────────────────────────────────────
+    // Reports KPIs
     var rptKpis = document.querySelectorAll('#view-reports .kc');
     if (rptKpis[0]) rptKpis[0].querySelector('.kv').textContent = fmtCurrency(data.offeringsTotal);
     if (rptKpis[1]) rptKpis[1].querySelector('.kv').textContent = fmtCurrency(data.expensesTotal);
@@ -1282,9 +1333,16 @@ function loadDashboardData() {
       netEl.style.color = net < 0 ? '#b91c1c' : '#15803d';
     }
     if (rptKpis[3]) rptKpis[3].querySelector('.kv').textContent = fmtCurrency(data.pendingAmount);
+
+    showToast('✅ Dashboard updated from Google Sheets!');
   };
 
   var script = document.createElement('script');
+  script.onerror = function() {
+    clearTimeout(timeout); delete window[callbackName];
+    setConnBadge('error');
+    showToast('⚠️ Could not reach Google Sheets. Check your URL.');
+  };
   script.src = url + '?action=getDashboardData&callback=' + callbackName;
   document.head.appendChild(script);
   setTimeout(function() { if (script.parentNode) script.parentNode.removeChild(script); }, 14000);
