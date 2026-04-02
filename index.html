@@ -2069,14 +2069,22 @@ function saveEmployee() {
 
   if (url && url.indexOf('script.google.com') !== -1) {
     var cb2 = 'empSaveCb_' + Date.now();
-    window[cb2] = function(data) {
+    var t2 = setTimeout(function() {
       delete window[cb2];
+      showToast('⚠️ Timed out — redeploy your Apps Script then try again.');
+    }, 10000);
+    window[cb2] = function(data) {
+      clearTimeout(t2); delete window[cb2];
       showToast(data && data.status === 'success'
         ? '✅ ' + f1 + ' saved to Google Sheets (' + (data.employeeId||newId) + ').'
-        : '⚠️ Added locally but Sheets sync failed.');
+        : '⚠️ Sheets error: ' + (data && data.message ? data.message : 'unknown'));
       loadEmployeeDropdown();
     };
     var s2 = document.createElement('script');
+    s2.onerror = function() {
+      clearTimeout(t2); delete window[cb2];
+      showToast('⚠️ Could not reach Google Sheets — check your URL and redeploy.');
+    };
     s2.src = url + '?action=addEmployee&callback=' + cb2
       + '&employeeId=' + encodeURIComponent(newId)
       + '&firstName='  + encodeURIComponent(f1)
@@ -2091,7 +2099,7 @@ function saveEmployee() {
       + '&state='      + encodeURIComponent(state)
       + '&zip='        + encodeURIComponent(zip);
     document.head.appendChild(s2);
-    setTimeout(function(){ if(s2.parentNode) s2.parentNode.removeChild(s2); }, 10000);
+    setTimeout(function(){ if(s2.parentNode) s2.parentNode.removeChild(s2); }, 12000);
   } else {
     showToast('✅ Employee added locally. Connect Google Sheets to sync.');
   }
