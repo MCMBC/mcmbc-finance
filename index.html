@@ -2143,7 +2143,8 @@ function loadEmployeeDropdown() {
       data.employees.forEach(function(e) {
         var opt = document.createElement('option');
         opt.value = e.id;
-        opt.textContent = e.name + ' (' + e.id + ')';
+        opt.textContent = e.name + ' (' + e.id + ')' + (e.payType ? ' — ' + e.payType : '');
+        opt.setAttribute('data-paytype', e.payType || '');
         sel.appendChild(opt);
       });
     } else {
@@ -2161,12 +2162,17 @@ function loadEmployeeDropdown() {
 }
 
 function prFillId() {
-  var sel = document.getElementById('pr-employee');
-  var val = sel.value;
-  if (val && val !== 'OTHER') {
-    document.getElementById('pr-empid').value = val;
-  } else {
-    document.getElementById('pr-empid').value = '';
+  var sel     = document.getElementById('pr-employee');
+  var opt     = sel.options[sel.selectedIndex];
+  var val     = sel.value;
+  var payType = opt ? (opt.getAttribute('data-paytype') || '') : '';
+
+  document.getElementById('pr-empid').value = (val && val !== 'OTHER') ? val : '';
+
+  // Auto-set pay type from employee record
+  if (payType) {
+    document.getElementById('pr-type').value = payType;
+    togglePayrollFields();
   }
 }
 
