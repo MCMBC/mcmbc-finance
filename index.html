@@ -2296,8 +2296,11 @@ function savePayrollToSheets() {
     var cb = 'prCb_' + Date.now();
     var t = setTimeout(function() {
       delete window[cb];
-      showToast('⚠️ Save timed out for ' + r.id);
-      saveNext(i + 1);
+      var statusEl = document.getElementById('pr-status-' + r.id);
+      if (statusEl) statusEl.innerHTML = '<span class="sb2" style="background:#fee2e2;color:#b91c1c">✗ Timed out</span>';
+      showToast('⚠️ Timed out saving ' + r.id + ' — redeploy Apps Script and try again.');
+      btn.textContent = '💾 Save All to Google Sheet';
+      btn.disabled = false;
     }, 10000);
     window[cb] = function(data) {
       clearTimeout(t); delete window[cb];
@@ -2306,7 +2309,8 @@ function savePayrollToSheets() {
         r._saved = true; saved++;
         if (statusEl) statusEl.innerHTML = '<span class="sb2 sa">✓ Saved</span>';
       } else {
-        if (statusEl) statusEl.innerHTML = '<span class="sb2" style="background:#fee2e2;color:#b91c1c">✗ Error</span>';
+        if (statusEl) statusEl.innerHTML = '<span class="sb2" style="background:#fee2e2;color:#b91c1c">✗ Error: ' + (data && data.message ? data.message : 'unknown') + '</span>';
+        showToast('⚠️ Error saving ' + r.id + ': ' + (data && data.message ? data.message : 'unknown'));
       }
       saveNext(i + 1);
     };
@@ -2330,7 +2334,16 @@ function savePayrollToSheets() {
       + '&checkNo=' + encodeURIComponent(p.checkNo)
       + '&memo=' + encodeURIComponent(p.memo)
       + '&savedBy=' + encodeURIComponent(p.savedBy);
-    var s = document.createElement('script'); s.src = src;
+    var s = document.createElement('script');
+    s.onerror = function() {
+      clearTimeout(t); delete window[cb];
+      var statusEl = document.getElementById('pr-status-' + r.id);
+      if (statusEl) statusEl.innerHTML = '<span class="sb2" style="background:#fee2e2;color:#b91c1c">✗ Network error</span>';
+      showToast('⚠️ Could not reach Google Sheets — check URL and redeploy Apps Script.');
+      btn.textContent = '💾 Save All to Google Sheet';
+      btn.disabled = false;
+    };
+    s.src = src;
     document.head.appendChild(s);
     setTimeout(function() { if (s.parentNode) s.parentNode.removeChild(s); }, 12000);
   }
