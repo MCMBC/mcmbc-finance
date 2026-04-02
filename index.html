@@ -659,7 +659,7 @@ nav{flex:1;padding:10px 0;}
           </div>
         </div>
 
-        <!-- Row 3: Pay Type + Fund -->
+        <!-- Row 3: Pay Type + Federal Tax (W-2 only) -->
         <div class="fr" style="grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
           <div class="fg3">
             <label>Pay Type</label>
@@ -669,33 +669,18 @@ nav{flex:1;padding:10px 0;}
               <option value="1099">1099 (Independent Contractor)</option>
             </select>
           </div>
-          <div class="fg3">
-            <label>Fund</label>
-            <select id="pr-fund">
-              <option value="General Offering Fund">General Offering Fund</option>
-              <option value="Building Fund">Building Fund</option>
-              <option value="Tithes Fund">Tithes Fund</option>
-              <option value="Youth Fund">Youth Fund</option>
-            </select>
+          <div class="fg3" id="pr-w2-fields" style="display:none">
+            <label>Federal Tax W/H ($)</label>
+            <input type="number" id="pr-fedtax" placeholder="0.00" min="0" step="0.01" oninput="calcPayroll()">
           </div>
         </div>
 
-        <!-- Row 4: Wages only (deductions shown below for W-2) -->
+        <!-- Row 4: Wages only -->
         <div class="fr" style="grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
           <div class="fg3">
             <label>Gross Wages ($)</label>
             <input type="number" id="pr-wages" placeholder="0.00" min="0" step="0.01" oninput="calcPayroll()">
           </div>
-        </div>
-
-        <!-- W-2 only deductions -->
-        <div id="pr-w2-fields" style="display:none">
-        <div class="fr" style="grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
-          <div class="fg3">
-            <label>Federal Tax W/H ($)</label>
-            <input type="number" id="pr-fedtax" placeholder="0.00" min="0" step="0.01" oninput="calcPayroll()">
-          </div>
-        </div>
         </div>
 
         <!-- Row 6: Check # + Memo -->
@@ -2216,7 +2201,7 @@ function savePayrollEntry() {
   var empId    = document.getElementById('pr-empid').value.trim();
   var period   = document.getElementById('pr-period').value;
   var payType  = document.getElementById('pr-type').value;
-  var fund     = document.getElementById('pr-fund').value;
+  var fund     = 'General Offering Fund';
   var gross    = parseFloat(document.getElementById('pr-wages').value)  || 0;
   var fed      = parseFloat(document.getElementById('pr-fedtax').value) || 0;
   var state    = 0, fica = 0, medicare = 0, other = 0;
