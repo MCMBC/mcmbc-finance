@@ -151,7 +151,7 @@ nav{flex:1;padding:10px 0;}
       <div class="ni" onclick="sv('reports',this)">📊 Financial Reports</div>
       <div class="ns">Income</div>
       <div class="ni" onclick="sv('tithes',this)">💵 Offerings</div>
-      <div class="ni" onclick="sv('tithes-members',this)">🙏 Tithes by Members</div>
+      <div class="ni" onclick="sv('tithes-members',this);loadTithesMembers()">🙏 Tithes by Members</div>
       <div class="ni" onclick="sv('giveify-donors',this)">📱 giveify by Donors</div>
       <div class="ni" onclick="sv('other-offerings',this)">🎁 Other Offerings &amp; Donations</div>
       <div class="ns">Expenses</div>
@@ -347,16 +347,7 @@ nav{flex:1;padding:10px 0;}
           <div class="fg3"><label>Date</label><input type="date" id="tm-date"></div>
         </div>
         <div class="fg3"><label>Member Name</label><select id="tm-member">
-          <option value="">Select member...</option>
-          <option>John Smith</option>
-          <option>Grace Lee</option>
-          <option>Robert Brown</option>
-          <option>Susan White</option>
-          <option>David Mensah</option>
-          <option>Linda Asante</option>
-          <option>James Owusu</option>
-          <option>Abena Poku</option>
-          <option>Anonymous</option>
+          <option value="">⏳ Loading members...</option>
         </select></div>
         <div class="fr">
           <div class="fg3"><label>Tithes ($)</label><input type="number" id="tm-tithes" placeholder="0.00" min="0" step="0.01" oninput="calcTMTotal()"></div>
@@ -1852,6 +1843,62 @@ function saveStaff() {
   document.getElementById('ss').value=''; document.getElementById('st').value='';
   document.getElementById('asf').style.display='none';
   showToast('Staff member added!');
+}
+
+// ── TITHES BY MEMBERS — member dropdown ──────────────────────────
+function loadTithesMembers() {
+  var url = localStorage.getItem('mcmbc_sheet_url') || '';
+  var sel = document.getElementById('tm-member');
+  if (!sel) return;
+
+  if (!url || url.indexOf('script.google.com') === -1) {
+    sel.innerHTML = '<option value="">— No Sheets URL saved —</option><option value="Anonymous">Anonymous</option>';
+    return;
+  }
+
+  // If memberData is already loaded, use it directly
+  if (memberData && memberData.length > 0) {
+    populateTithesDropdown(memberData);
+    return;
+  }
+
+  sel.innerHTML = '<option value="">⏳ Loading members...</option>';
+
+  var cb = 'tmMemCb_' + Date.now();
+  var timeout = setTimeout(function() {
+    delete window[cb];
+    sel.innerHTML = '<option value="">⚠️ Could not load — check URL</option><option value="Anonymous">Anonymous</option>';
+  }, 10000);
+
+  window[cb] = function(data) {
+    clearTimeout(timeout); delete window[cb];
+    if (data && data.status === 'success' && data.members && data.members.length > 0) {
+      if (!memberData || memberData.length === 0) memberData = data.members;
+      populateTithesDropdown(data.members);
+    } else {
+      sel.innerHTML = '<option value="">No members found</option><option value="Anonymous">Anonymous</option>';
+    }
+  };
+
+  var s = document.createElement('script');
+  s.src = url + '?action=getMembers&callback=' + cb;
+  document.head.appendChild(s);
+  setTimeout(function() { if (s.parentNode) s.parentNode.removeChild(s); }, 12000);
+}
+
+function populateTithesDropdown(members) {
+  var sel = document.getElementById('tm-member');
+  sel.innerHTML = '<option value="">Select member...</option>';
+  members.forEach(function(m) {
+    if (m.status === 'Inactive') return;  // only show active members
+    var opt = document.createElement('option');
+    opt.value = m.fullName || m.name || m.id;
+    opt.textContent = (m.fullName || m.name || m.id) + ' (' + m.id + ')';
+    sel.appendChild(opt);
+  });
+  var anon = document.createElement('option');
+  anon.value = 'Anonymous'; anon.textContent = '— Anonymous —';
+  sel.appendChild(anon);
 }
 
 // ── MEMBERS CRUD ─────────────────────────────────────────────────
