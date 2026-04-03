@@ -413,12 +413,13 @@ nav{flex:1;padding:10px 0;}
 
       <!-- Saved Records -->
       <div id="tm-saved-wrap" style="display:none;margin-top:28px;">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px">
           <div style="font-family:'Lora',serif;font-size:1.1rem;font-weight:700;color:var(--navy);">📋 Saved Tithes by Members</div>
+          <button class="bp" onclick="saveTMToSheets()" id="tm-save-sheet-btn" style="font-size:.8rem">💾 Save All to Google Sheet</button>
         </div>
         <div style="overflow-x:auto">
           <table class="vt" id="tm-saved-table">
-            <tr><th>ID</th><th>Date</th><th>Member</th><th>Tithes</th><th>Youth</th><th>Building Fund</th><th>Benevolent</th><th>Youth Education</th><th>Offering</th><th>Special Event</th><th>Other</th><th>Total</th><th>Received By</th></tr>
+            <tr><th>ID</th><th>Date</th><th>Member</th><th>Tithes</th><th>Youth</th><th>Building Fund</th><th>Benevolent</th><th>Youth Education</th><th>Offering</th><th>Special Event</th><th>Other</th><th>Total</th><th>Received By</th><th>Saved?</th></tr>
           </table>
         </div>
       </div>
@@ -1335,27 +1336,32 @@ function calcTMTotal() {
   document.getElementById('tm-gl-other').textContent       = fmtCurrency(other);
 }
 
+var tmPendingRows = [];
+
 function saveTMRec() {
   var id     = document.getElementById('tm-id').value;
   var date   = document.getElementById('tm-date').value || '—';
   var member = document.getElementById('tm-member').value || 'Anonymous';
-  var tithes   = parseFloat(document.getElementById('tm-tithes').value) || 0;
-  var yth      = parseFloat(document.getElementById('tm-youth').value) || 0;
-  var bldg     = parseFloat(document.getElementById('tm-bldg').value) || 0;
-  var benv     = parseFloat(document.getElementById('tm-benv').value) || 0;
-  var yedu     = parseFloat(document.getElementById('tm-yedu').value) || 0;
+  var tithes   = parseFloat(document.getElementById('tm-tithes').value)   || 0;
+  var yth      = parseFloat(document.getElementById('tm-youth').value)    || 0;
+  var bldg     = parseFloat(document.getElementById('tm-bldg').value)     || 0;
+  var benv     = parseFloat(document.getElementById('tm-benv').value)     || 0;
+  var yedu     = parseFloat(document.getElementById('tm-yedu').value)     || 0;
   var offering = parseFloat(document.getElementById('tm-offering').value) || 0;
-  var special  = parseFloat(document.getElementById('tm-special').value) || 0;
-  var other    = parseFloat(document.getElementById('tm-other').value) || 0;
+  var special  = parseFloat(document.getElementById('tm-special').value)  || 0;
+  var other    = parseFloat(document.getElementById('tm-other').value)    || 0;
   var total    = tithes + yth + bldg + benv + yedu + offering + special + other;
-  var rcvd   = document.getElementById('tm-received-by').value || '—';
+  var rcvd     = document.getElementById('tm-received-by').value || '—';
+
+  if (total <= 0) { showToast('Enter at least one amount before saving.'); return; }
 
   var tb = document.getElementById('tm-saved-table');
   var tr = document.createElement('tr');
+  tr.setAttribute('data-tmid', id);
   tr.innerHTML =
-    '<td>' + id + '</td>' +
+    '<td style="font-family:monospace;font-size:.78rem">' + id + '</td>' +
     '<td>' + date + '</td>' +
-    '<td>' + member + '</td>' +
+    '<td style="font-weight:600">' + member + '</td>' +
     '<td class="ta">' + fmtCurrency(tithes)   + '</td>' +
     '<td class="ta">' + fmtCurrency(yth)       + '</td>' +
     '<td class="ta">' + fmtCurrency(bldg)      + '</td>' +
@@ -1363,23 +1369,96 @@ function saveTMRec() {
     '<td class="ta">' + fmtCurrency(yedu)      + '</td>' +
     '<td class="ta">' + fmtCurrency(offering)  + '</td>' +
     '<td class="ta">' + fmtCurrency(special)   + '</td>' +
-    '<td class="ta">' + fmtCurrency(other)      + '</td>' +
+    '<td class="ta">' + fmtCurrency(other)     + '</td>' +
     '<td style="font-weight:700;color:var(--blue)">' + fmtCurrency(total) + '</td>' +
-    '<td>' + rcvd + '</td>';
+    '<td>' + rcvd + '</td>' +
+    '<td id="tm-status-' + id + '"><span class="sb2" style="background:#fef3c7;color:#92400e">Pending</span></td>';
   tb.appendChild(tr);
+
+  tmPendingRows.push({id:id, date:date, member:member, tithes:tithes, youth:yth,
+    bldg:bldg, benv:benv, yedu:yedu, offering:offering, special:special,
+    other:other, total:total, rcvd:rcvd, _saved:false});
 
   document.getElementById('tm-saved-wrap').style.display = 'block';
 
   var nextNum = tb.querySelectorAll('tr').length;
   document.getElementById('tm-id').value = 'TM-' + String(nextNum).padStart(3,'0');
-
   ['tm-tithes','tm-youth','tm-bldg','tm-benv','tm-yedu','tm-offering','tm-special','tm-other'].forEach(function(i) {
     document.getElementById(i).value = '';
   });
   document.getElementById('tm-member').value = '';
   calcTMTotal();
-  showToast('Tithe by member saved!');
+  showToast('Entry added — click Save All to Google Sheet to sync.');
 }
+
+function saveTMToSheets() {
+  var url = localStorage.getItem('mcmbc_sheet_url') || '';
+  if (!url || url.indexOf('script.google.com') === -1) {
+    showToast('No Google Sheets URL saved. Set it on the Dashboard first.');
+    return;
+  }
+  var pending = tmPendingRows.filter(function(r){ return !r._saved; });
+  if (pending.length === 0) { showToast('No pending entries to save.'); return; }
+
+  var btn = document.getElementById('tm-save-sheet-btn');
+  btn.textContent = 'Saving...'; btn.disabled = true;
+  var saved = 0;
+
+  function saveNext(i) {
+    if (i >= pending.length) {
+      btn.textContent = 'Save All to Google Sheet'; btn.disabled = false;
+      showToast(saved + ' tithe record(s) saved to Google Sheets!');
+      return;
+    }
+    var r = pending[i];
+    var cb = 'tmCb_' + Date.now();
+    var t = setTimeout(function() {
+      delete window[cb];
+      var el = document.getElementById('tm-status-' + r.id);
+      if (el) el.innerHTML = '<span class="sb2" style="background:#fee2e2;color:#b91c1c">Timed out</span>';
+      showToast('Timed out — redeploy Apps Script and try again.');
+      btn.textContent = 'Save All to Google Sheet'; btn.disabled = false;
+    }, 10000);
+    window[cb] = function(data) {
+      clearTimeout(t); delete window[cb];
+      var el = document.getElementById('tm-status-' + r.id);
+      if (data && data.status === 'success') {
+        r._saved = true; saved++;
+        if (el) el.innerHTML = '<span class="sb2 sa">Saved</span>';
+      } else {
+        if (el) el.innerHTML = '<span class="sb2" style="background:#fee2e2;color:#b91c1c">Error: ' + (data && data.message ? data.message : 'unknown') + '</span>';
+      }
+      saveNext(i + 1);
+    };
+    var s = document.createElement('script');
+    s.onerror = function() {
+      clearTimeout(t); delete window[cb];
+      var el = document.getElementById('tm-status-' + r.id);
+      if (el) el.innerHTML = '<span class="sb2" style="background:#fee2e2;color:#b91c1c">Network error</span>';
+      showToast('Could not reach Google Sheets — check URL and redeploy.');
+      btn.textContent = 'Save All to Google Sheet'; btn.disabled = false;
+    };
+    s.src = url + '?action=addTithesByMembers'
+      + '&callback='       + cb
+      + '&offeringId='     + encodeURIComponent(r.id)
+      + '&date='           + encodeURIComponent(r.date)
+      + '&memberName='     + encodeURIComponent(r.member)
+      + '&tithes='         + encodeURIComponent(r.tithes)
+      + '&youth='          + encodeURIComponent(r.youth)
+      + '&buildingFund='   + encodeURIComponent(r.bldg)
+      + '&benevolent='     + encodeURIComponent(r.benv)
+      + '&youthEducation=' + encodeURIComponent(r.yedu)
+      + '&offering='       + encodeURIComponent(r.offering)
+      + '&specialEvent='   + encodeURIComponent(r.special)
+      + '&other='          + encodeURIComponent(r.other)
+      + '&total='          + encodeURIComponent(r.total)
+      + '&receivedBy='     + encodeURIComponent(r.rcvd);
+    document.head.appendChild(s);
+    setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); }, 12000);
+  }
+  saveNext(0);
+}
+
 
 function calcOfferingTotal() {
   var fields = [
