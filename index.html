@@ -771,8 +771,9 @@ nav{flex:1;padding:10px 0;}
 
         <!-- Row 2: Payee + Type of Bill -->
         <div class="fr" style="grid-template-columns:2fr 1fr;gap:14px;margin-bottom:14px">
-          <div class="fg3"><label>Payee (Paid To) <span style="color:var(--red)">*</span></label>
-            <select id="pb-payee" onchange="calcBillEntry()">
+          <div class="fg3">
+            <label>Payee (Paid To) <span style="color:var(--red)">*</span></label>
+            <select id="pb-payee" onchange="pbPayeeChange()">
               <option value="">⏳ Loading vendors...</option>
             </select>
           </div>
@@ -780,6 +781,31 @@ nav{flex:1;padding:10px 0;}
             <select id="pb-type" onchange="calcBillEntry()">
               <option value="">⏳ Loading bill types...</option>
             </select>
+          </div>
+        </div>
+
+        <!-- Quick-Add Vendor (shown when "+ Add New Vendor" is selected) -->
+        <div id="pb-new-vendor-wrap" style="display:none;background:#f0f9ff;border:1.5px solid #bae6fd;border-radius:10px;padding:16px;margin-bottom:14px">
+          <div style="font-weight:700;font-size:.85rem;color:var(--blue);margin-bottom:12px">➕ Add New Vendor</div>
+          <div class="fr" style="grid-template-columns:2fr 1fr;gap:12px;margin-bottom:10px">
+            <div class="fg3"><label>Vendor Name <span style="color:var(--red)">*</span></label>
+              <input type="text" id="pb-new-vnd-name" placeholder="e.g. City Water Authority">
+            </div>
+            <div class="fg3"><label>Phone</label>
+              <input type="tel" id="pb-new-vnd-phone" placeholder="555-000-0000">
+            </div>
+          </div>
+          <div class="fr" style="grid-template-columns:1fr 2fr;gap:12px;margin-bottom:12px">
+            <div class="fg3"><label>Email</label>
+              <input type="email" id="pb-new-vnd-email" placeholder="billing@vendor.com">
+            </div>
+            <div class="fg3"><label>Address</label>
+              <input type="text" id="pb-new-vnd-address" placeholder="Street Address, City, State">
+            </div>
+          </div>
+          <div style="display:flex;gap:10px">
+            <button class="bsv" onclick="pbSaveNewVendor()" style="padding:8px 18px;font-size:.85rem">✅ Save &amp; Select Vendor</button>
+            <button class="bcc" onclick="pbCancelNewVendor()" style="padding:8px 14px;font-size:.85rem">✕ Cancel</button>
           </div>
         </div>
 
@@ -2214,14 +2240,14 @@ function loadBillVendors() {
   var url = localStorage.getItem('mcmbc_sheet_url') || '';
   var sel = document.getElementById('pb-payee');
   if (!url || url.indexOf('script.google.com') === -1) {
-    sel.innerHTML = '<option value="">— No Sheets URL saved —</option>';
+    sel.innerHTML = '<option value="">— No Sheets URL saved —</option><option value="__ADD_NEW__">➕ Add New Vendor...</option>';
     return;
   }
   sel.innerHTML = '<option value="">⏳ Loading vendors...</option>';
   var cb = 'pbVendCb_' + Date.now();
   var t = setTimeout(function() {
     delete window[cb];
-    sel.innerHTML = '<option value="">⚠️ Could not load vendors</option>';
+    sel.innerHTML = '<option value="">⚠️ Could not load vendors</option><option value="__ADD_NEW__">➕ Add New Vendor...</option>';
   }, 10000);
   window[cb] = function(data) {
     clearTimeout(t); delete window[cb];
@@ -2234,13 +2260,85 @@ function loadBillVendors() {
         sel.appendChild(opt);
       });
     } else {
-      sel.innerHTML = '<option value="">No vendors found — add them in Vendors</option>';
+      var empty = document.createElement('option');
+      empty.disabled = true;
+      empty.textContent = 'No vendors yet';
+      sel.appendChild(empty);
     }
+    // Always append the add-new option last
+    var addNew = document.createElement('option');
+    addNew.value = '__ADD_NEW__';
+    addNew.textContent = '➕ Add New Vendor...';
+    sel.appendChild(addNew);
   };
   var s = document.createElement('script');
   s.src = url + '?action=getVendors&callback=' + cb;
   document.head.appendChild(s);
   setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); }, 12000);
+}
+
+function pbPayeeChange() {
+  var sel = document.getElementById('pb-payee');
+  if (sel.value === '__ADD_NEW__') {
+    document.getElementById('pb-new-vendor-wrap').style.display = 'block';
+    document.getElementById('pb-new-vnd-name').focus();
+    sel.value = ''; // reset so it doesn't stay on the add option
+  } else {
+    document.getElementById('pb-new-vendor-wrap').style.display = 'none';
+    calcBillEntry();
+  }
+}
+
+function pbCancelNewVendor() {
+  document.getElementById('pb-new-vendor-wrap').style.display = 'none';
+  ['pb-new-vnd-name','pb-new-vnd-phone','pb-new-vnd-email','pb-new-vnd-address'].forEach(function(x){ document.getElementById(x).value=''; });
+}
+
+function pbSaveNewVendor() {
+  var name    = document.getElementById('pb-new-vnd-name').value.trim();
+  var phone   = document.getElementById('pb-new-vnd-phone').value.trim();
+  var email   = document.getElementById('pb-new-vnd-email').value.trim();
+  var address = document.getElementById('pb-new-vnd-address').value.trim();
+  if (!name) { showToast('Vendor name is required.'); document.getElementById('pb-new-vnd-name').focus(); return; }
+
+  // Add to the dropdown immediately
+  var sel = document.getElementById('pb-payee');
+  var addNewOpt = sel.querySelector('option[value="__ADD_NEW__"]');
+  var opt = document.createElement('option');
+  opt.value = name; opt.textContent = name;
+  sel.insertBefore(opt, addNewOpt);
+  sel.value = name;
+
+  // Hide quick-add panel
+  pbCancelNewVendor();
+  calcBillEntry();
+  showToast('✅ ' + name + ' added to dropdown.');
+
+  // Save to Vendors sheet in background
+  var url = localStorage.getItem('mcmbc_sheet_url') || '';
+  if (url && url.indexOf('script.google.com') !== -1) {
+    var newId = 'VND-' + Date.now().toString().slice(-4);
+    var cb = 'pbVndSaveCb_' + Date.now();
+    window[cb] = function(data) {
+      delete window[cb];
+      if (data && data.status === 'success') {
+        showToast('✅ ' + name + ' saved to Vendors in Google Sheets.');
+        // Also refresh vendors screen if it was already loaded
+        if (vendorData) {
+          vendorData.push({id: data.vendorId||newId, name:name, phone:phone, email:email, address:address, notes:''});
+        }
+      }
+    };
+    var s = document.createElement('script');
+    s.src = url + '?action=addVendor&callback=' + cb
+      + '&vendorId='   + encodeURIComponent(newId)
+      + '&vendorName=' + encodeURIComponent(name)
+      + '&phone='      + encodeURIComponent(phone)
+      + '&email='      + encodeURIComponent(email)
+      + '&address='    + encodeURIComponent(address)
+      + '&notes=';
+    document.head.appendChild(s);
+  }
 }
 
 function loadBillTypes() {
@@ -2365,10 +2463,12 @@ function saveBillEntry() {
 }
 
 function clearBillForm() {
-  ['pb-checkno','pb-payee','pb-amount','pb-acctno','pb-memo'].forEach(function(x){
+  ['pb-checkno','pb-amount','pb-acctno','pb-memo'].forEach(function(x){
     document.getElementById(x).value = '';
   });
+  document.getElementById('pb-payee').value = '';
   document.getElementById('pb-type').value = '';
+  document.getElementById('pb-new-vendor-wrap').style.display = 'none';
   document.getElementById('pb-fund').value = 'General Offering Fund';
   calcBillEntry();
 }
