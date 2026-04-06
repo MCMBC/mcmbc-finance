@@ -348,9 +348,15 @@ nav{flex:1;padding:10px 0;}
           <div class="fg3"><label>Offering ID</label><input value="TM-001" readonly style="background:#f1f5f9;color:#64748b" id="tm-id"></div>
           <div class="fg3"><label>Date</label><input type="date" id="tm-date"></div>
         </div>
-        <div class="fg3"><label>Member Name</label><select id="tm-member">
-          <option value="">⏳ Loading members...</option>
-        </select></div>
+        <div class="fg3">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px">
+            <label style="margin:0">Member Name</label>
+            <button onclick="memberData=[];loadTithesMembers()" style="background:none;border:none;color:var(--blue);font-size:.75rem;cursor:pointer;padding:0;font-family:inherit">↻ Reload list</button>
+          </div>
+          <select id="tm-member">
+            <option value="">⏳ Loading members...</option>
+          </select>
+        </div>
         <div class="fr">
           <div class="fg3"><label>Tithes ($)</label><input type="number" id="tm-tithes" placeholder="0.00" min="0" step="0.01" oninput="calcTMTotal()"></div>
           <div class="fg3"><label>Youth ($)</label><input type="number" id="tm-youth" placeholder="0.00" min="0" step="0.01" oninput="calcTMTotal()"></div>
@@ -2642,7 +2648,7 @@ function loadTithesMembers() {
   var cb = 'tmMemCb_' + Date.now();
   var timeout = setTimeout(function() {
     delete window[cb];
-    sel.innerHTML = '<option value="">⚠️ Could not load — check URL</option><option value="Anonymous">Anonymous</option>';
+    sel.innerHTML = '<option value="">⚠️ Timed out — click ↻ Reload list</option><option value="Anonymous">Anonymous</option>';
   }, 10000);
 
   window[cb] = function(data) {
@@ -2651,11 +2657,15 @@ function loadTithesMembers() {
       if (!memberData || memberData.length === 0) memberData = data.members;
       populateTithesDropdown(data.members);
     } else {
-      sel.innerHTML = '<option value="">No members found</option><option value="Anonymous">Anonymous</option>';
+      sel.innerHTML = '<option value="">No members found — add them in Members</option><option value="Anonymous">Anonymous</option>';
     }
   };
 
   var s = document.createElement('script');
+  s.onerror = function() {
+    clearTimeout(timeout); delete window[cb];
+    sel.innerHTML = '<option value="">⚠️ Could not reach Sheets — click ↻ Reload list</option><option value="Anonymous">Anonymous</option>';
+  };
   s.src = url + '?action=getMembers&callback=' + cb;
   document.head.appendChild(s);
   setTimeout(function() { if (s.parentNode) s.parentNode.removeChild(s); }, 12000);
