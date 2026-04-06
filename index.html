@@ -1853,8 +1853,8 @@ function loadDashboardData() {
     var billsSub = document.getElementById('kpi-bills-sub');
     if (billsKpi) billsKpi.textContent = fmtCurrency(data.billsTotal || 0);
     if (billsSub) billsSub.textContent = (data.billsCount || 0) + ' bill(s) paid';
-    if (kpis[2]) { kpis[2].querySelector('.kv').textContent = data.activeMembers; kpis[2].querySelector('.ks').textContent = 'Active members'; }
-    if (kpis[3]) { kpis[3].querySelector('.kv').textContent = data.pendingCount; kpis[3].querySelector('.ks').textContent = fmtCurrency(data.pendingAmount) + ' awaiting approval'; }
+    if (kpis[3]) { kpis[3].querySelector('.kv').textContent = data.activeMembers; kpis[3].querySelector('.ks').textContent = 'Active members'; }
+    if (kpis[4]) { kpis[4].querySelector('.kv').textContent = data.pendingCount; kpis[4].querySelector('.ks').textContent = fmtCurrency(data.pendingAmount) + ' awaiting approval'; }
 
     // Fund Cards — match by fund name order
     var fundOrder = ['Sunday School Fund','Benevolent Offering Fund','General Offering Fund',
