@@ -2622,9 +2622,18 @@ function saveDonor() {
   donorData.push(newDnr); renderDonorRow(newDnr); closeDonorForm();
   if (url && url.indexOf('script.google.com') !== -1) {
     var cb2 = 'dnrSaveCb_' + Date.now();
-    var t2 = setTimeout(function(){ delete window[cb2]; showToast('⚠️ Timed out.'); }, 25000);
-    window[cb2] = function(data) { clearTimeout(t2); delete window[cb2]; showToast(data && data.status === 'success' ? '✅ ' + name + ' saved to Google Sheets.' : '⚠️ Sync failed.'); loadGDDonors(); };
+    var t2 = setTimeout(function(){ delete window[cb2]; showToast('⚠️ Timed out — redeploy Apps Script and try again.'); }, 25000);
+    window[cb2] = function(data) {
+      clearTimeout(t2); delete window[cb2];
+      if (data && data.status === 'success') {
+        showToast('✅ ' + name + ' saved to Google Sheets (' + (data.donorId||newId) + ').');
+        loadGDDonors();
+      } else {
+        showToast('⚠️ Sheets error: ' + (data && data.message ? data.message : 'Unknown action — redeploy Apps Script'));
+      }
+    };
     var s2 = document.createElement('script');
+    s2.onerror = function() { clearTimeout(t2); delete window[cb2]; showToast('⚠️ Could not reach Google Sheets — check URL and redeploy Apps Script.'); };
     s2.src = url + '?action=addDonor&callback=' + cb2
       + '&donorId='  + encodeURIComponent(newId) + '&fullName=' + encodeURIComponent(name)
       + '&phone='    + encodeURIComponent(phone)  + '&email='    + encodeURIComponent(email)
@@ -2633,7 +2642,8 @@ function saveDonor() {
       + '&city='     + encodeURIComponent(city)   + '&state='    + encodeURIComponent(state)
       + '&zip='      + encodeURIComponent(zip);
     document.head.appendChild(s2);
-  } else { showToast('✅ Donor added locally.'); }
+    setTimeout(function(){ if(s2.parentNode) s2.parentNode.removeChild(s2); }, 27000);
+  } else { showToast('✅ Donor added locally. Connect Google Sheets to sync.'); }
 }
 
 // ── GIVEIFY DONOR DROPDOWN ────────────────────────────────────────
