@@ -247,6 +247,7 @@ nav{flex:1;padding:10px 0;}
           <tr id="rpt-src-offerings"><td>📋 Offerings (Sunday School, Benevolent, etc.)</td><td class="ta" style="font-weight:700;color:var(--green)">$0.00</td><td class="ta">0</td></tr>
           <tr id="rpt-src-tithes"><td>🙏 Tithes by Members</td><td class="ta" style="font-weight:700;color:var(--green)">$0.00</td><td class="ta">0</td></tr>
           <tr id="rpt-src-giveify"><td>📱 giveify by Donors</td><td class="ta" style="font-weight:700;color:var(--green)">$0.00</td><td class="ta">0</td></tr>
+          <tr id="rpt-src-otheroff"><td>🎁 Other Offerings &amp; Donations</td><td class="ta" style="font-weight:700;color:var(--green)">$0.00</td><td class="ta">0</td></tr>
           <tr style="border-top:2px solid var(--light);font-weight:700;background:#f0fdf4">
             <td>Total Income</td>
             <td class="ta" id="rpt-src-total" style="color:var(--green)">$0.00</td>
@@ -2018,6 +2019,8 @@ function loadDashboardData() {
     if (srcOff) { srcOff.cells[1].textContent = fmtCurrency(data.offeringsBreakdown||0); srcOff.cells[2].textContent = (data.offeringsBreakdownCount||0) + ' records'; }
     if (srcTit) { srcTit.cells[1].textContent = fmtCurrency(data.tithesBreakdown||0);    srcTit.cells[2].textContent = (data.tithesBreakdownCount||0) + ' records'; }
     if (srcGiv) { srcGiv.cells[1].textContent = fmtCurrency(data.giveifyBreakdown||0);   srcGiv.cells[2].textContent = (data.giveifyBreakdownCount||0) + ' records'; }
+    var srcOther = document.getElementById('rpt-src-otheroff');
+    if (srcOther) { srcOther.cells[1].textContent = fmtCurrency(data.otherOffBreakdown||0); srcOther.cells[2].textContent = (data.otherOffBreakdownCount||0) + ' records'; }
     if (srcTot) srcTot.textContent = fmtCurrency(data.offeringsTotal);
     if (srcCnt) srcCnt.textContent = (data.offeringsCount||0) + ' total';
 
