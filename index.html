@@ -229,26 +229,45 @@ nav{flex:1;padding:10px 0;}
 
     <!-- FINANCIAL REPORTS -->
     <div id="view-reports" class="vw">
-      <div class="ph"><h1>Financial Reports</h1><p>Summary across funds, offerings, and expenses</p></div>
-      <div class="kg">
-        <div class="kc bl2"><div class="kl">Offerings YTD</div><div class="kv">$0.00</div><div class="ks">No transactions yet</div><div class="ki">💰</div></div>
-        <div class="kc rd"><div class="kl">Expenses YTD</div><div class="kv">$0.00</div><div class="ks">No transactions yet</div><div class="ki">💸</div></div>
-        <div class="kc gn"><div class="kl">Net Balance</div><div class="kv" style="color:#15803d">$0.00</div><div class="ks">Offerings minus expenses</div><div class="ki">📈</div></div>
-        <div class="kc gd"><div class="kl">Pending</div><div class="kv">$0.00</div><div class="ks">2 awaiting approval</div><div class="ki">⏳</div></div>
+      <div class="ph"><h1>Financial Reports</h1><p>Summary across all income sources, funds, and expenses</p></div>
+
+      <!-- Top KPIs -->
+      <div class="kg" style="margin-bottom:18px">
+        <div class="kc bl2"><div class="kl">Total Income YTD</div><div class="kv" id="rpt-income">$0.00</div><div class="ks" id="rpt-income-sub">All sources</div><div class="ki">💰</div></div>
+        <div class="kc rd"><div class="kl">Total Expenses YTD</div><div class="kv" id="rpt-expenses">$0.00</div><div class="ks">Including bills paid</div><div class="ki">💸</div></div>
+        <div class="kc gn"><div class="kl">Net Balance</div><div class="kv" id="rpt-net" style="color:#15803d">$0.00</div><div class="ks">Income minus expenses</div><div class="ki">📈</div></div>
+        <div class="kc gd"><div class="kl">Pending Approvals</div><div class="kv" id="rpt-pending">$0.00</div><div class="ks">Awaiting approval</div><div class="ki">⏳</div></div>
       </div>
-      <div class="cd" style="margin-bottom:15px"><div class="ch"><div class="ct">Offerings by Fund</div></div>
-        <table class="vt"><tr><th>Fund</th><th>Total Received</th><th>Transactions</th></tr>
-        <tr><td colspan="3" style="text-align:center;color:var(--gray);padding:18px;font-style:italic;">No offering data yet</td></tr></table>
+
+      <!-- Income by Source breakdown -->
+      <div class="cd" style="margin-bottom:15px">
+        <div class="ch"><div class="ct">Income by Source</div></div>
+        <table class="vt" id="rpt-income-table">
+          <tr><th>Source</th><th class="ta">Total</th><th class="ta">Records</th></tr>
+          <tr id="rpt-src-offerings"><td>📋 Offerings (Sunday School, Benevolent, etc.)</td><td class="ta" style="font-weight:700;color:var(--green)">$0.00</td><td class="ta">0</td></tr>
+          <tr id="rpt-src-tithes"><td>🙏 Tithes by Members</td><td class="ta" style="font-weight:700;color:var(--green)">$0.00</td><td class="ta">0</td></tr>
+          <tr id="rpt-src-giveify"><td>📱 giveify by Donors</td><td class="ta" style="font-weight:700;color:var(--green)">$0.00</td><td class="ta">0</td></tr>
+          <tr style="border-top:2px solid var(--light);font-weight:700;background:#f0fdf4">
+            <td>Total Income</td>
+            <td class="ta" id="rpt-src-total" style="color:var(--green)">$0.00</td>
+            <td class="ta" id="rpt-src-count">0</td>
+          </tr>
+        </table>
       </div>
-      <div class="cd"><div class="ch"><div class="ct">Fund Balance Summary</div></div>
-        <table class="vt"><tr><th>Fund</th><th>Budget</th><th>Income</th><th>Expenses</th><th>Balance</th></tr>
-        <tr><td>Sunday School Fund</td><td>$10,000</td><td class="ta">$0.00</td><td class="ta ex">$0.00</td><td style="font-weight:700;color:#15803d">$0.00</td></tr>
-        <tr><td>Benevolent Offering Fund</td><td>$10,000</td><td class="ta">$0.00</td><td class="ta ex">$0.00</td><td style="font-weight:700;color:#15803d">$0.00</td></tr>
-        <tr><td>General Offering Fund</td><td>$50,000</td><td class="ta">$0.00</td><td class="ta ex">$0.00</td><td style="font-weight:700;color:#15803d">$0.00</td></tr>
-        <tr><td>Building Fund</td><td>$100,000</td><td class="ta">$0.00</td><td class="ta ex">$0.00</td><td style="font-weight:700;color:#15803d">$0.00</td></tr>
-        <tr><td>Tithes Fund</td><td>$50,000</td><td class="ta">$0.00</td><td class="ta ex">$0.00</td><td style="font-weight:700;color:#15803d">$0.00</td></tr>
-        <tr><td>Youth Fund</td><td>$20,000</td><td class="ta">$0.00</td><td class="ta ex">$0.00</td><td style="font-weight:700;color:#15803d">$0.00</td></tr>
-        <tr><td>Youth Education Fund</td><td>$15,000</td><td class="ta">$0.00</td><td class="ta ex">$0.00</td><td style="font-weight:700;color:#15803d">$0.00</td></tr></table>
+
+      <!-- Fund Balance Summary -->
+      <div class="cd">
+        <div class="ch"><div class="ct">Fund Balance Summary</div></div>
+        <table class="vt" id="rpt-fund-table">
+          <tr><th>Fund</th><th>Budget</th><th class="ta">Income</th><th class="ta">Expenses</th><th class="ta">Balance</th></tr>
+          <tr><td>Sunday School Fund</td><td>$10,000</td><td class="ta">$0.00</td><td class="ta ex">$0.00</td><td style="font-weight:700;color:#15803d">$0.00</td></tr>
+          <tr><td>Benevolent Offering Fund</td><td>$10,000</td><td class="ta">$0.00</td><td class="ta ex">$0.00</td><td style="font-weight:700;color:#15803d">$0.00</td></tr>
+          <tr><td>General Offering Fund</td><td>$50,000</td><td class="ta">$0.00</td><td class="ta ex">$0.00</td><td style="font-weight:700;color:#15803d">$0.00</td></tr>
+          <tr><td>Building Fund</td><td>$100,000</td><td class="ta">$0.00</td><td class="ta ex">$0.00</td><td style="font-weight:700;color:#15803d">$0.00</td></tr>
+          <tr><td>Tithes Fund</td><td>$50,000</td><td class="ta">$0.00</td><td class="ta ex">$0.00</td><td style="font-weight:700;color:#15803d">$0.00</td></tr>
+          <tr><td>Youth Fund</td><td>$20,000</td><td class="ta">$0.00</td><td class="ta ex">$0.00</td><td style="font-weight:700;color:#15803d">$0.00</td></tr>
+          <tr><td>Youth Education Fund</td><td>$15,000</td><td class="ta">$0.00</td><td class="ta ex">$0.00</td><td style="font-weight:700;color:#15803d">$0.00</td></tr>
+        </table>
       </div>
     </div>
 
@@ -1977,16 +1996,34 @@ function loadDashboardData() {
     }
 
     // Reports KPIs
-    var rptKpis = document.querySelectorAll('#view-reports .kc');
-    if (rptKpis[0]) rptKpis[0].querySelector('.kv').textContent = fmtCurrency(data.offeringsTotal);
-    if (rptKpis[1]) rptKpis[1].querySelector('.kv').textContent = fmtCurrency(data.expensesTotal);
-    if (rptKpis[2]) {
+    var rptIncome = document.getElementById('rpt-income');
+    var rptExp    = document.getElementById('rpt-expenses');
+    var rptNet    = document.getElementById('rpt-net');
+    var rptPend   = document.getElementById('rpt-pending');
+    if (rptIncome) rptIncome.textContent = fmtCurrency(data.offeringsTotal);
+    if (rptExp)    rptExp.textContent    = fmtCurrency(data.expensesTotal);
+    if (rptNet) {
       var net = data.offeringsTotal - data.expensesTotal;
-      var netEl = rptKpis[2].querySelector('.kv');
-      netEl.textContent = fmtCurrency(Math.abs(net));
-      netEl.style.color = net < 0 ? '#b91c1c' : '#15803d';
+      rptNet.textContent   = fmtCurrency(Math.abs(net));
+      rptNet.style.color   = net < 0 ? '#b91c1c' : '#15803d';
     }
-    if (rptKpis[3]) rptKpis[3].querySelector('.kv').textContent = fmtCurrency(data.pendingAmount);
+    if (rptPend) rptPend.textContent = fmtCurrency(data.pendingAmount);
+
+    // Income by Source breakdown table
+    var srcOff = document.getElementById('rpt-src-offerings');
+    var srcTit = document.getElementById('rpt-src-tithes');
+    var srcGiv = document.getElementById('rpt-src-giveify');
+    var srcTot = document.getElementById('rpt-src-total');
+    var srcCnt = document.getElementById('rpt-src-count');
+    if (srcOff) { srcOff.cells[1].textContent = fmtCurrency(data.offeringsBreakdown||0); srcOff.cells[2].textContent = (data.offeringsBreakdownCount||0) + ' records'; }
+    if (srcTit) { srcTit.cells[1].textContent = fmtCurrency(data.tithesBreakdown||0);    srcTit.cells[2].textContent = (data.tithesBreakdownCount||0) + ' records'; }
+    if (srcGiv) { srcGiv.cells[1].textContent = fmtCurrency(data.giveifyBreakdown||0);   srcGiv.cells[2].textContent = (data.giveifyBreakdownCount||0) + ' records'; }
+    if (srcTot) srcTot.textContent = fmtCurrency(data.offeringsTotal);
+    if (srcCnt) srcCnt.textContent = (data.offeringsCount||0) + ' total';
+
+    // Dashboard Total Offerings KPI sub-label
+    var rptIncomeSub = document.getElementById('rpt-income-sub');
+    if (rptIncomeSub) rptIncomeSub.textContent = (data.offeringsCount||0) + ' records from all sources';
 
     showToast('✅ Dashboard updated from Google Sheets!');
   };
