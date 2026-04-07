@@ -311,7 +311,7 @@ nav{flex:1;padding:10px 0;}
         </div>
 
         <div class="fg3"><label>Received By</label><input id="to-received-by" readonly style="background:#f1f5f9;color:#64748b"></div>
-        <div class="fg3"><label>Notes (optional)</label><textarea rows="3" placeholder="Any additional notes..."></textarea></div>
+        <div class="fg3"><label>Notes (optional)</label><textarea id="offering-notes" rows="3" placeholder="Any additional notes..."></textarea></div>
         <button class="bsv" onclick="saveRec('offering')">Save Offering</button>
         <button class="bcc" onclick="sv('dashboard',null)">Cancel</button>
       </div>
@@ -1991,6 +1991,8 @@ function saveRec(type) {
     ['amt-ss','amt-benv','amt-bldg','amt-gen','amt-youth','amt-youthedu'].forEach(function(i) {
       document.getElementById(i).value = '';
     });
+    var notesEl = document.getElementById('offering-notes');
+    if (notesEl) notesEl.value = '';
     calcOfferingTotal();
     showToast('Offering saved! Click "Save to Google Sheet" to send to Sheets.');
   } else {
