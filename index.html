@@ -152,7 +152,7 @@ nav{flex:1;padding:10px 0;}
       <div class="ns">Income</div>
       <div class="ni" onclick="sv('tithes',this)">💵 Offerings</div>
       <div class="ni" onclick="sv('tithes-members',this);loadTithesMembers()">🙏 Tithes by Members</div>
-      <div class="ni" onclick="sv('giveify-donors',this)">📱 giveify by Donors</div>
+      <div class="ni" onclick="sv('giveify-donors',this);loadGDDonors()">📱 giveify by Donors</div>
       <div class="ni" onclick="sv('other-offerings',this)">🎁 Other Offerings &amp; Donations</div>
       <div class="ns">Expenses</div>
       <div class="ni" onclick="sv('payroll-view',this);initPayrollForm()">💼 Payroll</div>
@@ -163,6 +163,7 @@ nav{flex:1;padding:10px 0;}
       <div class="ns">Management</div>
       <div class="ni" onclick="sv('funds',this)">🏦 Funds</div>
       <div class="ni" onclick="sv('members',this)">👥 Members</div>
+      <div class="ni" onclick="sv('donors',this);loadDonorsScreen()">🤝 Donors</div>
       <div class="ni tonly" onclick="sv('users',this)">🔐 Users</div>
       <div class="ni tonly" onclick="sv('staff',this)">💼 Staff / Payroll</div>
       <div class="ni tonly" onclick="sv('employees',this)">👤 Employees</div>
@@ -484,18 +485,32 @@ nav{flex:1;padding:10px 0;}
           <div class="fg3"><label>giveify ID</label><input value="GD-001" readonly style="background:#f1f5f9;color:#64748b" id="gd-id"></div>
           <div class="fg3"><label>Date</label><input type="date" id="gd-date"></div>
         </div>
-        <div class="fg3"><label>Donor Name</label><select id="gd-donor">
-          <option value="">Select donor...</option>
-          <option>John Smith</option>
-          <option>Grace Lee</option>
-          <option>Robert Brown</option>
-          <option>Susan White</option>
-          <option>David Mensah</option>
-          <option>Linda Asante</option>
-          <option>James Owusu</option>
-          <option>Abena Poku</option>
-          <option>Anonymous</option>
-        </select></div>
+        <div class="fg3">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px">
+            <label style="margin:0">Donor Name</label>
+            <button onclick="donorData=[];loadGDDonors()" style="background:none;border:none;color:var(--blue);font-size:.75rem;cursor:pointer;padding:0;font-family:inherit">↻ Reload list</button>
+          </div>
+          <select id="gd-donor" onchange="gdDonorChange()">
+            <option value="">⏳ Loading donors...</option>
+          </select>
+        </div>
+
+        <!-- Quick-Add Donor -->
+        <div id="gd-new-donor-wrap" style="display:none;background:#f0f9ff;border:1.5px solid #bae6fd;border-radius:10px;padding:16px;margin-bottom:14px">
+          <div style="font-weight:700;font-size:.85rem;color:var(--blue);margin-bottom:12px">➕ Add New Donor</div>
+          <div class="fr" style="grid-template-columns:2fr 1fr;gap:12px;margin-bottom:10px">
+            <div class="fg3"><label>Full Name <span style="color:var(--red)">*</span></label><input type="text" id="gd-new-donor-name" placeholder="Full Name"></div>
+            <div class="fg3"><label>Phone</label><input type="tel" id="gd-new-donor-phone" placeholder="555-000-0000"></div>
+          </div>
+          <div class="fr" style="grid-template-columns:1fr 2fr;gap:12px;margin-bottom:12px">
+            <div class="fg3"><label>Email</label><input type="email" id="gd-new-donor-email" placeholder="email@example.com"></div>
+            <div class="fg3"><label>Address</label><input type="text" id="gd-new-donor-address" placeholder="Street Address, City, State"></div>
+          </div>
+          <div style="display:flex;gap:10px">
+            <button class="bsv" onclick="gdSaveNewDonor()" style="padding:8px 18px;font-size:.85rem">✅ Save &amp; Select Donor</button>
+            <button class="bcc" onclick="gdCancelNewDonor()" style="padding:8px 14px;font-size:.85rem">✕ Cancel</button>
+          </div>
+        </div>
         <div class="fr">
           <div class="fg3"><label>Sunday School ($)</label><input type="number" id="gd-ss" placeholder="0.00" min="0" step="0.01" oninput="calcGDTotal()"></div>
           <div class="fg3"><label>Building Fund ($)</label><input type="number" id="gd-bldg" placeholder="0.00" min="0" step="0.01" oninput="calcGDTotal()"></div>
@@ -1081,6 +1096,67 @@ nav{flex:1;padding:10px 0;}
           <div style="display:flex;gap:10px;justify-content:center">
             <button class="bsv" style="background:#b91c1c" onclick="confirmDeleteMember()">🗑 Yes, Remove</button>
             <button class="bcc" onclick="cancelDeleteMember()">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DONORS -->
+    <div id="view-donors" class="vw">
+      <div class="ph"><h1>Donors</h1><p>Donor directory for giveify contributions</p></div>
+      <div class="tbar">
+        <div class="sbox"><span>🔍</span><input placeholder="Search donors..." oninput="filterDonorTable(this.value)"></div>
+        <div style="display:flex;gap:8px">
+          <button class="bp" onclick="loadDonorsScreen()">↻ Refresh</button>
+          <button class="bp" onclick="openDonorForm()">+ Add Donor</button>
+        </div>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="vt" id="donor-table">
+          <tr><th>ID</th><th>Full Name</th><th>Phone</th><th>Email</th><th>City</th><th>Status</th><th>Joined</th><th style="text-align:center">Actions</th></tr>
+          <tr id="donor-empty-row"><td colspan="8" style="text-align:center;color:var(--gray);padding:22px;font-style:italic;">Click ↻ Refresh to load donors from Google Sheets.</td></tr>
+        </table>
+      </div>
+      <div id="donor-form-wrap" style="display:none;margin-top:24px">
+        <div class="fcd">
+          <h3 id="donor-form-title" style="margin:0 0 18px;font-family:'Lora',serif;color:var(--blue)">➕ Add Donor</h3>
+          <input type="hidden" id="dnr-mode" value="add">
+          <input type="hidden" id="dnr-id" value="">
+          <div class="fr" style="gap:14px;margin-bottom:14px">
+            <div class="fg3" style="flex:2"><label>Full Name <span style="color:var(--red)">*</span></label><input type="text" id="dnr-name" placeholder="Full Name"></div>
+            <div class="fg3">
+              <label>Status <span style="color:var(--red)">*</span></label>
+              <select id="dnr-status"><option value="Active">Active</option><option value="Inactive">Inactive</option></select>
+            </div>
+          </div>
+          <div class="fr" style="gap:14px;margin-bottom:14px">
+            <div class="fg3"><label>Phone</label><input type="tel" id="dnr-phone" placeholder="555-000-0000"></div>
+            <div class="fg3"><label>Email</label><input type="email" id="dnr-email" placeholder="email@example.com"></div>
+            <div class="fg3"><label>Join Date</label><input type="date" id="dnr-joined"></div>
+          </div>
+          <div class="fr" style="gap:14px;margin-bottom:14px">
+            <div class="fg3" style="flex:2"><label>Address 1</label><input type="text" id="dnr-addr1" placeholder="Street Address"></div>
+            <div class="fg3"><label>Address 2</label><input type="text" id="dnr-addr2" placeholder="Apt, Suite, etc."></div>
+          </div>
+          <div class="fr" style="gap:14px;margin-bottom:20px">
+            <div class="fg3" style="flex:2"><label>City</label><input type="text" id="dnr-city" placeholder="City"></div>
+            <div class="fg3"><label>State</label><input type="text" id="dnr-state" placeholder="ST" maxlength="2"></div>
+            <div class="fg3"><label>Zip</label><input type="text" id="dnr-zip" placeholder="Zip" maxlength="10"></div>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="bsv" onclick="saveDonor()" id="donor-save-btn">💾 Save Donor</button>
+            <button class="bcc" onclick="closeDonorForm()">✕ Cancel</button>
+          </div>
+        </div>
+      </div>
+      <div id="donor-delete-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;align-items:center;justify-content:center">
+        <div style="background:#fff;border-radius:14px;padding:28px 32px;max-width:380px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.3)">
+          <div style="font-size:2.5rem;margin-bottom:12px">⚠️</div>
+          <h3 style="font-family:'Lora',serif;color:var(--blue);margin:0 0 8px">Remove Donor?</h3>
+          <p id="donor-delete-name" style="color:#475569;margin:0 0 22px;font-size:.9rem"></p>
+          <div style="display:flex;gap:10px;justify-content:center">
+            <button class="bsv" style="background:#b91c1c" onclick="confirmDeleteDonor()">🗑 Yes, Remove</button>
+            <button class="bcc" onclick="cancelDeleteDonor()">Cancel</button>
           </div>
         </div>
       </div>
@@ -2373,6 +2449,274 @@ function saveStaff() {
   document.getElementById('ss').value=''; document.getElementById('st').value='';
   document.getElementById('asf').style.display='none';
   showToast('Staff member added!');
+}
+
+// ── DONORS CRUD ──────────────────────────────────────────────────
+var donorData = [];
+var donorDeleteTarget = null;
+
+function loadDonorsScreen() {
+  var url = localStorage.getItem('mcmbc_sheet_url') || '';
+  var tb  = document.getElementById('donor-table');
+  if (!url || url.indexOf('script.google.com') === -1) { showToast('No Google Sheets URL saved.'); return; }
+  tb.querySelectorAll('tr:not(:first-child)').forEach(function(r){ r.remove(); });
+  var loading = tb.insertRow();
+  loading.innerHTML = '<td colspan="8" style="text-align:center;padding:18px;color:var(--gray)">⏳ Loading donors...</td>';
+  var cb = 'dnrLoadCb_' + Date.now();
+  var t = setTimeout(function(){ delete window[cb]; loading.remove(); showToast('⚠️ Could not load donors.'); }, 25000);
+  window[cb] = function(data) {
+    clearTimeout(t); delete window[cb]; loading.remove(); donorData = [];
+    if (data && data.status === 'success' && data.donors && data.donors.length > 0) {
+      data.donors.forEach(function(d){ donorData.push(d); renderDonorRow(d); });
+      showToast('✅ ' + data.donors.length + ' donor(s) loaded.');
+    } else {
+      var r = tb.insertRow(); r.id = 'donor-empty-row';
+      r.innerHTML = '<td colspan="8" style="text-align:center;color:var(--gray);padding:22px;font-style:italic;">No donors found. Click + Add Donor.</td>';
+    }
+  };
+  var s = document.createElement('script');
+  s.src = url + '?action=getDonors&callback=' + cb;
+  document.head.appendChild(s);
+}
+
+function renderDonorRow(d) {
+  var tb = document.getElementById('donor-table');
+  var empty = document.getElementById('donor-empty-row');
+  if (empty) empty.remove();
+  var statusClass = d.status === 'Active' ? 'sa' : 'si';
+  var tr = document.createElement('tr');
+  tr.setAttribute('data-dnorid', d.id);
+  tr.innerHTML = [
+    '<td style="font-family:monospace;font-size:.78rem">' + d.id + '</td>',
+    '<td style="font-weight:600">' + (d.fullName||'—') + '</td>',
+    '<td>' + (d.phone||'—') + '</td>',
+    '<td>' + (d.email||'—') + '</td>',
+    '<td>' + (d.city||'—') + '</td>',
+    '<td><span class="sb2 ' + statusClass + '">' + (d.status||'Active') + '</span></td>',
+    '<td>' + (d.joinDate||'—') + '</td>',
+    '<td style="text-align:center;white-space:nowrap"></td>'
+  ].join('');
+  var td = tr.lastElementChild;
+  var editBtn = document.createElement('button');
+  editBtn.className = 'bac'; editBtn.style.marginRight = '6px'; editBtn.textContent = '✏️ Edit';
+  editBtn.onclick = (function(id){ return function(){ editDonor(id); }; })(d.id);
+  var delBtn = document.createElement('button');
+  delBtn.className = 'bac'; delBtn.style.cssText = 'background:#fee2e2;color:#b91c1c'; delBtn.textContent = '🗑 Remove';
+  delBtn.onclick = (function(id, name, row){ return function(){ deleteDonor(id, name, row); }; })(d.id, d.fullName||'', tr);
+  td.appendChild(editBtn); td.appendChild(delBtn);
+  tb.appendChild(tr);
+}
+
+function filterDonorTable(q) {
+  document.getElementById('donor-table').querySelectorAll('tr:not(:first-child)').forEach(function(r){
+    r.style.display = r.textContent.toLowerCase().includes(q.toLowerCase()) ? '' : 'none';
+  });
+}
+
+function openDonorForm(mode) {
+  document.getElementById('dnr-mode').value = mode || 'add';
+  document.getElementById('donor-form-title').textContent = mode === 'edit' ? '✏️ Edit Donor' : '➕ Add Donor';
+  document.getElementById('donor-save-btn').textContent   = mode === 'edit' ? '💾 Update Donor' : '💾 Save Donor';
+  document.getElementById('donor-form-wrap').style.display = 'block';
+  document.getElementById('donor-form-wrap').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function closeDonorForm() {
+  document.getElementById('donor-form-wrap').style.display = 'none';
+  ['dnr-name','dnr-phone','dnr-email','dnr-addr1','dnr-addr2','dnr-city','dnr-state','dnr-zip','dnr-joined'].forEach(function(x){ document.getElementById(x).value=''; });
+  document.getElementById('dnr-status').value = 'Active';
+  document.getElementById('dnr-id').value = '';
+  document.getElementById('dnr-mode').value = 'add';
+}
+
+function editDonor(id) {
+  var d = donorData.find(function(x){ return x.id === id; });
+  if (!d) { showToast('Donor not found — click Refresh.'); return; }
+  document.getElementById('dnr-id').value     = d.id;
+  document.getElementById('dnr-name').value   = d.fullName  || '';
+  document.getElementById('dnr-phone').value  = d.phone     || '';
+  document.getElementById('dnr-email').value  = d.email     || '';
+  document.getElementById('dnr-status').value = d.status    || 'Active';
+  document.getElementById('dnr-joined').value = d.joinDate  || '';
+  document.getElementById('dnr-addr1').value  = d.address1  || '';
+  document.getElementById('dnr-addr2').value  = d.address2  || '';
+  document.getElementById('dnr-city').value   = d.city      || '';
+  document.getElementById('dnr-state').value  = d.state     || '';
+  document.getElementById('dnr-zip').value    = d.zip       || '';
+  openDonorForm('edit');
+}
+
+function deleteDonor(id, name, rowEl) {
+  donorDeleteTarget = {id:id, name:name, rowEl:rowEl};
+  document.getElementById('donor-delete-name').textContent = 'Remove donor "' + (name||id) + '"? This cannot be undone.';
+  document.getElementById('donor-delete-modal').style.display = 'flex';
+}
+function cancelDeleteDonor() { donorDeleteTarget=null; document.getElementById('donor-delete-modal').style.display='none'; }
+function confirmDeleteDonor() {
+  if (!donorDeleteTarget) return;
+  var target = donorDeleteTarget;
+  document.getElementById('donor-delete-modal').style.display = 'none'; donorDeleteTarget = null;
+  if (target.rowEl) target.rowEl.remove();
+  donorData = donorData.filter(function(d){ return d.id !== target.id; });
+  var tb = document.getElementById('donor-table');
+  if (tb.querySelectorAll('tr:not(:first-child)').length === 0) {
+    var r = tb.insertRow(); r.id = 'donor-empty-row';
+    r.innerHTML = '<td colspan="8" style="text-align:center;color:var(--gray);padding:22px;font-style:italic;">No donors. Click + Add Donor.</td>';
+  }
+  var url = localStorage.getItem('mcmbc_sheet_url') || '';
+  if (!url || url.indexOf('script.google.com') === -1) { showToast('Removed locally.'); return; }
+  var cb = 'dnrDelCb_' + Date.now();
+  window[cb] = function(data) { delete window[cb]; showToast(data && data.status === 'success' ? '🗑 Donor removed.' : '⚠️ Sync failed.'); loadGDDonors(); };
+  var s = document.createElement('script');
+  s.src = url + '?action=deleteDonor&callback=' + cb + '&donorId=' + encodeURIComponent(target.id);
+  document.head.appendChild(s);
+}
+
+function saveDonor() {
+  var mode   = document.getElementById('dnr-mode').value;
+  var id     = document.getElementById('dnr-id').value.trim();
+  var name   = document.getElementById('dnr-name').value.trim();
+  var phone  = document.getElementById('dnr-phone').value.trim();
+  var email  = document.getElementById('dnr-email').value.trim();
+  var status = document.getElementById('dnr-status').value;
+  var joined = document.getElementById('dnr-joined').value;
+  var addr1  = document.getElementById('dnr-addr1').value.trim();
+  var addr2  = document.getElementById('dnr-addr2').value.trim();
+  var city   = document.getElementById('dnr-city').value.trim();
+  var state  = document.getElementById('dnr-state').value.trim();
+  var zip    = document.getElementById('dnr-zip').value.trim();
+  if (!name) { showToast('Full Name is required.'); return; }
+  var url = localStorage.getItem('mcmbc_sheet_url') || '';
+
+  if (mode === 'edit') {
+    var d = donorData.find(function(x){ return x.id === id; });
+    if (d) { d.fullName=name; d.phone=phone; d.email=email; d.status=status; d.joinDate=joined; d.city=city; }
+    var row = document.querySelector('tr[data-dnorid="' + id + '"]');
+    if (row) {
+      row.cells[1].textContent = name; row.cells[2].textContent = phone||'—';
+      row.cells[3].textContent = email||'—'; row.cells[4].textContent = city||'—';
+      row.cells[5].innerHTML = '<span class="sb2 ' + (status==='Active'?'sa':'si') + '">' + status + '</span>';
+      row.cells[6].textContent = joined||'—';
+    }
+    closeDonorForm();
+    if (url && url.indexOf('script.google.com') !== -1) {
+      var cb = 'dnrUpdCb_' + Date.now();
+      window[cb] = function(data) { delete window[cb]; showToast(data && data.status === 'success' ? '✅ Donor updated.' : '⚠️ Sync failed.'); loadGDDonors(); };
+      var s = document.createElement('script');
+      s.src = url + '?action=updateDonor&callback=' + cb
+        + '&donorId='  + encodeURIComponent(id)   + '&fullName=' + encodeURIComponent(name)
+        + '&phone='    + encodeURIComponent(phone) + '&email='    + encodeURIComponent(email)
+        + '&status='   + encodeURIComponent(status)+ '&joinDate=' + encodeURIComponent(joined)
+        + '&address1=' + encodeURIComponent(addr1) + '&address2=' + encodeURIComponent(addr2)
+        + '&city='     + encodeURIComponent(city)  + '&state='    + encodeURIComponent(state)
+        + '&zip='      + encodeURIComponent(zip);
+      document.head.appendChild(s);
+    } else { showToast('✅ Updated locally.'); }
+    return;
+  }
+
+  // ADD
+  var tb = document.getElementById('donor-table');
+  var newId = 'DNR-' + String(tb.querySelectorAll('tr').length).padStart(3,'0');
+  var newDnr = {id:newId, fullName:name, phone:phone, email:email, status:status, joinDate:joined, address1:addr1, address2:addr2, city:city, state:state, zip:zip};
+  donorData.push(newDnr); renderDonorRow(newDnr); closeDonorForm();
+  if (url && url.indexOf('script.google.com') !== -1) {
+    var cb2 = 'dnrSaveCb_' + Date.now();
+    var t2 = setTimeout(function(){ delete window[cb2]; showToast('⚠️ Timed out.'); }, 25000);
+    window[cb2] = function(data) { clearTimeout(t2); delete window[cb2]; showToast(data && data.status === 'success' ? '✅ ' + name + ' saved to Google Sheets.' : '⚠️ Sync failed.'); loadGDDonors(); };
+    var s2 = document.createElement('script');
+    s2.src = url + '?action=addDonor&callback=' + cb2
+      + '&donorId='  + encodeURIComponent(newId) + '&fullName=' + encodeURIComponent(name)
+      + '&phone='    + encodeURIComponent(phone)  + '&email='    + encodeURIComponent(email)
+      + '&status='   + encodeURIComponent(status) + '&joinDate=' + encodeURIComponent(joined)
+      + '&address1=' + encodeURIComponent(addr1)  + '&address2=' + encodeURIComponent(addr2)
+      + '&city='     + encodeURIComponent(city)   + '&state='    + encodeURIComponent(state)
+      + '&zip='      + encodeURIComponent(zip);
+    document.head.appendChild(s2);
+  } else { showToast('✅ Donor added locally.'); }
+}
+
+// ── GIVEIFY DONOR DROPDOWN ────────────────────────────────────────
+function loadGDDonors() {
+  var url = localStorage.getItem('mcmbc_sheet_url') || '';
+  var sel = document.getElementById('gd-donor');
+  if (!sel) return;
+  if (!url || url.indexOf('script.google.com') === -1) {
+    sel.innerHTML = '<option value="">— No Sheets URL saved —</option><option value="Anonymous">— Anonymous —</option>';
+    return;
+  }
+  if (donorData && donorData.length > 0) { populateGDDonors(donorData); return; }
+  sel.innerHTML = '<option value="">⏳ Loading donors...</option>';
+  var cb = 'gdDnrCb_' + Date.now();
+  var t = setTimeout(function(){ delete window[cb]; sel.innerHTML = '<option value="">⚠️ Could not load — click ↻ Reload list</option><option value="Anonymous">— Anonymous —</option>'; }, 25000);
+  window[cb] = function(data) {
+    clearTimeout(t); delete window[cb];
+    if (data && data.status === 'success' && data.donors && data.donors.length > 0) {
+      donorData = data.donors; populateGDDonors(data.donors);
+    } else {
+      sel.innerHTML = '<option value="">No donors found</option><option value="Anonymous">— Anonymous —</option><option value="__ADD_NEW__">➕ Add New Donor...</option>';
+    }
+  };
+  var s = document.createElement('script');
+  s.onerror = function(){ clearTimeout(t); delete window[cb]; sel.innerHTML = '<option value="">⚠️ Network error — click ↻ Reload list</option><option value="Anonymous">— Anonymous —</option>'; };
+  s.src = url + '?action=getDonors&callback=' + cb;
+  document.head.appendChild(s);
+}
+
+function populateGDDonors(donors) {
+  var sel = document.getElementById('gd-donor');
+  sel.innerHTML = '<option value="">Select donor...</option>';
+  donors.forEach(function(d) {
+    if (d.status === 'Inactive') return;
+    var opt = document.createElement('option');
+    opt.value = d.fullName || d.id;
+    opt.textContent = (d.fullName || d.id) + ' (' + d.id + ')';
+    sel.appendChild(opt);
+  });
+  var anon = document.createElement('option'); anon.value = 'Anonymous'; anon.textContent = '— Anonymous —'; sel.appendChild(anon);
+  var addNew = document.createElement('option'); addNew.value = '__ADD_NEW__'; addNew.textContent = '➕ Add New Donor...'; sel.appendChild(addNew);
+}
+
+function gdDonorChange() {
+  var sel = document.getElementById('gd-donor');
+  if (sel.value === '__ADD_NEW__') {
+    document.getElementById('gd-new-donor-wrap').style.display = 'block';
+    document.getElementById('gd-new-donor-name').focus();
+    sel.value = '';
+  } else {
+    document.getElementById('gd-new-donor-wrap').style.display = 'none';
+  }
+}
+
+function gdCancelNewDonor() {
+  document.getElementById('gd-new-donor-wrap').style.display = 'none';
+  ['gd-new-donor-name','gd-new-donor-phone','gd-new-donor-email','gd-new-donor-address'].forEach(function(x){ document.getElementById(x).value=''; });
+}
+
+function gdSaveNewDonor() {
+  var name    = document.getElementById('gd-new-donor-name').value.trim();
+  var phone   = document.getElementById('gd-new-donor-phone').value.trim();
+  var email   = document.getElementById('gd-new-donor-email').value.trim();
+  var address = document.getElementById('gd-new-donor-address').value.trim();
+  if (!name) { showToast('Donor name is required.'); return; }
+  var sel = document.getElementById('gd-donor');
+  var addNewOpt = sel.querySelector('option[value="__ADD_NEW__"]');
+  var opt = document.createElement('option'); opt.value = name; opt.textContent = name;
+  sel.insertBefore(opt, addNewOpt); sel.value = name;
+  gdCancelNewDonor();
+  showToast('✅ ' + name + ' added to dropdown.');
+  var url = localStorage.getItem('mcmbc_sheet_url') || '';
+  if (url && url.indexOf('script.google.com') !== -1) {
+    var newId = 'DNR-' + Date.now().toString().slice(-4);
+    var cb = 'gdDnrNewCb_' + Date.now();
+    window[cb] = function(data) { delete window[cb]; if (data && data.status === 'success') { donorData.push({id:data.donorId||newId, fullName:name, phone:phone, email:email, status:'Active'}); showToast('✅ ' + name + ' saved to Donors in Google Sheets.'); } };
+    var s = document.createElement('script');
+    s.src = url + '?action=addDonor&callback=' + cb
+      + '&donorId=' + encodeURIComponent(newId) + '&fullName=' + encodeURIComponent(name)
+      + '&phone='   + encodeURIComponent(phone)  + '&email='    + encodeURIComponent(email)
+      + '&address1='+ encodeURIComponent(address) + '&status=Active&joinDate=';
+    document.head.appendChild(s);
+  }
 }
 
 // ── VENDORS CRUD ─────────────────────────────────────────────────
