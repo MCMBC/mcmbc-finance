@@ -1555,7 +1555,7 @@ function loadWhoHasPaid() {
   var t = setTimeout(function(){
     delete window[cb]; loading.remove();
     showToast('⚠️ Could not load — check URL and redeploy Apps Script.');
-  }, 10000);
+  }, 25000);
 
   window[cb] = function(data) {
     clearTimeout(t); delete window[cb]; loading.remove();
@@ -1594,7 +1594,7 @@ function loadWhoHasPaid() {
   var s = document.createElement('script');
   s.src = url + '?action=getMemberTithes&callback=' + cb;
   document.head.appendChild(s);
-  setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); }, 12000);
+  setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); }, 27000);
 }
 
 var tmPendingRows = [];
@@ -1679,7 +1679,7 @@ function saveTMToSheets() {
       if (el) el.innerHTML = '<span class="sb2" style="background:#fee2e2;color:#b91c1c">Timed out</span>';
       showToast('Timed out — redeploy Apps Script and try again.');
       btn.textContent = 'Save All to Google Sheet'; btn.disabled = false;
-    }, 10000);
+    }, 25000);
     window[cb] = function(data) {
       clearTimeout(t); delete window[cb];
       var el = document.getElementById('tm-status-' + r.id);
@@ -1715,7 +1715,7 @@ function saveTMToSheets() {
       + '&total='          + encodeURIComponent(r.total)
       + '&receivedBy='     + encodeURIComponent(r.rcvd);
     document.head.appendChild(s);
-    setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); }, 12000);
+    setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); }, 27000);
   }
   saveNext(0);
 }
@@ -1805,8 +1805,62 @@ function saveDashUrl() {
   localStorage.setItem('mcmbc_sheet_url', url);
   var ofField = document.getElementById('sheet-url');
   if (ofField) ofField.value = url;
-  showToast('URL saved! Loading data...');
-  loadDashboardData();
+  showToast('URL saved! Waking up Google Sheets...');
+  warmUpSheets(url, function() { loadDashboardData(); });
+}
+
+// ── WARM-UP PING — fires on connect so Apps Script is awake ──────
+function warmUpSheets(url, callback) {
+  url = url || localStorage.getItem('mcmbc_sheet_url') || '';
+  if (!url || url.indexOf('script.google.com') === -1) { if(callback) callback(); return; }
+  var cb = 'warmUpCb_' + Date.now();
+  var t = setTimeout(function() { delete window[cb]; if(callback) callback(); }, 20000);
+  window[cb] = function() { clearTimeout(t); delete window[cb]; if(callback) callback(); };
+  var s = document.createElement('script');
+  s.src = url + '?action=ping&callback=' + cb;
+  document.head.appendChild(s);
+  setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); }, 22000);
+}
+
+// ── RETRY HELPER — wraps a JSONP save with auto-retry ────────────
+function jsonpWithRetry(url, onSuccess, onError, maxRetries) {
+  maxRetries = maxRetries || 3;
+  var attempt = 0;
+  function tryOnce() {
+    attempt++;
+    var cb = 'retryCb_' + Date.now();
+    var t = setTimeout(function() {
+      delete window[cb];
+      if (attempt < maxRetries) {
+        showToast('Retrying... (attempt ' + (attempt+1) + ' of ' + maxRetries + ')');
+        setTimeout(tryOnce, 2000);
+      } else {
+        onError('Timed out after ' + maxRetries + ' attempts. Apps Script may be sleeping — try again in 30 seconds.');
+      }
+    }, 25000);
+    window[cb] = function(data) {
+      clearTimeout(t); delete window[cb];
+      if (data && data.status === 'success') {
+        onSuccess(data);
+      } else {
+        onError(data && data.message ? data.message : 'Unknown error');
+      }
+    };
+    var s = document.createElement('script');
+    s.onerror = function() {
+      clearTimeout(t); delete window[cb];
+      if (attempt < maxRetries) {
+        showToast('Network error — retrying... (attempt ' + (attempt+1) + ' of ' + maxRetries + ')');
+        setTimeout(tryOnce, 3000);
+      } else {
+        onError('Network error — could not reach Google Sheets.');
+      }
+    };
+    s.src = url;
+    document.head.appendChild(s);
+    setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); }, 27000);
+  }
+  tryOnce();
 }
 
 function setConnBadge(state) {
@@ -1846,7 +1900,7 @@ function loadDashboardData() {
     delete window[callbackName];
     setConnBadge('error');
     showToast('⚠️ Timed out. Check your Apps Script URL and redeploy.');
-  }, 12000);
+  }, 27000);
 
   window[callbackName] = function(data) {
     clearTimeout(timeout);
@@ -2085,7 +2139,7 @@ function saveAllToSheet() {
       errors++;
       statusEl.innerHTML = '<span class="sb2 si">Timeout</span>';
       sendNext(i + 1);
-    }, 10000);
+    }, 25000);
 
     window[callbackName] = function(response) {
       clearTimeout(timeout);
@@ -2112,7 +2166,7 @@ function saveAllToSheet() {
     document.head.appendChild(script);
     setTimeout(function() {
       if (script.parentNode) script.parentNode.removeChild(script);
-    }, 12000);
+    }, 27000);
   }
 
   sendNext(0);
@@ -2211,7 +2265,7 @@ function loadVendorsScreen() {
   var loading = tb.insertRow();
   loading.innerHTML = '<td colspan="7" style="text-align:center;padding:18px;color:var(--gray)">⏳ Loading vendors...</td>';
   var cb = 'vndLoadCb_' + Date.now();
-  var t = setTimeout(function(){ delete window[cb]; loading.remove(); showToast('⚠️ Could not load vendors.'); }, 10000);
+  var t = setTimeout(function(){ delete window[cb]; loading.remove(); showToast('⚠️ Could not load vendors.'); }, 25000);
   window[cb] = function(data) {
     clearTimeout(t); delete window[cb]; loading.remove(); vendorData = [];
     if (data && data.status === 'success' && data.vendors && data.vendors.length > 0) {
@@ -2309,7 +2363,7 @@ function saveVendor() {
   var url = localStorage.getItem('mcmbc_sheet_url') || '';
   if (url && url.indexOf('script.google.com') !== -1) {
     var cb = 'vndSaveCb_' + Date.now();
-    var t = setTimeout(function(){ delete window[cb]; showToast('⚠️ Timed out — redeploy Apps Script.'); }, 10000);
+    var t = setTimeout(function(){ delete window[cb]; showToast('⚠️ Timed out — redeploy Apps Script.'); }, 25000);
     window[cb] = function(data) { clearTimeout(t); delete window[cb]; showToast(data && data.status === 'success' ? '✅ ' + name + ' saved to Google Sheets.' : '⚠️ Sheets sync failed.'); };
     var s = document.createElement('script');
     s.src = url + '?action=addVendor&callback=' + cb
@@ -2348,7 +2402,7 @@ function loadBillVendors() {
   var t = setTimeout(function() {
     delete window[cb];
     sel.innerHTML = '<option value="">⚠️ Could not load vendors</option><option value="__ADD_NEW__">➕ Add New Vendor...</option>';
-  }, 10000);
+  }, 25000);
   window[cb] = function(data) {
     clearTimeout(t); delete window[cb];
     sel.innerHTML = '<option value="">Select vendor...</option>';
@@ -2374,7 +2428,7 @@ function loadBillVendors() {
   var s = document.createElement('script');
   s.src = url + '?action=getVendors&callback=' + cb;
   document.head.appendChild(s);
-  setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); }, 12000);
+  setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); }, 27000);
 }
 
 function pbPayeeChange() {
@@ -2453,7 +2507,7 @@ function loadBillTypes() {
   var t = setTimeout(function() {
     delete window[cb];
     sel.innerHTML = '<option value="">⚠️ Could not load bill types</option>';
-  }, 10000);
+  }, 25000);
   window[cb] = function(data) {
     clearTimeout(t); delete window[cb];
     sel.innerHTML = '<option value="">Select type...</option>';
@@ -2471,7 +2525,7 @@ function loadBillTypes() {
   var s = document.createElement('script');
   s.src = url + '?action=getBillTypes&callback=' + cb;
   document.head.appendChild(s);
-  setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); }, 12000);
+  setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); }, 27000);
 }
 
 function calcBillEntry() {
@@ -2601,7 +2655,7 @@ function saveBillsToSheets() {
       if (el) el.innerHTML = '<span class="sb2" style="background:#fee2e2;color:#b91c1c">Timed out</span>';
       showToast('Timed out — redeploy Apps Script and try again.');
       btn.textContent = 'Save All to Google Sheet'; btn.disabled = false;
-    }, 10000);
+    }, 25000);
     window[cb] = function(data) {
       clearTimeout(t); delete window[cb];
       var el = document.getElementById('pb-status-' + r.id);
@@ -2634,7 +2688,7 @@ function saveBillsToSheets() {
       + '&memo='                + encodeURIComponent(r.memo)
       + '&typeOfBill='          + encodeURIComponent(r.type);
     document.head.appendChild(s);
-    setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); }, 12000);
+    setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); }, 27000);
   }
   saveNext(0);
 }
@@ -2662,7 +2716,7 @@ function loadTithesMembers() {
   var timeout = setTimeout(function() {
     delete window[cb];
     sel.innerHTML = '<option value="">⚠️ Timed out — click ↻ Reload list</option><option value="Anonymous">Anonymous</option>';
-  }, 10000);
+  }, 25000);
 
   window[cb] = function(data) {
     clearTimeout(timeout); delete window[cb];
@@ -2681,7 +2735,7 @@ function loadTithesMembers() {
   };
   s.src = url + '?action=getMembers&callback=' + cb;
   document.head.appendChild(s);
-  setTimeout(function() { if (s.parentNode) s.parentNode.removeChild(s); }, 12000);
+  setTimeout(function() { if (s.parentNode) s.parentNode.removeChild(s); }, 27000);
 }
 
 function populateTithesDropdown(members) {
@@ -2718,7 +2772,7 @@ function loadMembersFromSheets() {
   var timeout = setTimeout(function(){
     delete window[cb]; loading.remove();
     showToast('⚠️ Could not load members — check Sheets URL.');
-  }, 10000);
+  }, 25000);
 
   window[cb] = function(data) {
     clearTimeout(timeout); delete window[cb]; loading.remove();
@@ -2734,7 +2788,7 @@ function loadMembersFromSheets() {
   var s = document.createElement('script');
   s.src = url + '?action=getMembers&callback=' + cb;
   document.head.appendChild(s);
-  setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); }, 12000);
+  setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); }, 27000);
 }
 
 function renderMemberRow(m) {
@@ -2907,7 +2961,7 @@ function saveMember() {
 
   if (url && url.indexOf('script.google.com') !== -1) {
     var cb2 = 'memSaveCb_' + Date.now();
-    var t2 = setTimeout(function(){ delete window[cb2]; showToast('⚠️ Timed out — redeploy Apps Script and try again.'); }, 10000);
+    var t2 = setTimeout(function(){ delete window[cb2]; showToast('⚠️ Timed out — redeploy Apps Script and try again.'); }, 25000);
     window[cb2] = function(data) {
       clearTimeout(t2); delete window[cb2];
       showToast(data && data.status === 'success' ? '✅ ' + name + ' saved to Google Sheets (' + (data.memberId||newId) + ').' : '⚠️ Sheets error: ' + (data && data.message ? data.message : 'unknown'));
@@ -2950,7 +3004,7 @@ function loadEmployeesFromSheets() {
     delete window[cb];
     loading.remove();
     showToast('⚠️ Could not load employees — check Sheets URL.');
-  }, 10000);
+  }, 25000);
 
   window[cb] = function(data) {
     clearTimeout(timeout); delete window[cb];
@@ -2971,7 +3025,7 @@ function loadEmployeesFromSheets() {
   var s = document.createElement('script');
   s.src = url + '?action=getEmployees&callback=' + cb;
   document.head.appendChild(s);
-  setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); }, 12000);
+  setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); }, 27000);
 }
 
 function renderEmpRow(e) {
@@ -3101,7 +3155,7 @@ function confirmDeleteEmployee() {
   var s = document.createElement('script');
   s.src = url + '?action=deleteEmployee&callback=' + cb + '&employeeId=' + encodeURIComponent(target.id);
   document.head.appendChild(s);
-  setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); }, 10000);
+  setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); }, 25000);
 }
 
 function showAddEmployee() { openEmpForm('add'); }
@@ -3169,7 +3223,7 @@ function saveEmployee() {
         + '&state='      + encodeURIComponent(state)
         + '&zip='        + encodeURIComponent(zip);
       document.head.appendChild(s);
-      setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); }, 10000);
+      setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); }, 25000);
     } else {
       showToast('✅ Updated locally. Connect Google Sheets to sync.');
     }
@@ -3192,7 +3246,7 @@ function saveEmployee() {
     var t2 = setTimeout(function() {
       delete window[cb2];
       showToast('⚠️ Timed out — redeploy your Apps Script then try again.');
-    }, 10000);
+    }, 25000);
     window[cb2] = function(data) {
       clearTimeout(t2); delete window[cb2];
       showToast(data && data.status === 'success'
@@ -3219,7 +3273,7 @@ function saveEmployee() {
       + '&state='      + encodeURIComponent(state)
       + '&zip='        + encodeURIComponent(zip);
     document.head.appendChild(s2);
-    setTimeout(function(){ if(s2.parentNode) s2.parentNode.removeChild(s2); }, 12000);
+    setTimeout(function(){ if(s2.parentNode) s2.parentNode.removeChild(s2); }, 27000);
   } else {
     showToast('✅ Employee added locally. Connect Google Sheets to sync.');
   }
@@ -3254,7 +3308,7 @@ function loadEmployeeDropdown() {
   var timeout = setTimeout(function() {
     delete window[cb];
     sel.innerHTML = '<option value="">⚠️ Could not load — check URL</option><option value="OTHER">Enter name manually below</option>';
-  }, 10000);
+  }, 25000);
 
   window[cb] = function(data) {
     clearTimeout(timeout); delete window[cb];
@@ -3278,7 +3332,7 @@ function loadEmployeeDropdown() {
   var s = document.createElement('script');
   s.src = url + '?action=getEmployees&callback=' + cb;
   document.head.appendChild(s);
-  setTimeout(function() { if (s.parentNode) s.parentNode.removeChild(s); }, 12000);
+  setTimeout(function() { if (s.parentNode) s.parentNode.removeChild(s); }, 27000);
 }
 
 function prFillId() {
@@ -3436,7 +3490,7 @@ function savePayrollToSheets() {
       showToast('⚠️ Timed out saving ' + r.id + ' — redeploy Apps Script and try again.');
       btn.textContent = '💾 Save All to Google Sheet';
       btn.disabled = false;
-    }, 10000);
+    }, 25000);
     window[cb] = function(data) {
       clearTimeout(t); delete window[cb];
       var statusEl = document.getElementById('pr-status-' + r.id);
@@ -3480,7 +3534,7 @@ function savePayrollToSheets() {
     };
     s.src = src;
     document.head.appendChild(s);
-    setTimeout(function() { if (s.parentNode) s.parentNode.removeChild(s); }, 12000);
+    setTimeout(function() { if (s.parentNode) s.parentNode.removeChild(s); }, 27000);
   }
   saveNext(0);
 }
