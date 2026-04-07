@@ -208,6 +208,7 @@ nav{flex:1;padding:10px 0;}
         <div class="kc bl2"><div class="kl">Total Offerings</div><div class="kv">$0.00</div><div class="ks">No records yet</div><div class="ki">💰</div></div>
         <div class="kc rd"><div class="kl">Total Expenses</div><div class="kv">$0.00</div><div class="ks">No records yet</div><div class="ki">💸</div></div>
         <div class="kc gd"><div class="kl">Bills Paid</div><div class="kv" id="kpi-bills">$0.00</div><div class="ks" id="kpi-bills-sub">No bills yet</div><div class="ki">🧾</div></div>
+        <div class="kc bl2"><div class="kl">giveify</div><div class="kv" id="kpi-giveify">$0.00</div><div class="ks" id="kpi-giveify-sub">No records yet</div><div class="ki">📱</div></div>
         <div class="kc gn"><div class="kl">Active Members</div><div class="kv">0</div><div class="ks">Active members</div><div class="ki">👥</div></div>
         <div class="kc gd2"><div class="kl">Pending Approvals</div><div class="kv">0</div><div class="ks">$0.00 awaiting approval</div><div class="ki">⏳</div></div>
       </div>
@@ -2100,8 +2101,14 @@ function loadDashboardData() {
     var billsSub = document.getElementById('kpi-bills-sub');
     if (billsKpi) billsKpi.textContent = fmtCurrency(data.billsTotal || 0);
     if (billsSub) billsSub.textContent = (data.billsCount || 0) + ' bill(s) paid';
-    if (kpis[3]) { kpis[3].querySelector('.kv').textContent = data.activeMembers; kpis[3].querySelector('.ks').textContent = 'Active members'; }
-    if (kpis[4]) { kpis[4].querySelector('.kv').textContent = data.pendingCount; kpis[4].querySelector('.ks').textContent = fmtCurrency(data.pendingAmount) + ' awaiting approval'; }
+    // giveify KPI
+    var giveifyKpi = document.getElementById('kpi-giveify');
+    var giveiфySub = document.getElementById('kpi-giveify-sub');
+    if (giveifyKpi) giveifyKpi.textContent = fmtCurrency(data.giveifyBreakdown || 0);
+    var giveifySub2 = document.getElementById('kpi-giveify-sub');
+    if (giveifySub2) giveifySub2.textContent = (data.giveifyBreakdownCount || 0) + ' record(s)';
+    if (kpis[4]) { kpis[4].querySelector('.kv').textContent = data.activeMembers; kpis[4].querySelector('.ks').textContent = 'Active members'; }
+    if (kpis[5]) { kpis[5].querySelector('.kv').textContent = data.pendingCount; kpis[5].querySelector('.ks').textContent = fmtCurrency(data.pendingAmount) + ' awaiting approval'; }
 
     // Fund Cards — match by fund name order
     var fundOrder = ['Sunday School Fund','Benevolent Offering Fund','General Offering Fund',
