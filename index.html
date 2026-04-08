@@ -3204,37 +3204,198 @@ function runReport(type) {
   var html = '';
 
   if (type === 'cashflow') {
-    var net = (data.offeringsTotal||0) - (data.expensesTotal||0);
-    var netColor = net >= 0 ? '#15803d' : '#b91c1c';
-    html  = '<p style="color:#64748b;font-size:.82rem;margin:0 0 16px">Generated: ' + dateStr + '</p>';
-    html += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px">';
-    html += kpiMini('Total Income','💰',fmtCurrency(data.offeringsTotal),'var(--blue)');
-    html += kpiMini('Total Expenses','💸',fmtCurrency(data.expensesTotal),'#b91c1c');
-    html += kpiMini('Net Cash Flow', net>=0?'📈':'📉', fmtCurrency(Math.abs(net)), netColor);
-    html += '</div>';
-    html += rptTable('Income by Source',
-      ['Source','Amount','Records'],
-      [['📋 Offerings',         fmtCurrency(data.offeringsBreakdown||0),  (data.offeringsBreakdownCount||0)+' records'],
-       ['🙏 Tithes by Members', fmtCurrency(data.tithesBreakdown||0),     (data.tithesBreakdownCount||0)+' records'],
-       ['📱 giveify by Donors', fmtCurrency(data.giveifyBreakdown||0),    (data.giveifyBreakdownCount||0)+' records'],
-       ['🎁 Other Offerings',   fmtCurrency(data.otherOffBreakdown||0),   (data.otherOffBreakdownCount||0)+' records']],
-      ['Total Income', fmtCurrency(data.offeringsTotal), (data.offeringsCount||0)+' records']
-    );
-    html += rptTable('Expenses',
-      ['Category','Amount'],
-      [['Expenses (Miscellaneous)', fmtCurrency((data.expensesTotal||0)-(data.billsTotal||0))],
-       ['Bills Paid',               fmtCurrency(data.billsTotal||0)]],
-      ['Total Expenses', fmtCurrency(data.expensesTotal)]
-    );
-    html += rptTable('Fund Balances',
-      ['Fund','Income','Expenses','Balance'],
-      (data.funds||[]).map(function(f){
-        var bal = f.balance || (f.income - f.expenses);
-        return [f.name, fmtCurrency(f.income), fmtCurrency(f.expenses),
-          '<strong style="color:'+(bal>=0?'#15803d':'#b91c1c')+'">' + fmtCurrency(bal) + '</strong>'];
-      })
-    );
+    // Load detailed cash flow data from Sheets
+    body.innerHTML = '<div style="text-align:center;padding:32px;color:var(--gray)">⏳ Loading Cash Flow data from Google Sheets...</div>';
+    var url = localStorage.getItem('mcmbc_sheet_url') || '';
+    if (!url || url.indexOf('script.google.com') === -1) {
+      body.innerHTML = '<div style="background:#fef3c7;border-left:4px solid #ca8a04;padding:14px 16px;border-radius:8px;color:#854d0e">⚠️ No Google Sheets URL saved — connect on the Dashboard first.</div>';
+      return;
+    }
+    var cb = 'cfCb_' + Date.now();
+    var t = setTimeout(function(){ delete window[cb]; body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Timed out loading data. Try again.</div>'; }, 25000);
+    window[cb] = function(cfData) {
+      clearTimeout(t); delete window[cb];
+      if (!cfData || cfData.status !== 'success') { body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Error loading cash flow data.</div>'; return; }
+      var d = cfData;
+      var inc = d.income || {};
+      var now = new Date();
+      var dateStr = now.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
 
+      // Income totals
+      var incIncoming = (inc.sundaySchool||0) + (inc.generalOffering||0) + (inc.tithes||0);
+      var incOther    = (inc.building||0) + (inc.youth||0) + (inc.youthEducation||0) + (inc.benevolent||0) + (inc.giveify||0) + (inc.other||0) + (inc.otherOfferings||0);
+      var grandIncome = incIncoming + incOther;
+
+      // Payroll totals
+      var payrollTotal = (d.payroll||[]).reduce(function(s,e){ return s+e.net; }, 0);
+      // Utility totals
+      var utilTotal = (d.utilityBills||[]).reduce(function(s,b){ return s+b.amount; }, 0);
+      // Other expense totals
+      var otherExpTotal = (d.otherExpenses||[]).reduce(function(s,e){ return s+e.amount; }, 0);
+      var otherBillTotal= (d.otherBills||[]).reduce(function(s,b){ return s+b.amount; }, 0);
+      var grandExpenses = payrollTotal + utilTotal + otherExpTotal + otherBillTotal;
+      var gainLoss = grandIncome - grandExpenses;
+
+      function dot(label, val) {
+        return '<tr><td style="padding:2px 0;font-size:.82rem;width:180px">' + label + '</td>' +
+               '<td style="border-bottom:1px dotted #94a3b8;width:100%"></td>' +
+               '<td style="padding:2px 0 2px 10px;font-size:.82rem;text-align:right;white-space:nowrap;min-width:70px">' + fmtCurrency(val) + '</td></tr>';
+      }
+      function dotCheck(label, checkNo, val) {
+        return '<tr><td style="padding:2px 0;font-size:.82rem;width:160px">' + label + '</td>' +
+               '<td style="padding:2px 0 2px 6px;font-size:.78rem;color:#64748b;width:80px">' + (checkNo||'') + '</td>' +
+               '<td style="border-bottom:1px dotted #94a3b8;width:100%"></td>' +
+               '<td style="padding:2px 0 2px 10px;font-size:.82rem;text-align:right;white-space:nowrap;min-width:70px">' + fmtCurrency(val) + '</td></tr>';
+      }
+      function sectionHead(label) {
+        return '<tr><td colspan="4" style="padding:8px 0 2px;font-size:.82rem;font-weight:700;text-decoration:underline">' + label + '</td></tr>';
+      }
+      function totalRow(label, val, bold) {
+        return '<tr><td colspan="3" style="padding:4px 0;font-size:.82rem;font-weight:' + (bold?'700':'600') + '">' + label + '</td>' +
+               '<td style="padding:4px 0;font-size:.82rem;text-align:right;font-weight:' + (bold?'700':'600') + ';border-top:1px solid #334155;white-space:nowrap">' + fmtCurrency(val) + '</td></tr>';
+      }
+
+      // Build salaries rows
+      var salaryRows = '';
+      var employees = d.payroll || [];
+      var utilBills  = d.utilityBills || [];
+      var maxRows = Math.max(employees.length, utilBills.length, 6);
+      // Pad arrays
+      while(employees.length < maxRows) employees.push({name:'', checkNo:'', net:0});
+      while(utilBills.length < maxRows) utilBills.push({type:'', checkNo:'', amount:0});
+
+      var salaryHtml = '';
+      (d.payroll||[]).forEach(function(e){ salaryHtml += dotCheck(e.name, e.checkNo, e.net); });
+      salaryHtml += totalRow('Totals', payrollTotal, false);
+
+      var utilHtml = '';
+      var utilOrder = ['Electricity','Gas','Internet & Phone','Pest Control','Taxes IRS 941'];
+      utilOrder.forEach(function(utype) {
+        var b = (d.utilityBills||[]).find(function(x){ return x.type===utype; }) || {type:utype, checkNo:'', amount:0};
+        utilHtml += dotCheck(b.type, b.checkNo, b.amount);
+      });
+      // Add any extra utility bills
+      (d.utilityBills||[]).forEach(function(b){ if(utilOrder.indexOf(b.type)===-1) utilHtml += dotCheck(b.type, b.checkNo, b.amount); });
+      utilHtml += totalRow('Total', utilTotal, false);
+
+      // Other expenses — left and right
+      var otherExpLeft = d.otherExpenses || [];
+      var otherBillsRight = d.otherBills || [];
+
+      var rpt = '';
+      rpt += '<div style="font-family:Arial,sans-serif;max-width:820px;margin:0 auto;padding:0 8px">';
+
+      // Header
+      rpt += '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">';
+      rpt += '<div></div>';
+      rpt += '<div style="text-align:center">';
+      rpt += '<div style="font-size:.9rem">Mount Calvary Missionary Baptist Church</div>';
+      rpt += '<div style="font-size:.85rem">10314 Canal Rd</div>';
+      rpt += '<div style="font-size:.85rem">Gulfport, Ms. 39503</div>';
+      rpt += '</div>';
+      rpt += '<div style="font-size:.82rem;text-align:right">Date:<br><strong>' + dateStr + '</strong></div>';
+      rpt += '</div>';
+      rpt += '<div style="text-align:center;font-weight:700;font-size:.9rem;margin:14px 0 16px;text-decoration:underline">Weekly Cash Flow Statement</div>';
+
+      // INCOMING
+      rpt += '<table style="width:100%;border-collapse:collapse;margin-bottom:10px"><tbody>';
+      rpt += sectionHead('Incoming');
+      rpt += dot('Sunday School.', inc.sundaySchool||0);
+      rpt += dot('General Offering.', inc.generalOffering||0);
+      rpt += dot('Tithes', inc.tithes||0);
+      rpt += totalRow('Total', incIncoming, false);
+      rpt += '</tbody></table>';
+
+      // OTHER INCOME
+      rpt += '<table style="width:100%;border-collapse:collapse;margin-bottom:10px"><tbody>';
+      rpt += sectionHead('Other');
+      rpt += dot('Bldg', inc.building||0);
+      rpt += dot('giveify', inc.giveify||0);
+      rpt += dot('Youth', inc.youth||0);
+      rpt += dot('Youth Education', inc.youthEducation||0);
+      rpt += dot('Benevolent', inc.benevolent||0);
+      rpt += dot('Other:', inc.other||0);
+      rpt += dot('Other Offerings:', inc.otherOfferings||0);
+      rpt += totalRow('Total', incOther, false);
+      rpt += totalRow('Grand Total', grandIncome, true);
+      rpt += '</tbody></table>';
+
+      // EXPENDITURES — two columns
+      rpt += '<div style="text-align:center;font-weight:700;font-size:.85rem;margin:12px 0 8px;text-decoration:underline">Expenditures/Outgoing</div>';
+      rpt += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:10px">';
+
+      // Left — Salaries
+      rpt += '<div><table style="width:100%;border-collapse:collapse"><tbody>';
+      rpt += sectionHead('Salaries');
+      (d.payroll||[]).forEach(function(e){ rpt += dotCheck(e.name, e.checkNo, e.net); });
+      if ((d.payroll||[]).length === 0) rpt += dot('—', 0);
+      rpt += totalRow('Totals', payrollTotal, false);
+      rpt += '</tbody></table></div>';
+
+      // Right — Utilities
+      rpt += '<div><table style="width:100%;border-collapse:collapse"><tbody>';
+      rpt += '<tr><td colspan="4" style="padding:8px 0 2px;font-size:.82rem">&nbsp;</td></tr>';
+      var utilOrderFull = ['Electricity','Gas','Internet & Phone','Pest Control','Taxes IRS 941'];
+      utilOrderFull.forEach(function(utype) {
+        var b = (d.utilityBills||[]).find(function(x){ return x.type===utype; }) || {type:utype, checkNo:'', amount:0};
+        rpt += dotCheck(b.type, b.checkNo, b.amount);
+      });
+      (d.utilityBills||[]).forEach(function(b){ if(utilOrderFull.indexOf(b.type)===-1) rpt += dotCheck(b.type, b.checkNo, b.amount); });
+      rpt += totalRow('Total', utilTotal, false);
+      rpt += '</tbody></table></div>';
+      rpt += '</div>';
+
+      // OTHER EXPENSES — two columns
+      rpt += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:10px">';
+
+      // Left — Other Expenses (from Expenses sheet)
+      rpt += '<div><table style="width:100%;border-collapse:collapse"><tbody>';
+      rpt += sectionHead('Other Expenses');
+      (d.otherExpenses||[]).forEach(function(e){ rpt += dotCheck(e.cat, '', e.amount); });
+      if ((d.otherExpenses||[]).length === 0) rpt += dot('—', 0);
+      rpt += '</tbody></table></div>';
+
+      // Right — Other Bills
+      rpt += '<div><table style="width:100%;border-collapse:collapse"><tbody>';
+      rpt += '<tr><td colspan="4" style="padding:8px 0 2px;font-size:.82rem">&nbsp;</td></tr>';
+      (d.otherBills||[]).forEach(function(b){ rpt += dotCheck(b.type, b.checkNo, b.amount); });
+      if ((d.otherBills||[]).length === 0) rpt += dot('—', 0);
+      rpt += totalRow('Total', otherExpTotal + otherBillTotal, false);
+      rpt += '</tbody></table></div>';
+      rpt += '</div>';
+
+      // Grand Totals
+      rpt += '<table style="width:100%;border-collapse:collapse;margin-bottom:10px"><tbody>';
+      rpt += '<tr><td colspan="3" style="padding:4px 0;font-size:.82rem">Grand Total Expenses</td>' +
+             '<td style="border-bottom:1px dotted #94a3b8;width:60%"></td>' +
+             '<td style="padding:4px 0 4px 10px;font-size:.82rem;text-align:right;font-weight:700;white-space:nowrap">' + fmtCurrency(grandExpenses) + '</td></tr>';
+      var glColor = gainLoss >= 0 ? '#15803d' : '#b91c1c';
+      rpt += '<tr><td colspan="3" style="padding:4px 0;font-size:.82rem;font-weight:700">Gain/Loss</td>' +
+             '<td style="border-bottom:1px dotted #94a3b8;width:60%"></td>' +
+             '<td style="padding:4px 0 4px 10px;font-size:.82rem;text-align:right;font-weight:700;color:' + glColor + ';white-space:nowrap">' + fmtCurrency(gainLoss) + '</td></tr>';
+      rpt += '</tbody></table>';
+
+      // Fund balances footer
+      var funds = (window._dashData && window._dashData.funds) || [];
+      var bldgFund = funds.find(function(f){ return f.name==='Building Fund'; }) || {income:0, expenses:0, balance:0};
+      var youthFund = funds.find(function(f){ return f.name==='Youth Fund'; }) || {income:0, expenses:0, balance:0};
+      var yEduFund  = funds.find(function(f){ return f.name==='Youth Education Fund'; }) || {income:0, expenses:0, balance:0};
+      rpt += '<table style="width:100%;border-collapse:collapse;margin-top:8px"><tbody>';
+      rpt += '<tr><td style="font-size:.82rem;padding:3px 0;width:120px">Bldg Fund</td>' +
+             '<td style="border-bottom:1px dotted #94a3b8;width:30%"></td>' +
+             '<td style="padding:3px 10px;font-size:.82rem;text-align:right;white-space:nowrap">' + fmtCurrency(bldgFund.balance||0) + '</td>' +
+             '<td style="font-size:.82rem;padding:3px 10px">Youth/You. Edu.</td>' +
+             '<td style="border-bottom:1px dotted #94a3b8;width:20%"></td>' +
+             '<td style="padding:3px 0 3px 10px;font-size:.82rem;text-align:right;white-space:nowrap">' + fmtCurrency((youthFund.balance||0)) + '/' + fmtCurrency((yEduFund.balance||0)) + '</td></tr>';
+      rpt += '</tbody></table>';
+
+      rpt += '</div>';
+      body.innerHTML = rpt;
+    };
+    var s = document.createElement('script');
+    s.onerror = function(){ clearTimeout(t); delete window[cb]; body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Could not reach Google Sheets.</div>'; };
+    s.src = url + '?action=getCashFlowData&callback=' + cb;
+    document.head.appendChild(s);
   } else if (type === 'weekly') {
     var chart = data.chart || [];
     var latest = chart[chart.length-1] || {};
