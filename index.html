@@ -3336,83 +3336,11 @@ function runReport(type, startDate, endDate) {
                    ' — ' + s2.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
       }
 
-      // Income totals
+      // Income totals — all 4 sources distributed by fund
       var incIncoming = (inc.sundaySchool||0) + (inc.generalOffering||0) + (inc.tithes||0);
       var incOther    = (inc.building||0) + (inc.youth||0) + (inc.youthEducation||0) +
-                        (inc.benevolent||0) + (inc.giveify||0) +
-                        (inc.other||0) + (inc.otherOfferings||0);
+                        (inc.benevolent||0) + (inc.special||0) + (inc.other||0);
       var grandIncome = incIncoming + incOther;
-
-      // Payroll totals
-      var payrollTotal = (d.payroll||[]).reduce(function(s,e){ return s+e.net; }, 0);
-      // Utility totals
-      var utilTotal = (d.utilityBills||[]).reduce(function(s,b){ return s+b.amount; }, 0);
-      // Other expense totals
-      var otherExpTotal = (d.otherExpenses||[]).reduce(function(s,e){ return s+e.amount; }, 0);
-      var otherBillTotal= (d.otherBills||[]).reduce(function(s,b){ return s+b.amount; }, 0);
-      var grandExpenses = payrollTotal + utilTotal + otherExpTotal + otherBillTotal;
-      var gainLoss = grandIncome - grandExpenses;
-
-      function dot(label, val) {
-        return '<tr><td style="padding:2px 0;font-size:.82rem;width:180px">' + label + '</td>' +
-               '<td style="border-bottom:1px dotted #94a3b8;width:100%"></td>' +
-               '<td style="padding:2px 0 2px 10px;font-size:.82rem;text-align:right;white-space:nowrap;min-width:70px">' + fmtCurrency(val) + '</td></tr>';
-      }
-      function dotCheck(label, checkNo, val) {
-        return '<tr><td style="padding:2px 0;font-size:.82rem;width:160px">' + label + '</td>' +
-               '<td style="padding:2px 0 2px 6px;font-size:.78rem;color:#64748b;width:80px">' + (checkNo||'') + '</td>' +
-               '<td style="border-bottom:1px dotted #94a3b8;width:100%"></td>' +
-               '<td style="padding:2px 0 2px 10px;font-size:.82rem;text-align:right;white-space:nowrap;min-width:70px">' + fmtCurrency(val) + '</td></tr>';
-      }
-      function sectionHead(label) {
-        return '<tr><td colspan="4" style="padding:8px 0 2px;font-size:.82rem;font-weight:700;text-decoration:underline">' + label + '</td></tr>';
-      }
-      function totalRow(label, val, bold) {
-        return '<tr><td colspan="3" style="padding:4px 0;font-size:.82rem;font-weight:' + (bold?'700':'600') + '">' + label + '</td>' +
-               '<td style="padding:4px 0;font-size:.82rem;text-align:right;font-weight:' + (bold?'700':'600') + ';border-top:1px solid #334155;white-space:nowrap">' + fmtCurrency(val) + '</td></tr>';
-      }
-
-      // Build salaries rows
-      var salaryRows = '';
-      var employees = d.payroll || [];
-      var utilBills  = d.utilityBills || [];
-      var maxRows = Math.max(employees.length, utilBills.length, 6);
-      // Pad arrays
-      while(employees.length < maxRows) employees.push({name:'', checkNo:'', net:0});
-      while(utilBills.length < maxRows) utilBills.push({type:'', checkNo:'', amount:0});
-
-      var salaryHtml = '';
-      (d.payroll||[]).forEach(function(e){ salaryHtml += dotCheck(e.name, e.checkNo, e.net); });
-      salaryHtml += totalRow('Totals', payrollTotal, false);
-
-      var utilHtml = '';
-      var utilOrder = ['Electricity','Gas','Internet & Phone','Pest Control','Taxes IRS 941'];
-      utilOrder.forEach(function(utype) {
-        var b = (d.utilityBills||[]).find(function(x){ return x.type===utype; }) || {type:utype, checkNo:'', amount:0};
-        utilHtml += dotCheck(b.type, b.checkNo, b.amount);
-      });
-      // Add any extra utility bills
-      (d.utilityBills||[]).forEach(function(b){ if(utilOrder.indexOf(b.type)===-1) utilHtml += dotCheck(b.type, b.checkNo, b.amount); });
-      utilHtml += totalRow('Total', utilTotal, false);
-
-      // Other expenses — left and right
-      var otherExpLeft = d.otherExpenses || [];
-      var otherBillsRight = d.otherBills || [];
-
-      var rpt = '';
-      rpt += '<div style="font-family:Arial,sans-serif;max-width:820px;margin:0 auto;padding:0 8px">';
-
-      // Header
-      rpt += '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">';
-      rpt += '<div></div>';
-      rpt += '<div style="text-align:center">';
-      rpt += '<div style="font-size:.9rem">Mount Calvary Missionary Baptist Church</div>';
-      rpt += '<div style="font-size:.85rem">10314 Canal Rd</div>';
-      rpt += '<div style="font-size:.85rem">Gulfport, Ms. 39503</div>';
-      rpt += '</div>';
-      rpt += '<div style="font-size:.82rem;text-align:right">Date:<br><strong>' + dateStr + '</strong>' + (rangeStr ? '<br><span style="color:#64748b;font-size:.75rem">Period: ' + rangeStr + '</span>' : '') + '</div>';
-      rpt += '</div>';
-      rpt += '<div style="text-align:center;font-weight:700;font-size:.9rem;margin:14px 0 16px;text-decoration:underline">Weekly Cash Flow Statement</div>';
 
       // INCOMING
       rpt += '<table style="width:100%;border-collapse:collapse;margin-bottom:10px"><tbody>';
@@ -3427,12 +3355,11 @@ function runReport(type, startDate, endDate) {
       rpt += '<table style="width:100%;border-collapse:collapse;margin-bottom:10px"><tbody>';
       rpt += sectionHead('Other');
       rpt += dot('Bldg', inc.building||0);
-      rpt += dot('📱 giveify by Donors', inc.giveify||0);
       rpt += dot('Youth', inc.youth||0);
       rpt += dot('Youth Education', inc.youthEducation||0);
       rpt += dot('Benevolent', inc.benevolent||0);
-      rpt += dot('Other:', inc.other||0);
-      rpt += dot('Other Offerings:', inc.otherOfferings||0);
+      rpt += dot('Special Event', inc.special||0);
+      rpt += dot('Other', inc.other||0);
       rpt += totalRow('Total', incOther, false);
       rpt += totalRow('Grand Total', grandIncome, true);
       rpt += '</tbody></table>';
