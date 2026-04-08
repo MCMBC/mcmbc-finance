@@ -3351,6 +3351,23 @@ function runReport(type, startDate, endDate) {
                         (inc.benevolent||0) + (inc.special||0) + (inc.other||0);
       var grandIncome = incIncoming + incOther;
 
+      // Pre-calculate expense totals
+      var payrollTotal   = (d.payroll||[]).reduce(function(s,e){ return s+(e.net||0); }, 0);
+      var utilTotal      = (d.utilityBills||[]).reduce(function(s,b){ return s+(b.amount||0); }, 0);
+      var otherExpTotal  = (d.otherExpenses||[]).reduce(function(s,e){ return s+(e.amount||0); }, 0);
+      var otherBillTotal = (d.otherBills||[]).reduce(function(s,b){ return s+(b.amount||0); }, 0);
+      var grandExpenses  = payrollTotal + utilTotal + otherExpTotal + otherBillTotal;
+      var gainLoss       = grandIncome - grandExpenses;
+      var glColor        = gainLoss >= 0 ? '#15803d' : '#b91c1c';
+
+      // Fund balances from dashboard data
+      var funds     = (window._dashData && window._dashData.funds) || [];
+      var bldgFund  = funds.find(function(f){ return f.name==='Building Fund'; })         || {income:0, expenses:0, balance:0};
+      var youthFund = funds.find(function(f){ return f.name==='Youth Fund'; })             || {income:0, expenses:0, balance:0};
+      var yEduFund  = funds.find(function(f){ return f.name==='Youth Education Fund'; })   || {income:0, expenses:0, balance:0};
+
+      var rpt = '';
+
       // INCOMING
       rpt += '<table style="width:100%;border-collapse:collapse;margin-bottom:10px"><tbody>';
       rpt += sectionHead('Incoming');
@@ -3422,17 +3439,12 @@ function runReport(type, startDate, endDate) {
       rpt += '<tr><td colspan="3" style="padding:4px 0;font-size:.82rem">Grand Total Expenses</td>' +
              '<td style="border-bottom:1px dotted #94a3b8;width:60%"></td>' +
              '<td style="padding:4px 0 4px 10px;font-size:.82rem;text-align:right;font-weight:700;white-space:nowrap">' + fmtCurrency(grandExpenses) + '</td></tr>';
-      var glColor = gainLoss >= 0 ? '#15803d' : '#b91c1c';
       rpt += '<tr><td colspan="3" style="padding:4px 0;font-size:.82rem;font-weight:700">Gain/Loss</td>' +
              '<td style="border-bottom:1px dotted #94a3b8;width:60%"></td>' +
              '<td style="padding:4px 0 4px 10px;font-size:.82rem;text-align:right;font-weight:700;color:' + glColor + ';white-space:nowrap">' + fmtCurrency(gainLoss) + '</td></tr>';
       rpt += '</tbody></table>';
 
-      // Fund balances footer
-      var funds = (window._dashData && window._dashData.funds) || [];
-      var bldgFund = funds.find(function(f){ return f.name==='Building Fund'; }) || {income:0, expenses:0, balance:0};
-      var youthFund = funds.find(function(f){ return f.name==='Youth Fund'; }) || {income:0, expenses:0, balance:0};
-      var yEduFund  = funds.find(function(f){ return f.name==='Youth Education Fund'; }) || {income:0, expenses:0, balance:0};
+            // Fund balances footer
       rpt += '<table style="width:100%;border-collapse:collapse;margin-top:8px"><tbody>';
       rpt += '<tr><td style="font-size:.82rem;padding:3px 0;width:120px">Bldg Fund</td>' +
              '<td style="border-bottom:1px dotted #94a3b8;width:30%"></td>' +
