@@ -165,7 +165,7 @@ nav{flex:1;padding:10px 0;}
       <div class="ni" onclick="sv('funds',this)">🏦 Funds</div>
       <div class="ni" onclick="sv('members',this)">👥 Members</div>
       <div class="ni" onclick="sv('donors',this);loadDonorsScreen()">🤝 Donors</div>
-      <div class="ni tonly" onclick="sv('users',this)">🔐 Users</div>
+      <div class="ni tonly" onclick="sv('users',this);loadUsersTable()">🔐 Users</div>
       <div class="ni tonly" onclick="sv('staff',this)">💼 Staff / Payroll</div>
       <div class="ni tonly" onclick="sv('employees',this)">👤 Employees</div>
       <div class="ni tonly" onclick="sv('payroll-table',this)">💵 Payroll Table</div>
@@ -1194,15 +1194,74 @@ nav{flex:1;padding:10px 0;}
 
     <!-- USERS -->
     <div id="view-users" class="vw">
-      <div class="ph"><h1>Users &amp; Access</h1><p>Manage who can log into the system</p></div>
-      <table class="vt"><tr><th>Username</th><th>Full Name</th><th>Email</th><th>Role</th><th>Active</th></tr>
-      <tr><td><strong>rachal</strong></td><td>Rachal</td><td><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="ee839a8d8f82988f9c978887808f808d8b9c818183ae89838f8782c08d8183">[email&#160;protected]</a></td><td><span class="br2 bt">Treasurer</span></td><td><span class="sb2 sa">Yes</span></td></tr>
-      <tr><td><strong>brandy</strong></td><td>Brandy</td><td><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="4f223b2c2e23392e3d362926212e212c2a3d2020220f28222e2623612c2022">[email&#160;protected]</a></td><td><span class="br2 be2">Secretary</span></td><td><span class="sb2 sa">Yes</span></td></tr>
-      <tr><td><strong>willie</strong></td><td>Willie</td><td><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="315e4b5f504671505e5d1f525e5c">[email&#160;protected]</a></td><td><span class="br2 bb">Trustee Board</span></td><td><span class="sb2 sa">Yes</span></td></tr>
-      <tr><td><strong>viewonly</strong></td><td>View Only</td><td><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="4f223b2c2e23392e3d362926212e212c2a3d2020220f28222e2623612c2022">[email&#160;protected]</a></td><td><span class="br2 bb">View Only</span></td><td><span class="sb2 sa">Yes</span></td></tr>
-      </table>
-    </div>
+      <div class="ph"><h1>Users &amp; Access</h1><p>Manage who can log into the system — Treasurer access only</p></div>
 
+      <div class="tbar">
+        <div class="sbox"><span>🔍</span><input placeholder="Search users..." oninput="filterUsersTable(this.value)"></div>
+        <button class="bp" onclick="openUserForm()">+ Add User</button>
+      </div>
+
+      <div style="overflow-x:auto">
+        <table class="vt" id="users-table">
+          <tr><th>Username</th><th>Full Name</th><th>Email</th><th>Role</th><th>Password</th><th>Active</th><th style="text-align:center">Actions</th></tr>
+        </table>
+      </div>
+
+      <!-- Add / Edit Form -->
+      <div id="user-form-wrap" style="display:none;margin-top:24px">
+        <div class="fcd">
+          <h3 id="user-form-title" style="margin:0 0 18px;font-family:'Lora',serif;color:var(--blue)">➕ Add User</h3>
+          <input type="hidden" id="usr-mode" value="add">
+          <input type="hidden" id="usr-orig-key" value="">
+          <div class="fr" style="gap:14px;margin-bottom:14px">
+            <div class="fg3"><label>Username <span style="color:var(--red)">*</span></label><input type="text" id="usr-key" placeholder="e.g. pastor" autocomplete="off" style="text-transform:lowercase"></div>
+            <div class="fg3"><label>Full Name <span style="color:var(--red)">*</span></label><input type="text" id="usr-name" placeholder="Full Name"></div>
+          </div>
+          <div class="fr" style="gap:14px;margin-bottom:14px">
+            <div class="fg3"><label>Email</label><input type="email" id="usr-email" placeholder="email@church.org"></div>
+            <div class="fg3">
+              <label>Role <span style="color:var(--red)">*</span></label>
+              <select id="usr-role">
+                <option value="">Select role...</option>
+                <option value="Treasurer">Treasurer</option>
+                <option value="Secretary">Secretary</option>
+                <option value="Pastor">Pastor</option>
+                <option value="Trustee Board">Trustee Board</option>
+                <option value="Data Entry">Data Entry</option>
+                <option value="View Only">View Only</option>
+              </select>
+            </div>
+          </div>
+          <div class="fr" style="gap:14px;margin-bottom:14px">
+            <div class="fg3"><label>Password <span style="color:var(--red)">*</span></label><input type="password" id="usr-pw" placeholder="Password" autocomplete="new-password"></div>
+            <div class="fg3">
+              <label>Active</label>
+              <select id="usr-active"><option value="Yes">Yes</option><option value="No">No</option></select>
+            </div>
+          </div>
+          <div style="background:#fef3c7;border-left:4px solid #ca8a04;padding:10px 14px;border-radius:8px;font-size:.8rem;color:#854d0e;margin-bottom:16px">
+            ⚠️ User credentials are stored locally in this browser. All users on this system need to log in from the same device, or you can share credentials manually.
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="bsv" onclick="saveUser()" id="user-save-btn">💾 Save User</button>
+            <button class="bcc" onclick="closeUserForm()">✕ Cancel</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Delete Modal -->
+      <div id="user-delete-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;align-items:center;justify-content:center">
+        <div style="background:#fff;border-radius:14px;padding:28px 32px;max-width:380px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.3)">
+          <div style="font-size:2.5rem;margin-bottom:12px">⚠️</div>
+          <h3 style="font-family:'Lora',serif;color:var(--blue);margin:0 0 8px">Delete User?</h3>
+          <p id="user-delete-name" style="color:#475569;margin:0 0 22px;font-size:.9rem"></p>
+          <div style="display:flex;gap:10px;justify-content:center">
+            <button class="bsv" style="background:#b91c1c" onclick="confirmDeleteUser()">🗑 Yes, Delete</button>
+            <button class="bcc" onclick="cancelDeleteUser()">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
     <!-- STAFF / PAYROLL -->
     <div id="view-staff" class="vw">
       <div class="ph"><h1>Staff &amp; Payroll</h1><p>Employee and contractor records — Treasurer access only</p></div>
@@ -2807,7 +2866,155 @@ function gdSaveNewDonor() {
   }
 }
 
-// ── VENDORS CRUD ─────────────────────────────────────────────────
+// ── USERS CRUD ────────────────────────────────────────────────────
+var userDeleteTarget = null;
+
+function getRoleClass(role) {
+  var map = {'Treasurer':'bt','Secretary':'be2','Pastor':'bp2','Trustee Board':'bb','Data Entry':'bb','View Only':'bb'};
+  return map[role] || 'bb';
+}
+
+function loadUsersTable() {
+  var tb = document.getElementById('users-table');
+  tb.querySelectorAll('tr:not(:first-child)').forEach(function(r){ r.remove(); });
+  var keys = Object.keys(USERS);
+  if (keys.length === 0) {
+    var r = tb.insertRow();
+    r.innerHTML = '<td colspan="7" style="text-align:center;color:var(--gray);padding:22px;font-style:italic">No users found. Click + Add User.</td>';
+    return;
+  }
+  keys.forEach(function(k){ renderUserRow(k, USERS[k]); });
+}
+
+function renderUserRow(key, u) {
+  var tb = document.getElementById('users-table');
+  var tr = document.createElement('tr');
+  tr.setAttribute('data-userkey', key);
+  tr.innerHTML = [
+    '<td><strong>' + key + '</strong></td>',
+    '<td>' + (u.name||'—') + '</td>',
+    '<td style="font-size:.8rem">' + (u.email||'—') + '</td>',
+    '<td><span class="br2 ' + getRoleClass(u.role) + '">' + (u.role||'—') + '</span></td>',
+    '<td style="font-size:.78rem;color:#64748b;font-family:monospace">••••••••</td>',
+    '<td><span class="sb2 ' + (u.active==='No'?'si':'sa') + '">' + (u.active||'Yes') + '</span></td>',
+    '<td style="text-align:center;white-space:nowrap"></td>'
+  ].join('');
+  var td = tr.lastElementChild;
+  var eBtn = document.createElement('button'); eBtn.className='bac'; eBtn.style.marginRight='5px'; eBtn.textContent='✏️ Edit';
+  eBtn.onclick = (function(k){ return function(){ editUser(k); }; })(key);
+  var dBtn = document.createElement('button'); dBtn.className='bac'; dBtn.style.cssText='background:#fee2e2;color:#b91c1c'; dBtn.textContent='🗑 Delete';
+  dBtn.onclick = (function(k, row){ return function(){ deleteUser(k, row); }; })(key, tr);
+  td.appendChild(eBtn); td.appendChild(dBtn);
+  tb.appendChild(tr);
+}
+
+function filterUsersTable(q) {
+  document.getElementById('users-table').querySelectorAll('tr:not(:first-child)').forEach(function(r){
+    r.style.display = r.textContent.toLowerCase().includes(q.toLowerCase()) ? '' : 'none';
+  });
+}
+
+function openUserForm(mode) {
+  document.getElementById('usr-mode').value = mode || 'add';
+  document.getElementById('user-form-title').textContent = mode==='edit' ? '✏️ Edit User' : '➕ Add User';
+  document.getElementById('user-save-btn').textContent   = mode==='edit' ? '💾 Update User' : '💾 Save User';
+  document.getElementById('usr-key').readOnly = (mode === 'edit');
+  document.getElementById('usr-key').style.background = mode==='edit' ? '#f1f5f9' : '';
+  document.getElementById('user-form-wrap').style.display = 'block';
+  document.getElementById('user-form-wrap').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function closeUserForm() {
+  document.getElementById('user-form-wrap').style.display = 'none';
+  ['usr-key','usr-name','usr-email','usr-pw'].forEach(function(x){ document.getElementById(x).value=''; });
+  document.getElementById('usr-role').value   = '';
+  document.getElementById('usr-active').value = 'Yes';
+  document.getElementById('usr-mode').value   = 'add';
+  document.getElementById('usr-orig-key').value = '';
+  document.getElementById('usr-key').readOnly = false;
+  document.getElementById('usr-key').style.background = '';
+}
+
+function editUser(key) {
+  var u = USERS[key];
+  if (!u) { showToast('User not found.'); return; }
+  document.getElementById('usr-orig-key').value = key;
+  document.getElementById('usr-key').value      = key;
+  document.getElementById('usr-name').value     = u.name    || '';
+  document.getElementById('usr-email').value    = u.email   || '';
+  document.getElementById('usr-role').value     = u.role    || '';
+  document.getElementById('usr-pw').value       = u.pw      || '';
+  document.getElementById('usr-active').value   = u.active  || 'Yes';
+  openUserForm('edit');
+}
+
+function deleteUser(key, rowEl) {
+  if (key === (CU && CU.key)) { showToast('⚠️ You cannot delete the currently logged-in user.'); return; }
+  userDeleteTarget = {key:key, rowEl:rowEl};
+  document.getElementById('user-delete-name').textContent = 'Delete user "' + key + '"? This cannot be undone.';
+  document.getElementById('user-delete-modal').style.display = 'flex';
+}
+function cancelDeleteUser() { userDeleteTarget=null; document.getElementById('user-delete-modal').style.display='none'; }
+function confirmDeleteUser() {
+  if (!userDeleteTarget) return;
+  var target = userDeleteTarget;
+  document.getElementById('user-delete-modal').style.display = 'none'; userDeleteTarget = null;
+  delete USERS[target.key];
+  saveUsersToStorage();
+  if (target.rowEl) target.rowEl.remove();
+  showToast('🗑 User "' + target.key + '" deleted.');
+}
+
+function saveUser() {
+  var mode   = document.getElementById('usr-mode').value;
+  var origKey= document.getElementById('usr-orig-key').value;
+  var key    = document.getElementById('usr-key').value.trim().toLowerCase().replace(/\s+/g,'');
+  var name   = document.getElementById('usr-name').value.trim();
+  var email  = document.getElementById('usr-email').value.trim();
+  var role   = document.getElementById('usr-role').value;
+  var pw     = document.getElementById('usr-pw').value;
+  var active = document.getElementById('usr-active').value;
+
+  if (!key)  { showToast('Username is required.'); return; }
+  if (!name) { showToast('Full Name is required.'); return; }
+  if (!role) { showToast('Role is required.'); return; }
+  if (!pw)   { showToast('Password is required.'); return; }
+
+  if (mode === 'add' && USERS[key]) { showToast('⚠️ Username "' + key + '" already exists.'); return; }
+
+  // For edit: if username changed, delete old key
+  if (mode === 'edit' && origKey && origKey !== key) {
+    delete USERS[origKey];
+  }
+
+  // Preserve init if editing
+  var init = (USERS[origKey] && USERS[origKey].init) || key.substring(0,2).toUpperCase();
+
+  USERS[key] = {name:name, email:email, role:role, init:init, pw:pw, active:active};
+  saveUsersToStorage();
+
+  // Refresh table
+  loadUsersTable();
+  closeUserForm();
+  showToast('✅ User "' + key + '" saved.');
+}
+
+function saveUsersToStorage() {
+  try { localStorage.setItem('mcmbc_users', JSON.stringify(USERS)); } catch(e) {}
+}
+
+function loadUsersFromStorage() {
+  try {
+    var stored = localStorage.getItem('mcmbc_users');
+    if (stored) {
+      var parsed = JSON.parse(stored);
+      Object.keys(parsed).forEach(function(k){ USERS[k] = parsed[k]; });
+    }
+  } catch(e) {}
+}
+
+// Load stored users on startup
+loadUsersFromStorage();
 var vendorData = [];
 var vendorDeleteTarget = null;
 
