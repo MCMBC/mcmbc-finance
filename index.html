@@ -3329,14 +3329,12 @@ function runReport(type, startDate, endDate) {
         body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Error loading cash flow data: ' + JSON.stringify(cfData) + '</div>';
         return;
       }
-      // Debug: show what came back
-      var inc = cfData.income || {};
-      var totalInc = Object.values ? Object.values(inc).reduce(function(s,v){return s+(v||0);},0) :
-        (inc.sundaySchool||0)+(inc.generalOffering||0)+(inc.tithes||0)+(inc.building||0)+
-        (inc.youth||0)+(inc.youthEducation||0)+(inc.benevolent||0)+(inc.special||0)+(inc.other||0);
-      showToast('✅ Data loaded — Total income: $' + totalInc.toFixed(2) + ' | Payroll: ' + (cfData.payroll||[]).length + ' employees');
       var d = cfData;
       var inc = d.income || {};
+      var totalInc = (inc.sundaySchool||0)+(inc.generalOffering||0)+(inc.tithes||0)+
+                     (inc.building||0)+(inc.youth||0)+(inc.youthEducation||0)+
+                     (inc.benevolent||0)+(inc.special||0)+(inc.other||0);
+      showToast('✅ Report loaded — Income: ' + fmtCurrency(totalInc));
       var now = new Date();
       var dateStr = now.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
       var rangeStr = '';
