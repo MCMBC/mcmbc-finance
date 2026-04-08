@@ -1333,6 +1333,7 @@ nav{flex:1;padding:10px 0;}
         <div class="fcd">
           <h3 id="vendor-form-title" style="margin:0 0 18px;font-family:'Lora',serif;color:var(--blue)">➕ Add Vendor</h3>
           <input type="hidden" id="vnd-id" value="">
+          <input type="hidden" id="vnd-mode" value="add">
           <div class="fr" style="gap:14px;margin-bottom:14px">
             <div class="fg3" style="flex:2"><label>Vendor Name <span style="color:var(--red)">*</span></label><input type="text" id="vnd-name" placeholder="e.g. City Water Authority"></div>
             <div class="fg3"><label>Phone</label><input type="tel" id="vnd-phone" placeholder="555-000-0000"></div>
@@ -1343,7 +1344,7 @@ nav{flex:1;padding:10px 0;}
           </div>
           <div class="fg3" style="margin-bottom:20px"><label>Notes</label><input type="text" id="vnd-notes" placeholder="Any additional notes..."></div>
           <div style="display:flex;gap:10px">
-            <button class="bsv" onclick="saveVendor()">💾 Save Vendor</button>
+            <button class="bsv" onclick="saveVendor()" id="vnd-save-btn">💾 Save Vendor</button>
             <button class="bcc" onclick="closeVendorForm()">✕ Cancel</button>
           </div>
         </div>
@@ -2850,11 +2851,14 @@ function renderVendorRow(v) {
     '<td style="text-align:center;white-space:nowrap"></td>'
   ].join('');
   var td = tr.lastElementChild;
+  var editBtn = document.createElement('button');
+  editBtn.className = 'bac'; editBtn.style.marginRight = '6px'; editBtn.textContent = '✏️ Edit';
+  editBtn.onclick = (function(id){ return function(){ editVendor(id); }; })(v.id);
   var delBtn = document.createElement('button');
   delBtn.className = 'bac'; delBtn.style.cssText = 'background:#fee2e2;color:#b91c1c';
   delBtn.textContent = '🗑 Delete';
   delBtn.onclick = (function(id, name, row){ return function(){ deleteVendorRow(id, name, row); }; })(v.id, v.name, tr);
-  td.appendChild(delBtn);
+  td.appendChild(editBtn); td.appendChild(delBtn);
   tb.appendChild(tr);
 }
 
@@ -2864,7 +2868,10 @@ function filterVendorTable(q) {
   });
 }
 
-function openVendorForm() {
+function openVendorForm(mode) {
+  document.getElementById('vnd-mode').value = mode || 'add';
+  document.getElementById('vendor-form-title').textContent = mode === 'edit' ? '✏️ Edit Vendor' : '➕ Add Vendor';
+  document.getElementById('vnd-save-btn').textContent      = mode === 'edit' ? '💾 Update Vendor' : '💾 Save Vendor';
   document.getElementById('vendor-form-wrap').style.display = 'block';
   document.getElementById('vendor-form-wrap').scrollIntoView({behavior:'smooth', block:'start'});
 }
@@ -2872,7 +2879,22 @@ function openVendorForm() {
 function closeVendorForm() {
   document.getElementById('vendor-form-wrap').style.display = 'none';
   ['vnd-name','vnd-phone','vnd-email','vnd-address','vnd-notes'].forEach(function(x){ document.getElementById(x).value=''; });
-  document.getElementById('vnd-id').value = '';
+  document.getElementById('vnd-id').value   = '';
+  document.getElementById('vnd-mode').value = 'add';
+  document.getElementById('vendor-form-title').textContent = '➕ Add Vendor';
+  document.getElementById('vnd-save-btn').textContent      = '💾 Save Vendor';
+}
+
+function editVendor(id) {
+  var v = vendorData.find(function(x){ return x.id === id; });
+  if (!v) { showToast('Vendor not found — click Refresh.'); return; }
+  document.getElementById('vnd-id').value      = v.id;
+  document.getElementById('vnd-name').value    = v.name    || '';
+  document.getElementById('vnd-phone').value   = v.phone   || '';
+  document.getElementById('vnd-email').value   = v.email   || '';
+  document.getElementById('vnd-address').value = v.address || '';
+  document.getElementById('vnd-notes').value   = v.notes   || '';
+  openVendorForm('edit');
 }
 
 function deleteVendorRow(id, name, rowEl) {
@@ -2903,32 +2925,71 @@ function confirmDeleteVendor() {
 }
 
 function saveVendor() {
+  var mode    = document.getElementById('vnd-mode').value;
+  var id      = document.getElementById('vnd-id').value.trim();
   var name    = document.getElementById('vnd-name').value.trim();
   var phone   = document.getElementById('vnd-phone').value.trim();
   var email   = document.getElementById('vnd-email').value.trim();
   var address = document.getElementById('vnd-address').value.trim();
   var notes   = document.getElementById('vnd-notes').value.trim();
   if (!name) { showToast('Vendor Name is required.'); return; }
+  var url = localStorage.getItem('mcmbc_sheet_url') || '';
+
+  if (mode === 'edit') {
+    // Update in-memory data
+    var v = vendorData.find(function(x){ return x.id === id; });
+    if (v) { v.name=name; v.phone=phone; v.email=email; v.address=address; v.notes=notes; }
+    // Update table row
+    var row = document.querySelector('tr[data-vndid="' + id + '"]');
+    if (row) {
+      row.cells[1].textContent = name;
+      row.cells[2].textContent = phone   || '—';
+      row.cells[3].textContent = email   || '—';
+      row.cells[4].textContent = address || '—';
+      row.cells[5].textContent = notes   || '—';
+    }
+    closeVendorForm();
+    // Refresh Pay Bills payee dropdown
+    loadBillVendors();
+    if (url && url.indexOf('script.google.com') !== -1) {
+      var cb = 'vndUpdCb_' + Date.now();
+      var t = setTimeout(function(){ delete window[cb]; showToast('⚠️ Timed out — redeploy Apps Script.'); }, 25000);
+      window[cb] = function(data){ clearTimeout(t); delete window[cb]; showToast(data&&data.status==='success'?'✅ '+name+' updated in Google Sheets.':'⚠️ Sync failed.'); };
+      var s = document.createElement('script');
+      s.src = url + '?action=updateVendor&callback=' + cb
+        + '&vendorId='   + encodeURIComponent(id)
+        + '&vendorName=' + encodeURIComponent(name)
+        + '&phone='      + encodeURIComponent(phone)
+        + '&email='      + encodeURIComponent(email)
+        + '&address='    + encodeURIComponent(address)
+        + '&notes='      + encodeURIComponent(notes);
+      document.head.appendChild(s);
+    } else { showToast('✅ Updated locally.'); }
+    return;
+  }
+
+  // ADD mode
   var tb  = document.getElementById('vendor-table');
   var newId = 'VND-' + String(tb.querySelectorAll('tr').length).padStart(3,'0');
-  var v = {id:newId, name:name, phone:phone, email:email, address:address, notes:notes};
-  vendorData.push(v); renderVendorRow(v); closeVendorForm();
-  var url = localStorage.getItem('mcmbc_sheet_url') || '';
+  var nv = {id:newId, name:name, phone:phone, email:email, address:address, notes:notes};
+  vendorData.push(nv); renderVendorRow(nv); closeVendorForm();
+  loadBillVendors();
   if (url && url.indexOf('script.google.com') !== -1) {
-    var cb = 'vndSaveCb_' + Date.now();
-    var t = setTimeout(function(){ delete window[cb]; showToast('⚠️ Timed out — redeploy Apps Script.'); }, 25000);
-    window[cb] = function(data) { clearTimeout(t); delete window[cb]; showToast(data && data.status === 'success' ? '✅ ' + name + ' saved to Google Sheets.' : '⚠️ Sheets sync failed.'); };
-    var s = document.createElement('script');
-    s.src = url + '?action=addVendor&callback=' + cb
+    var cb2 = 'vndSaveCb_' + Date.now();
+    var t2 = setTimeout(function(){ delete window[cb2]; showToast('⚠️ Timed out — redeploy Apps Script.'); }, 25000);
+    window[cb2] = function(data){ clearTimeout(t2); delete window[cb2]; showToast(data&&data.status==='success'?'✅ '+name+' saved to Google Sheets.':'⚠️ Sheets sync failed.'); };
+    var s2 = document.createElement('script');
+    s2.src = url + '?action=addVendor&callback=' + cb2
       + '&vendorId='   + encodeURIComponent(newId)
       + '&vendorName=' + encodeURIComponent(name)
       + '&phone='      + encodeURIComponent(phone)
       + '&email='      + encodeURIComponent(email)
       + '&address='    + encodeURIComponent(address)
       + '&notes='      + encodeURIComponent(notes);
-    document.head.appendChild(s);
+    document.head.appendChild(s2);
   } else { showToast('✅ Vendor added locally. Connect Google Sheets to sync.'); }
 }
+
 
 // ── PAY BILLS DATA ENTRY ─────────────────────────────────────────
 var pbEntries = [];
