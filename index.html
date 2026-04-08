@@ -3370,8 +3370,7 @@ function runReport(type, startDate, endDate) {
       var yEduFund  = funds.find(function(f){ return f.name==='Youth Education Fund'; })   || {income:0, expenses:0, balance:0};
 
       var rpt = '';
-
-      // INCOMING
+      try {
       rpt += '<table style="width:100%;border-collapse:collapse;margin-bottom:10px"><tbody>';
       rpt += sectionHead('Incoming');
       rpt += dot('Sunday School.', inc.sundaySchool||0);
@@ -3459,6 +3458,13 @@ function runReport(type, startDate, endDate) {
 
       rpt += '</div>';
       body.innerHTML = rpt;
+      } catch(renderErr) {
+        body.innerHTML = '<div style="background:#fee2e2;padding:16px;border-radius:8px;color:#b91c1c;font-family:monospace;font-size:.82rem">' +
+          '<strong>⚠️ Report render error:</strong><br>' + renderErr.message +
+          '<br><br><strong>Stack:</strong><br>' + (renderErr.stack||'').replace(/\n/g,'<br>') +
+          '</div>';
+        console.error('Cash flow render error:', renderErr);
+      }
     };
     var s = document.createElement('script');
     s.onerror = function(){ clearTimeout(t); delete window[cb]; clearInterval(loadingInterval); body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Could not reach Google Sheets.</div>'; };
