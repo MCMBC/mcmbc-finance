@@ -3212,6 +3212,33 @@ function saveBillsToSheets() {
 
 var SYSTEM_VERSION = "v2026.04.08-1611";
 
+// ── REPORT HELPER FUNCTIONS ───────────────────────────────────────
+function sectionHead(label) {
+  return '<tr><td colspan="4" style="padding:8px 0 2px;font-size:.82rem;font-weight:700;text-decoration:underline">' + label + '</td></tr>';
+}
+function dot(label, val) {
+  return '<tr>' +
+    '<td style="padding:2px 0;font-size:.82rem;width:180px">' + label + '</td>' +
+    '<td style="border-bottom:1px dotted #94a3b8;"></td>' +
+    '<td style="padding:2px 0 2px 10px;font-size:.82rem;text-align:right;white-space:nowrap;min-width:70px">' + fmtCurrency(val) + '</td>' +
+    '</tr>';
+}
+function dotCheck(label, checkNo, val) {
+  return '<tr>' +
+    '<td style="padding:2px 0;font-size:.82rem;width:160px">' + label + '</td>' +
+    '<td style="padding:2px 0 2px 6px;font-size:.78rem;color:#64748b;width:80px">' + (checkNo||'') + '</td>' +
+    '<td style="border-bottom:1px dotted #94a3b8;"></td>' +
+    '<td style="padding:2px 0 2px 10px;font-size:.82rem;text-align:right;white-space:nowrap;min-width:70px">' + fmtCurrency(val) + '</td>' +
+    '</tr>';
+}
+function totalRow(label, val, bold) {
+  var w = bold ? '700' : '600';
+  return '<tr>' +
+    '<td colspan="3" style="padding:4px 0;font-size:.82rem;font-weight:' + w + '">' + label + '</td>' +
+    '<td style="padding:4px 0;font-size:.82rem;text-align:right;font-weight:' + w + ';border-top:1px solid #334155;white-space:nowrap">' + fmtCurrency(val) + '</td>' +
+    '</tr>';
+}
+
 // ── CASH FLOW DATE PICKER ─────────────────────────────────────────
 function showCashFlowDatePicker() {
   // Default to this week
