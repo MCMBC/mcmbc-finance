@@ -3264,13 +3264,14 @@ function runReport(type, startDate, endDate) {
   var title = document.getElementById('rpt-output-title');
   var body  = document.getElementById('rpt-output-body');
   panel.style.display = 'block';
+  body.innerHTML = '';  // clear immediately so panel is visible
   panel.scrollIntoView({behavior:'smooth', block:'start'});
 
   var titles = {cashflow:'💵 Weekly Cash Flow Report', weekly:'📅 Weekly Financial Report',
                 contributions:'🙏 Contributions Statement', benevolent:'❤️ Benevolent Report'};
   title.textContent = titles[type] || 'Report';
 
-  if (!data) {
+  if (!data && type !== 'cashflow') {
     body.innerHTML = '<div style="background:#fef3c7;border-left:4px solid #ca8a04;padding:14px 16px;border-radius:8px;color:#854d0e;font-size:.85rem">⚠️ No data loaded — click <strong>↻ Refresh</strong> on the dashboard first.</div>';
     return;
   }
@@ -3324,7 +3325,16 @@ function runReport(type, startDate, endDate) {
       clearTimeout(t); delete window[cb];
       clearInterval(loadingInterval);
       if (barEl) barEl.style.width = '100%';
-      if (!cfData || cfData.status !== 'success') { body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Error loading cash flow data.</div>'; return; }
+      if (!cfData || cfData.status !== 'success') {
+        body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Error loading cash flow data: ' + JSON.stringify(cfData) + '</div>';
+        return;
+      }
+      // Debug: show what came back
+      var inc = cfData.income || {};
+      var totalInc = Object.values ? Object.values(inc).reduce(function(s,v){return s+(v||0);},0) :
+        (inc.sundaySchool||0)+(inc.generalOffering||0)+(inc.tithes||0)+(inc.building||0)+
+        (inc.youth||0)+(inc.youthEducation||0)+(inc.benevolent||0)+(inc.special||0)+(inc.other||0);
+      showToast('✅ Data loaded — Total income: $' + totalInc.toFixed(2) + ' | Payroll: ' + (cfData.payroll||[]).length + ' employees');
       var d = cfData;
       var inc = d.income || {};
       var now = new Date();
