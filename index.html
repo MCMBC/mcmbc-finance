@@ -237,7 +237,7 @@ nav{flex:1;padding:10px 0;}
 
         <div class="rpt-card" onclick="runReport('cashflow')" style="background:#fff;border:2px solid #e2e8f0;border-radius:14px;padding:28px 24px;cursor:pointer;transition:all .2s;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.05)" onmouseover="this.style.borderColor='var(--blue)';this.style.boxShadow='0 6px 24px rgba(15,39,68,.12)'" onmouseout="this.style.borderColor='#e2e8f0';this.style.boxShadow='0 2px 8px rgba(0,0,0,.05)'">
           <div style="font-size:2.4rem;margin-bottom:12px">💵</div>
-          <div style="font-family:'Lora',serif;font-size:1.05rem;font-weight:700;color:var(--blue);margin-bottom:6px">Cash Flow Report</div>
+          <div style="font-family:'Lora',serif;font-size:1.05rem;font-weight:700;color:var(--blue);margin-bottom:6px">Weekly Cash Flow Report</div>
           <div style="font-size:.78rem;color:#64748b">Income vs expenses by fund and period</div>
         </div>
 
@@ -3190,7 +3190,7 @@ function runReport(type) {
   panel.style.display = 'block';
   panel.scrollIntoView({behavior:'smooth', block:'start'});
 
-  var titles = {cashflow:'💵 Cash Flow Report', weekly:'📅 Weekly Financial Report',
+  var titles = {cashflow:'💵 Weekly Cash Flow Report', weekly:'📅 Weekly Financial Report',
                 contributions:'🙏 Contributions Statement', benevolent:'❤️ Benevolent Report'};
   title.textContent = titles[type] || 'Report';
 
