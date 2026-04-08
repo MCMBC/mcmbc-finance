@@ -3382,6 +3382,8 @@ function runReport(type, startDate, endDate) {
       var grandIncome = incIncoming + incOther;
 
       // Pre-calculate expense totals
+      var payrollW2   = d.payrollW2   || d.payroll || [];
+      var payroll1099 = d.payroll1099 || [];
       var payrollTotal   = (d.payroll||[]).reduce(function(s,e){ return s+(e.net||0); }, 0);
       var utilTotal      = (d.utilityBills||[]).reduce(function(s,b){ return s+(b.amount||0); }, 0);
       var otherExpTotal  = (d.otherExpenses||[]).reduce(function(s,e){ return s+(e.amount||0); }, 0);
@@ -3423,10 +3425,26 @@ function runReport(type, startDate, endDate) {
       rpt += '<div style="text-align:center;font-weight:700;font-size:.85rem;margin:12px 0 8px;text-decoration:underline">Expenditures/Outgoing</div>';
       rpt += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:10px">';
 
-      // Left — Salaries
+      // Left — Salaries (W-2 then 1099)
       rpt += '<div><table style="width:100%;border-collapse:collapse"><tbody>';
       rpt += sectionHead('Salaries');
-      (d.payroll||[]).forEach(function(e){ rpt += dotCheck(e.name, e.checkNo, e.net||0); });
+
+      // W-2 employees
+      if (payrollW2.length > 0) {
+        rpt += '<tr><td colspan="4" style="padding:3px 0 1px;font-size:.75rem;color:#64748b;font-style:italic">W-2 Employees</td></tr>';
+        var w2Total = 0;
+        payrollW2.forEach(function(e){ w2Total += e.net||0; rpt += dotCheck(e.name, e.checkNo, e.net||0); });
+        rpt += totalRow('W-2 Total', w2Total, false);
+      }
+
+      // 1099 contractors
+      if (payroll1099.length > 0) {
+        rpt += '<tr><td colspan="4" style="padding:6px 0 1px;font-size:.75rem;color:#64748b;font-style:italic">1099 Contractors</td></tr>';
+        var c1099Total = 0;
+        payroll1099.forEach(function(e){ c1099Total += e.net||0; rpt += dotCheck(e.name, e.checkNo, e.net||0); });
+        rpt += totalRow('1099 Total', c1099Total, false);
+      }
+
       if ((d.payroll||[]).length === 0) rpt += dot('—', 0);
       rpt += totalRow('Totals', payrollTotal, false);
       rpt += '</tbody></table></div>';
