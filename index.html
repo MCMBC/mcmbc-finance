@@ -3382,7 +3382,7 @@ function runReport(type, startDate, endDate) {
       var grandIncome = incIncoming + incOther;
 
       // Pre-calculate expense totals
-      var payrollTotal   = (d.payroll||[]).reduce(function(s,e){ return s+(e.net||0); }, 0);
+      var payrollTotal   = (d.payroll||[]).reduce(function(s,e){ return s+(e.gross||e.net||0); }, 0);
       var utilTotal      = (d.utilityBills||[]).reduce(function(s,b){ return s+(b.amount||0); }, 0);
       var otherExpTotal  = (d.otherExpenses||[]).reduce(function(s,e){ return s+(e.amount||0); }, 0);
       var otherBillTotal = (d.otherBills||[]).reduce(function(s,b){ return s+(b.amount||0); }, 0);
@@ -3426,7 +3426,7 @@ function runReport(type, startDate, endDate) {
       // Left — Salaries
       rpt += '<div><table style="width:100%;border-collapse:collapse"><tbody>';
       rpt += sectionHead('Salaries');
-      (d.payroll||[]).forEach(function(e){ rpt += dotCheck(e.name, e.checkNo, e.net); });
+      (d.payroll||[]).forEach(function(e){ rpt += dotCheck(e.name, e.checkNo, e.gross||e.net||0); });
       if ((d.payroll||[]).length === 0) rpt += dot('—', 0);
       rpt += totalRow('Totals', payrollTotal, false);
       rpt += '</tbody></table></div>';
