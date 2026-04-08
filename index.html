@@ -235,7 +235,7 @@ nav{flex:1;padding:10px 0;}
 
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:18px;margin-top:8px">
 
-        <div class="rpt-card" onclick="runReport('cashflow')" style="background:#fff;border:2px solid #e2e8f0;border-radius:14px;padding:28px 24px;cursor:pointer;transition:all .2s;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.05)" onmouseover="this.style.borderColor='var(--blue)';this.style.boxShadow='0 6px 24px rgba(15,39,68,.12)'" onmouseout="this.style.borderColor='#e2e8f0';this.style.boxShadow='0 2px 8px rgba(0,0,0,.05)'">
+        <div class="rpt-card" onclick="showCashFlowDatePicker()" style="background:#fff;border:2px solid #e2e8f0;border-radius:14px;padding:28px 24px;cursor:pointer;transition:all .2s;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.05)" onmouseover="this.style.borderColor='var(--blue)';this.style.boxShadow='0 6px 24px rgba(15,39,68,.12)'" onmouseout="this.style.borderColor='#e2e8f0';this.style.boxShadow='0 2px 8px rgba(0,0,0,.05)'">
           <div style="font-size:2.4rem;margin-bottom:12px">💵</div>
           <div style="font-family:'Lora',serif;font-size:1.05rem;font-weight:700;color:var(--blue);margin-bottom:6px">Weekly Cash Flow Report</div>
           <div style="font-size:.78rem;color:#64748b">Income vs expenses by fund and period</div>
@@ -259,6 +259,33 @@ nav{flex:1;padding:10px 0;}
           <div style="font-size:.78rem;color:#64748b">Benevolent fund disbursements and balance</div>
         </div>
 
+      </div>
+
+      <!-- Date Range Picker (shown for Weekly Cash Flow) -->
+      <div id="rpt-date-picker" style="display:none;margin-top:24px;background:#f0f9ff;border:2px solid #bae6fd;border-radius:12px;padding:22px 24px">
+        <h3 style="margin:0 0 16px;font-family:'Lora',serif;color:var(--blue);font-size:1rem">💵 Weekly Cash Flow Report — Select Date Range</h3>
+        <div style="display:flex;gap:20px;align-items:flex-end;flex-wrap:wrap">
+          <div style="display:flex;flex-direction:column;gap:5px">
+            <label style="font-size:.78rem;font-weight:600;color:#475569;text-transform:uppercase;letter-spacing:.04em">Start Date</label>
+            <input type="date" id="cf-start-date" style="padding:9px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit">
+          </div>
+          <div style="display:flex;flex-direction:column;gap:5px">
+            <label style="font-size:.78rem;font-weight:600;color:#475569;text-transform:uppercase;letter-spacing:.04em">End Date</label>
+            <input type="date" id="cf-end-date" style="padding:9px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit">
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="bsv" onclick="generateCashFlowReport()" style="padding:9px 22px;font-size:.88rem">📊 Generate Report</button>
+            <button class="bcc" onclick="closeDatePicker()" style="padding:9px 16px;font-size:.88rem">✕ Cancel</button>
+          </div>
+        </div>
+        <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+          <span style="font-size:.75rem;color:#64748b;font-weight:600">Quick select:</span>
+          <button onclick="setDateRange('thisweek')" style="background:none;border:1px solid #cbd5e1;border-radius:6px;padding:3px 10px;font-size:.75rem;cursor:pointer;font-family:inherit;color:#334155" onmouseover="this.style.background='#e0f2fe'" onmouseout="this.style.background='none'">This Week</button>
+          <button onclick="setDateRange('lastweek')" style="background:none;border:1px solid #cbd5e1;border-radius:6px;padding:3px 10px;font-size:.75rem;cursor:pointer;font-family:inherit;color:#334155" onmouseover="this.style.background='#e0f2fe'" onmouseout="this.style.background='none'">Last Week</button>
+          <button onclick="setDateRange('thismonth')" style="background:none;border:1px solid #cbd5e1;border-radius:6px;padding:3px 10px;font-size:.75rem;cursor:pointer;font-family:inherit;color:#334155" onmouseover="this.style.background='#e0f2fe'" onmouseout="this.style.background='none'">This Month</button>
+          <button onclick="setDateRange('lastmonth')" style="background:none;border:1px solid #cbd5e1;border-radius:6px;padding:3px 10px;font-size:.75rem;cursor:pointer;font-family:inherit;color:#334155" onmouseover="this.style.background='#e0f2fe'" onmouseout="this.style.background='none'">Last Month</button>
+          <button onclick="setDateRange('ytd')" style="background:none;border:1px solid #cbd5e1;border-radius:6px;padding:3px 10px;font-size:.75rem;cursor:pointer;font-family:inherit;color:#334155" onmouseover="this.style.background='#e0f2fe'" onmouseout="this.style.background='none'">Year to Date</button>
+        </div>
       </div>
 
       <!-- Report Output Panel -->
@@ -3181,8 +3208,56 @@ function saveBillsToSheets() {
   saveNext(0);
 }
 
+// ── CASH FLOW DATE PICKER ─────────────────────────────────────────
+function showCashFlowDatePicker() {
+  // Default to this week
+  setDateRange('thisweek');
+  document.getElementById('rpt-date-picker').style.display = 'block';
+  document.getElementById('rpt-output').style.display = 'none';
+  document.getElementById('rpt-date-picker').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function closeDatePicker() {
+  document.getElementById('rpt-date-picker').style.display = 'none';
+}
+
+function setDateRange(preset) {
+  var now  = new Date();
+  var start, end;
+  if (preset === 'thisweek') {
+    var day = now.getDay(); // 0=Sun
+    start = new Date(now); start.setDate(now.getDate() - day);
+    end   = new Date(start); end.setDate(start.getDate() + 6);
+  } else if (preset === 'lastweek') {
+    var day2 = now.getDay();
+    end   = new Date(now); end.setDate(now.getDate() - day2 - 1);
+    start = new Date(end); start.setDate(end.getDate() - 6);
+  } else if (preset === 'thismonth') {
+    start = new Date(now.getFullYear(), now.getMonth(), 1);
+    end   = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+  } else if (preset === 'lastmonth') {
+    start = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    end   = new Date(now.getFullYear(), now.getMonth(), 0);
+  } else if (preset === 'ytd') {
+    start = new Date(now.getFullYear(), 0, 1);
+    end   = now;
+  }
+  function fmt(d) { return d.toISOString().split('T')[0]; }
+  document.getElementById('cf-start-date').value = fmt(start);
+  document.getElementById('cf-end-date').value   = fmt(end);
+}
+
+function generateCashFlowReport() {
+  var start = document.getElementById('cf-start-date').value;
+  var end   = document.getElementById('cf-end-date').value;
+  if (!start || !end) { showToast('Please select both a start and end date.'); return; }
+  if (start > end)    { showToast('Start date must be before end date.');       return; }
+  closeDatePicker();
+  runReport('cashflow', start, end);
+}
+
 // ── FINANCIAL REPORTS ─────────────────────────────────────────────
-function runReport(type) {
+function runReport(type, startDate, endDate) {
   var data = window._dashData || null;
   var panel = document.getElementById('rpt-output');
   var title = document.getElementById('rpt-output-title');
@@ -3220,6 +3295,13 @@ function runReport(type) {
       var inc = d.income || {};
       var now = new Date();
       var dateStr = now.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+      var rangeStr = '';
+      if (startDate && endDate) {
+        var s1 = new Date(startDate + 'T00:00:00');
+        var s2 = new Date(endDate   + 'T00:00:00');
+        rangeStr = s1.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) +
+                   ' — ' + s2.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+      }
 
       // Income totals
       var incIncoming = (inc.sundaySchool||0) + (inc.generalOffering||0) + (inc.tithes||0);
@@ -3293,7 +3375,7 @@ function runReport(type) {
       rpt += '<div style="font-size:.85rem">10314 Canal Rd</div>';
       rpt += '<div style="font-size:.85rem">Gulfport, Ms. 39503</div>';
       rpt += '</div>';
-      rpt += '<div style="font-size:.82rem;text-align:right">Date:<br><strong>' + dateStr + '</strong></div>';
+      rpt += '<div style="font-size:.82rem;text-align:right">Date:<br><strong>' + dateStr + '</strong>' + (rangeStr ? '<br><span style="color:#64748b;font-size:.75rem">Period: ' + rangeStr + '</span>' : '') + '</div>';
       rpt += '</div>';
       rpt += '<div style="text-align:center;font-weight:700;font-size:.9rem;margin:14px 0 16px;text-decoration:underline">Weekly Cash Flow Statement</div>';
 
@@ -3394,7 +3476,9 @@ function runReport(type) {
     };
     var s = document.createElement('script');
     s.onerror = function(){ clearTimeout(t); delete window[cb]; body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Could not reach Google Sheets.</div>'; };
-    s.src = url + '?action=getCashFlowData&callback=' + cb;
+    s.src = url + '?action=getCashFlowData&callback=' + cb
+          + (startDate ? '&startDate=' + encodeURIComponent(startDate) : '')
+          + (endDate   ? '&endDate='   + encodeURIComponent(endDate)   : '');
     document.head.appendChild(s);
   } else if (type === 'weekly') {
     var chart = data.chart || [];
