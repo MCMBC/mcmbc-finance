@@ -4259,10 +4259,7 @@ function runReport(type, startDate, endDate) {
       '<div style="text-align:center;padding:48px 24px">',
       '  <div style="display:inline-block;width:52px;height:52px;border:5px solid #e2e8f0;border-top-color:var(--blue);border-radius:50%;animation:cfSpin 0.9s linear infinite;margin-bottom:20px"></div>',
       '  <div style="font-family:\'Lora\',serif;font-size:1.1rem;font-weight:700;color:var(--blue);margin-bottom:8px">Generating Weekly Cash Flow Report...</div>',
-      '  <div id="cf-loading-msg" style="font-size:.82rem;color:#64748b">Connecting to Google Sheets</div>',
-      '  <div style="margin-top:16px;height:4px;background:#e2e8f0;border-radius:4px;overflow:hidden;width:280px;display:inline-block">',
-      '    <div id="cf-progress-bar" style="height:100%;background:var(--blue);border-radius:4px;width:0%;transition:width .4s ease"></div>',
-      '  </div>',
+      '  <div id="cf-loading-msg" style="font-size:.82rem;color:#64748b">Loading data from Google Sheets...</div>',
       '</div>',
       '<style>@keyframes cfSpin{to{transform:rotate(360deg)}}</style>'
     ].join('');
@@ -4278,17 +4275,14 @@ function runReport(type, startDate, endDate) {
       'Building report...'
     ];
     var msgEl = document.getElementById('cf-loading-msg');
-    var barEl = document.getElementById('cf-progress-bar');
     var msgIdx = 0;
     var loadingInterval = setInterval(function() {
-      if (msgIdx < loadingMsgs.length) {
-        if (msgEl) msgEl.textContent = loadingMsgs[msgIdx];
-        if (barEl) barEl.style.width = Math.round(((msgIdx + 1) / loadingMsgs.length) * 90) + '%';
-        msgIdx++;
-      }
-    }, 2500);
+      if (msgEl) msgEl.textContent = loadingMsgs[msgIdx % loadingMsgs.length];
+      msgIdx++;
+    }, 2000);
     var url = localStorage.getItem('mcmbc_sheet_url') || '';
     if (!url || url.indexOf('script.google.com') === -1) {
+      clearInterval(loadingInterval);
       body.innerHTML = '<div style="background:#fef3c7;border-left:4px solid #ca8a04;padding:14px 16px;border-radius:8px;color:#854d0e">⚠️ No Google Sheets URL saved — connect on the Dashboard first.</div>';
       return;
     }
@@ -4297,7 +4291,6 @@ function runReport(type, startDate, endDate) {
     window[cb] = function(cfData) {
       clearTimeout(t); delete window[cb];
       clearInterval(loadingInterval);
-      if (barEl) barEl.style.width = '100%';
       if (!cfData || cfData.status !== 'success') {
         body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Error loading cash flow data: ' + JSON.stringify(cfData) + '</div>';
         return;
