@@ -243,6 +243,12 @@ nav{flex:1;padding:10px 0;}
           <div style="font-size:.78rem;color:#64748b">Income vs expenses by fund and period</div>
         </div>
 
+        <div class="rpt-card" onclick="showMonthlyCFPicker()" style="background:#fff;border:2px solid #e2e8f0;border-radius:14px;padding:28px 24px;cursor:pointer;transition:all .2s;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.05)" onmouseover="this.style.borderColor='var(--blue)';this.style.boxShadow='0 6px 24px rgba(15,39,68,.12)'" onmouseout="this.style.borderColor='#e2e8f0';this.style.boxShadow='0 2px 8px rgba(0,0,0,.05)'">
+          <div style="font-size:2.4rem;margin-bottom:12px">📆</div>
+          <div style="font-family:'Lora',serif;font-size:1.05rem;font-weight:700;color:var(--blue);margin-bottom:6px">Monthly Cash Flow Report</div>
+          <div style="font-size:.78rem;color:#64748b">Sunday-by-Sunday columns for the month</div>
+        </div>
+
         <div class="rpt-card" onclick="runReport('weekly')" style="background:#fff;border:2px solid #e2e8f0;border-radius:14px;padding:28px 24px;cursor:pointer;transition:all .2s;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.05)" onmouseover="this.style.borderColor='var(--blue)';this.style.boxShadow='0 6px 24px rgba(15,39,68,.12)'" onmouseout="this.style.borderColor='#e2e8f0';this.style.boxShadow='0 2px 8px rgba(0,0,0,.05)'">
           <div style="font-size:2.4rem;margin-bottom:12px">📅</div>
           <div style="font-family:'Lora',serif;font-size:1.05rem;font-weight:700;color:var(--blue);margin-bottom:6px">Weekly Financial Report</div>
@@ -287,6 +293,21 @@ nav{flex:1;padding:10px 0;}
           <button onclick="setDateRange('thismonth')" style="background:none;border:1px solid #cbd5e1;border-radius:6px;padding:3px 10px;font-size:.75rem;cursor:pointer;font-family:inherit;color:#334155" onmouseover="this.style.background='#e0f2fe'" onmouseout="this.style.background='none'">This Month</button>
           <button onclick="setDateRange('lastmonth')" style="background:none;border:1px solid #cbd5e1;border-radius:6px;padding:3px 10px;font-size:.75rem;cursor:pointer;font-family:inherit;color:#334155" onmouseover="this.style.background='#e0f2fe'" onmouseout="this.style.background='none'">Last Month</button>
           <button onclick="setDateRange('ytd')" style="background:none;border:1px solid #cbd5e1;border-radius:6px;padding:3px 10px;font-size:.75rem;cursor:pointer;font-family:inherit;color:#334155" onmouseover="this.style.background='#e0f2fe'" onmouseout="this.style.background='none'">Year to Date</button>
+        </div>
+      </div>
+
+      <!-- Monthly Cash Flow Month Picker -->
+      <div id="rpt-month-picker" style="display:none;margin-top:24px;background:#f0fdf4;border:2px solid #bbf7d0;border-radius:12px;padding:22px 24px">
+        <h3 style="margin:0 0 16px;font-family:'Lora',serif;color:var(--blue);font-size:1rem">📆 Monthly Cash Flow Report — Select Month</h3>
+        <div style="display:flex;gap:20px;align-items:flex-end;flex-wrap:wrap">
+          <div style="display:flex;flex-direction:column;gap:5px">
+            <label style="font-size:.78rem;font-weight:600;color:#475569;text-transform:uppercase;letter-spacing:.04em">Month</label>
+            <input type="month" id="mcf-month" style="padding:9px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit">
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="bsv" onclick="generateMonthlyCFReport()" style="padding:9px 22px;font-size:.88rem">📊 Generate Report</button>
+            <button class="bcc" onclick="closeMonthPicker()" style="padding:9px 16px;font-size:.88rem">✕ Cancel</button>
+          </div>
         </div>
       </div>
 
@@ -728,10 +749,10 @@ nav{flex:1;padding:10px 0;}
             <label>Pay Period</label>
             <select id="pr-period">
               <option value="">Select pay period...</option>
-              <option>Weekly</option>
+              <option selected>Weekly</option>
+              <option>Monthly</option>
               <option>Bi-Weekly</option>
               <option>Semi-Monthly</option>
-              <option selected>Monthly</option>
             </select>
           </div>
         </div>
@@ -3900,6 +3921,210 @@ function saveBillsToSheets() {
 }
 
 var SYSTEM_VERSION = "v2026.04.08-1611";
+
+// ── MONTHLY CASH FLOW REPORT ─────────────────────────────────────
+function showMonthlyCFPicker() {
+  // Default to current month
+  var now = new Date();
+  document.getElementById('mcf-month').value = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0');
+  document.getElementById('rpt-month-picker').style.display = 'block';
+  document.getElementById('rpt-date-picker').style.display  = 'none';
+  document.getElementById('rpt-output').style.display       = 'none';
+  document.getElementById('rpt-month-picker').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function closeMonthPicker() {
+  document.getElementById('rpt-month-picker').style.display = 'none';
+}
+
+function generateMonthlyCFReport() {
+  var month = document.getElementById('mcf-month').value;
+  if (!month) { showToast('Please select a month.'); return; }
+  closeMonthPicker();
+
+  var panel = document.getElementById('rpt-output');
+  var title = document.getElementById('rpt-output-title');
+  var body  = document.getElementById('rpt-output-body');
+  var parts = month.split('-');
+  var monthName = new Date(parseInt(parts[0]), parseInt(parts[1])-1, 1)
+    .toLocaleDateString('en-US',{month:'long', year:'numeric'});
+
+  title.textContent = '📆 Monthly Cash Flow Report — ' + monthName;
+  panel.style.display = 'block';
+  body.innerHTML = '';
+  panel.scrollIntoView({behavior:'smooth', block:'start'});
+
+  var url = localStorage.getItem('mcmbc_sheet_url') || '';
+  if (!url || url.indexOf('script.google.com') === -1) {
+    body.innerHTML = '<div style="background:#fef3c7;border-left:4px solid #ca8a04;padding:14px 16px;border-radius:8px;color:#854d0e">⚠️ No Google Sheets URL saved — connect on the Dashboard first.</div>';
+    return;
+  }
+
+  // Loading spinner
+  body.innerHTML = [
+    '<div style="text-align:center;padding:48px 24px">',
+    '<div style="display:inline-block;width:52px;height:52px;border:5px solid #e2e8f0;border-top-color:var(--blue);border-radius:50%;animation:cfSpin 0.9s linear infinite;margin-bottom:20px"></div>',
+    '<div style="font-family:\'Lora\',serif;font-size:1.1rem;font-weight:700;color:var(--blue);margin-bottom:8px">Generating Monthly Cash Flow Report...</div>',
+    '<div id="mcf-loading-msg" style="font-size:.82rem;color:#64748b">Loading data from Google Sheets...</div>',
+    '</div>'
+  ].join('');
+
+  var cb = 'mcfCb_' + Date.now();
+  var t = setTimeout(function(){
+    delete window[cb];
+    body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Timed out. Try again.</div>';
+  }, 30000);
+
+  window[cb] = function(data) {
+    clearTimeout(t); delete window[cb];
+    if (!data || data.status !== 'success') {
+      body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Error: ' + JSON.stringify(data) + '</div>';
+      return;
+    }
+    try { renderMonthlyCFReport(data, monthName, body); }
+    catch(e) { body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c;font-size:.82rem"><strong>Render error:</strong><br>' + e.message + '</div>'; }
+  };
+
+  var s = document.createElement('script');
+  s.onerror = function(){ clearTimeout(t); delete window[cb]; body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Could not reach Google Sheets.</div>'; };
+  s.src = url + '?action=getMonthlyCashFlowData&callback=' + cb + '&month=' + encodeURIComponent(month);
+  document.head.appendChild(s);
+  setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); }, 32000);
+}
+
+function renderMonthlyCFReport(data, monthName, body) {
+  var cols   = data.sundays || [];   // Sunday date labels e.g. ['Apr 2','Apr 9','Apr 16','Apr 23','Apr 30']
+  var nCols  = cols.length;
+  var inflows  = data.inflows  || {};
+  var payroll  = data.payroll  || {};
+  var expenses = data.expenses || {};
+
+  function sumRow(arr) { return arr.reduce(function(s,v){ return s+(v||0); }, 0); }
+  function fc(v) { return v > 0 ? fmtCurrency(v) : '$0.00'; }
+
+  // Preferred inflow row order
+  var inflowOrder = [
+    'MCMBC- Benevolent','MCMBC- Building','MCMBC- Church Anniversary',
+    'MCMBC- Gen. Fund Offering','MCMBC- Other','MCMBC- Sunday School',
+    'MCMBC- Tithes','MCMBC- Youth','MCMBC- Youth Education'
+  ];
+  // Add any extra inflow labels not in preferred order
+  Object.keys(inflows).forEach(function(k){ if(inflowOrder.indexOf(k)===-1) inflowOrder.push(k); });
+  // Filter to only those with data
+  inflowOrder = inflowOrder.filter(function(k){ return inflows[k] && sumRow(inflows[k]) > 0; });
+
+  // CSS
+  var css = [
+    'font-family:Arial,sans-serif;font-size:.78rem;',
+    'table{width:100%;border-collapse:collapse;margin-bottom:16px}',
+    'th{background:#0F2744;color:#fff;padding:5px 7px;text-align:right;font-size:.72rem;white-space:nowrap}',
+    'th:first-child{text-align:left}',
+    'td{padding:4px 7px;border-bottom:1px solid #f1f5f9;text-align:right;white-space:nowrap}',
+    'td:first-child{text-align:left}',
+    '.sect{background:#e8eef7;font-weight:700;color:#0F2744}',
+    '.sub{padding-left:18px;color:#334155}',
+    '.tot{font-weight:700;border-top:2px solid #334155;background:#f0fdf4}',
+    '.gtot{font-weight:700;background:#dcfce7;color:#15803d}',
+    '.etot{font-weight:700;border-top:2px solid #334155;background:#fff7ed;color:#b91c1c}'
+  ].join('');
+
+  function thRow() {
+    var h = '<tr><th style="width:200px">Description</th>';
+    cols.forEach(function(c){ h += '<th>' + c + '</th>'; });
+    h += '<th style="background:#1e3a5f">Online/Tithes</th><th style="background:#1e3a5f">Totals</th></tr>';
+    return h;
+  }
+
+  function dataRow(label, rowData, cls, indent) {
+    var total = sumRow(rowData);
+    var tr = '<tr' + (cls?' class="'+cls+'"':'') + '><td' + (indent?' class="sub"':'') + '>' + label + '</td>';
+    rowData.forEach(function(v){ tr += '<td>' + fc(v) + '</td>'; });
+    tr += '<td>$0.00</td><td>' + fc(total) + '</td></tr>';
+    return tr;
+  }
+
+  function totalRow(label, rows, cls) {
+    var totals = []; for(var i=0;i<nCols;i++) totals.push(0);
+    rows.forEach(function(r){ r.forEach(function(v,i){ totals[i]+=(v||0); }); });
+    var grand = sumRow(totals);
+    var tr = '<tr class="' + cls + '"><td>' + label + '</td>';
+    totals.forEach(function(v){ tr += '<td>' + fc(v) + '</td>'; });
+    tr += '<td>$0.00</td><td>' + fc(grand) + '</td></tr>';
+    return tr;
+  }
+
+  var rpt = '<div style="' + css + '">';
+  rpt += '<style>' + css + '@keyframes cfSpin{to{transform:rotate(360deg)}}</style>';
+
+  // Header
+  rpt += '<div style="text-align:center;margin-bottom:16px">';
+  rpt += '<div style="font-size:.9rem">Mount Calvary Missionary Baptist Church</div>';
+  rpt += '<div style="font-size:.85rem">10314 Canal Rd &nbsp;|&nbsp; Gulfport, Ms. 39503</div>';
+  rpt += '<div style="font-weight:700;font-size:.95rem;margin-top:10px;text-decoration:underline">CASH FLOW — ' + monthName.toUpperCase() + '</div>';
+  rpt += '</div>';
+
+  // INFLOWS TABLE
+  rpt += '<table>';
+  rpt += thRow();
+  rpt += '<tr class="sect"><td colspan="' + (nCols+3) + '">Inflows</td></tr>';
+  var inflowDataArrays = [];
+  inflowOrder.forEach(function(label) {
+    var row = inflows[label] || [];
+    inflowDataArrays.push(row);
+    rpt += dataRow(label, row, '', true);
+  });
+  rpt += totalRow('Total', inflowDataArrays, 'tot');
+  // Dep to Bldg placeholder
+  rpt += '<tr><td class="sub">Dep to Bldg</td>' + cols.map(function(){ return '<td>$0.00</td>'; }).join('') + '<td>$0.00</td><td>$0.00</td></tr>';
+  rpt += totalRow('Grand Inflow Total', inflowDataArrays, 'gtot');
+  rpt += '</table>';
+
+  // OUTFLOWS
+  rpt += '<table>';
+  rpt += thRow();
+  rpt += '<tr class="sect"><td colspan="' + (nCols+3) + '">Outflows</td></tr>';
+
+  // Employee Salary
+  rpt += '<tr class="sect" style="background:#dbeafe"><td colspan="' + (nCols+3) + '">MCMBC Monthly Expenses &nbsp;— Employee Salary</td></tr>';
+  var empNames = Object.keys(payroll).sort();
+  var empArrays = [];
+  empNames.forEach(function(name) {
+    var row = payroll[name] || [];
+    empArrays.push(row);
+    // Show LastName, FirstName style
+    var parts = name.split(' ');
+    var dispName = parts.length > 1 ? parts[parts.length-1] + ' ' + parts[0].charAt(0) + '.' : name;
+    rpt += dataRow(dispName, row, '', true);
+  });
+  if (empNames.length === 0) rpt += '<tr><td class="sub" colspan="' + (nCols+3) + '" style="color:#94a3b8;font-style:italic">No payroll records for this month</td></tr>';
+  rpt += dataRow('Other Musician Expenses', Array(nCols).fill(0), '', true);
+  rpt += totalRow('TOTAL EMPLOYEES SALARY', empArrays, 'etot');
+
+  // Expenditures & Disbursements
+  rpt += '<tr class="sect" style="background:#fef3c7;color:#92400e"><td colspan="' + (nCols+3) + '">Expenditures &amp; Disbursements</td></tr>';
+  var expNames = Object.keys(expenses).sort();
+  var expArrays = [];
+  expNames.forEach(function(desc) {
+    var row = expenses[desc] || [];
+    expArrays.push(row);
+    rpt += dataRow(desc, row, '', true);
+  });
+  if (expNames.length === 0) rpt += '<tr><td class="sub" colspan="' + (nCols+3) + '" style="color:#94a3b8;font-style:italic">No expense records for this month</td></tr>';
+  rpt += dataRow('Other Expenses &amp; Disbursements', Array(nCols).fill(0), '', true);
+  rpt += totalRow('TOTAL EXPENSES &amp; DISBURSEM', expArrays.concat(empArrays), 'etot');
+
+  // Grand Total Expenses
+  var allExpArrays = expArrays.concat(empArrays);
+  rpt += totalRow('TOTAL OUTFLOWS', allExpArrays, 'etot');
+
+  // Miscellaneous row
+  rpt += '<tr><td class="sub">Miscellaneous</td>' + cols.map(function(){ return '<td></td>'; }).join('') + '<td></td><td></td></tr>';
+  rpt += '</table>';
+
+  rpt += '</div>';
+  body.innerHTML = rpt;
+  showToast('✅ Monthly Cash Flow Report generated for ' + monthName);
+}
 
 // ── REPORT HELPER FUNCTIONS ───────────────────────────────────────
 function sectionHead(label) {
