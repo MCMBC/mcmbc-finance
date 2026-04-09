@@ -4084,21 +4084,54 @@ function renderMonthlyCFReport(data, monthName, body) {
   rpt += thRow();
   rpt += '<tr class="sect"><td colspan="' + (nCols+3) + '">Outflows</td></tr>';
 
-  // Employee Salary
+  // ── MCMBC Monthly Expenses — Employee Salary ─────────────────
+  var w2Data   = data.payrollW2   || {};
+  var c1099Data= data.payroll1099 || {};
+  // Fallback: if split not returned, use combined payroll
+  if (Object.keys(w2Data).length === 0 && Object.keys(c1099Data).length === 0) {
+    w2Data = data.payroll || {};
+  }
+
+  var w2Names   = Object.keys(w2Data).sort();
+  var c1099Names= Object.keys(c1099Data).sort();
+
+  var allEmpArrays = [];
+
   rpt += '<tr class="sect" style="background:#dbeafe"><td colspan="' + (nCols+3) + '">MCMBC Monthly Expenses &nbsp;— Employee Salary</td></tr>';
-  var empNames = Object.keys(payroll).sort();
-  var empArrays = [];
-  empNames.forEach(function(name) {
-    var row = payroll[name] || [];
-    empArrays.push(row);
-    // Show LastName, FirstName style
+
+  // W-2 subsection
+  rpt += '<tr style="background:#eff6ff"><td colspan="' + (nCols+3) + '" style="padding:4px 8px;font-size:.72rem;font-weight:700;color:#1e40af;text-transform:uppercase;letter-spacing:.05em">W-2 Employees</td></tr>';
+  var w2Arrays = [];
+  w2Names.forEach(function(name) {
+    var row = w2Data[name] || [];
+    w2Arrays.push(row); allEmpArrays.push(row);
     var parts = name.split(' ');
     var dispName = parts.length > 1 ? parts[parts.length-1] + ' ' + parts[0].charAt(0) + '.' : name;
     rpt += dataRow(dispName, row, '', true);
   });
-  if (empNames.length === 0) rpt += '<tr><td class="sub" colspan="' + (nCols+3) + '" style="color:#94a3b8;font-style:italic">No payroll records for this month</td></tr>';
+  if (w2Names.length === 0) {
+    rpt += '<tr><td class="sub" colspan="' + (nCols+3) + '" style="color:#94a3b8;font-style:italic">No W-2 records</td></tr>';
+  }
+  rpt += totalRow('Total W-2 Salary', w2Arrays, 'tot');
+
+  // 1099 subsection
+  rpt += '<tr style="background:#faf5ff"><td colspan="' + (nCols+3) + '" style="padding:4px 8px;font-size:.72rem;font-weight:700;color:#7e22ce;text-transform:uppercase;letter-spacing:.05em">1099 Contractors</td></tr>';
+  var c1099Arrays = [];
+  c1099Names.forEach(function(name) {
+    var row = c1099Data[name] || [];
+    c1099Arrays.push(row); allEmpArrays.push(row);
+    var parts = name.split(' ');
+    var dispName = parts.length > 1 ? parts[parts.length-1] + ' ' + parts[0].charAt(0) + '.' : name;
+    rpt += dataRow(dispName, row, '', true);
+  });
+  if (c1099Names.length === 0) {
+    rpt += '<tr><td class="sub" colspan="' + (nCols+3) + '" style="color:#94a3b8;font-style:italic">No 1099 records</td></tr>';
+  }
   rpt += dataRow('Other Musician Expenses', Array(nCols).fill(0), '', true);
-  rpt += totalRow('TOTAL EMPLOYEES SALARY', empArrays, 'etot');
+  rpt += totalRow('Total 1099 Salary', c1099Arrays, 'tot');
+
+  // Grand total employees
+  rpt += totalRow('TOTAL EMPLOYEES SALARY', allEmpArrays, 'etot');
 
   // Expenditures & Disbursements
   rpt += '<tr class="sect" style="background:#fef3c7;color:#92400e"><td colspan="' + (nCols+3) + '">Expenditures &amp; Disbursements</td></tr>';
@@ -4111,10 +4144,10 @@ function renderMonthlyCFReport(data, monthName, body) {
   });
   if (expNames.length === 0) rpt += '<tr><td class="sub" colspan="' + (nCols+3) + '" style="color:#94a3b8;font-style:italic">No expense records for this month</td></tr>';
   rpt += dataRow('Other Expenses &amp; Disbursements', Array(nCols).fill(0), '', true);
-  rpt += totalRow('TOTAL EXPENSES &amp; DISBURSEM', expArrays.concat(empArrays), 'etot');
+  rpt += totalRow('TOTAL EXPENSES &amp; DISBURSEM', expArrays.concat(allEmpArrays), 'etot');
 
   // Grand Total Expenses
-  var allExpArrays = expArrays.concat(empArrays);
+  var allExpArrays = expArrays.concat(allEmpArrays);
   rpt += totalRow('TOTAL OUTFLOWS', allExpArrays, 'etot');
 
   // Miscellaneous row
