@@ -4105,9 +4105,7 @@ function renderMonthlyCFReport(data, monthName, body) {
   w2Names.forEach(function(name) {
     var row = w2Data[name] || [];
     w2Arrays.push(row); allEmpArrays.push(row);
-    var parts = name.split(' ');
-    var dispName = parts.length > 1 ? parts[parts.length-1] + ' ' + parts[0].charAt(0) + '.' : name;
-    rpt += dataRow(dispName, row, '', true);
+    rpt += dataRow(name, row, '', true);
   });
   if (w2Names.length === 0) {
     rpt += '<tr><td class="sub" colspan="' + (nCols+3) + '" style="color:#94a3b8;font-style:italic">No W-2 records</td></tr>';
@@ -4120,9 +4118,7 @@ function renderMonthlyCFReport(data, monthName, body) {
   c1099Names.forEach(function(name) {
     var row = c1099Data[name] || [];
     c1099Arrays.push(row); allEmpArrays.push(row);
-    var parts = name.split(' ');
-    var dispName = parts.length > 1 ? parts[parts.length-1] + ' ' + parts[0].charAt(0) + '.' : name;
-    rpt += dataRow(dispName, row, '', true);
+    rpt += dataRow(name, row, '', true);
   });
   if (c1099Names.length === 0) {
     rpt += '<tr><td class="sub" colspan="' + (nCols+3) + '" style="color:#94a3b8;font-style:italic">No 1099 records</td></tr>';
