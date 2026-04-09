@@ -1687,8 +1687,8 @@ nav{flex:1;padding:10px 0;}
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 const USERS = {
-  'rachal':  {name:'Rachal',    role:'Treasurer',     init:'RH', pw:'password'},
-  'brandy':  {name:'Brandy',    role:'Secretary',     init:'BR', pw:'password'},
+  'rachel':  {name:'Rachel',    role:'Treasurer',     init:'RH', pw:'password'},
+  'brandi':  {name:'Brandi',    role:'Secretary',     init:'BR', pw:'password'},
   'willie':  {name:'Willie',    role:'Trustee Board', init:'WI', pw:'password'},
   'viewonly':{name:'View Only', role:'View Only',     init:'VO', pw:'password'}
 };
@@ -2173,17 +2173,32 @@ function fmtCurrency(n) {
 var CU = null;
 
 function doLogin() {
-  var u = document.getElementById('lu').value.trim().toLowerCase();
-  var p = document.getElementById('lpw').value;
+  var u   = document.getElementById('lu').value.trim().toLowerCase();
+  var pw  = document.getElementById('lpw').value;
   var err = document.getElementById('lerr');
-  var user = USERS[u];
-  if (user && p === user.pw) {
+  if (!u || !pw) { err.textContent = 'Please enter username and password.'; err.style.display='block'; return; }
+
+  var url = localStorage.getItem('mcmbc_sheet_url') || '';
+
+  function attemptLogin(user) {
+    if (!user || user.active === 'No') {
+      err.textContent = 'Invalid username or password.';
+      err.style.display = 'block';
+      return;
+    }
+    if (pw !== user.pw) {
+      err.textContent = 'Invalid username or password.';
+      err.style.display = 'block';
+      return;
+    }
     err.style.display = 'none';
-    CU = user;
+    // Merge into local USERS so session works
+    USERS[u] = user;
+    CU = user; CU.key = u;
     document.getElementById('unm').textContent = CU.name;
     document.getElementById('uro').textContent = CU.role;
-    document.getElementById('uav').textContent = CU.init;
-    document.getElementById('received-by').value = CU.name;
+    document.getElementById('uav').textContent = CU.init || u.substring(0,2).toUpperCase();
+    document.getElementById('received-by').value    = CU.name;
     document.getElementById('to-received-by').value = CU.name;
     document.getElementById('tm-received-by').value = CU.name;
     document.getElementById('gd-received-by').value = CU.name;
@@ -2205,8 +2220,54 @@ function doLogin() {
     document.getElementById('od-date').value = today;
     buildChart();
     loadDashboardData();
+  }
+
+  // Try Google Sheets first, fall back to local USERS
+  if (url && url.indexOf('script.google.com') !== -1) {
+    var loginBtn = document.querySelector('.blb');
+    if (loginBtn) { loginBtn.textContent = '⏳ Signing in...'; loginBtn.disabled = true; }
+    var cb = 'loginCb_' + Date.now();
+    var t = setTimeout(function() {
+      delete window[cb];
+      if (loginBtn) { loginBtn.textContent = 'Sign In'; loginBtn.disabled = false; }
+      // Fall back to local USERS on timeout
+      var localUser = USERS[u];
+      if (localUser) attemptLogin(localUser);
+      else { err.textContent = 'Could not reach Google Sheets. Check connection.'; err.style.display='block'; }
+    }, 12000);
+    window[cb] = function(data) {
+      clearTimeout(t); delete window[cb];
+      if (loginBtn) { loginBtn.textContent = 'Sign In'; loginBtn.disabled = false; }
+      if (data && data.status === 'success' && data.users) {
+        // Merge Sheets users into local USERS
+        data.users.forEach(function(su) { USERS[su.username] = {name:su.name, email:su.email, role:su.role, pw:su.pw, active:su.active, init:(su.username||'').substring(0,2).toUpperCase()}; });
+        saveUsersToStorage();
+      }
+      var sheetUser = data && data.users ? data.users.find(function(su){ return su.username === u; }) : null;
+      if (sheetUser) {
+        attemptLogin({name:sheetUser.name, email:sheetUser.email, role:sheetUser.role, pw:sheetUser.pw, active:sheetUser.active, init:(u).substring(0,2).toUpperCase()});
+      } else {
+        // Fall back to local
+        var localUser = USERS[u];
+        if (localUser) attemptLogin(localUser);
+        else { err.textContent = 'Invalid username or password.'; err.style.display='block'; }
+      }
+    };
+    var s = document.createElement('script');
+    s.onerror = function() {
+      clearTimeout(t); delete window[cb];
+      if (loginBtn) { loginBtn.textContent = 'Sign In'; loginBtn.disabled = false; }
+      var localUser = USERS[u];
+      if (localUser) attemptLogin(localUser);
+      else { err.textContent = 'Could not reach Google Sheets and no local user found.'; err.style.display='block'; }
+    };
+    s.src = url + '?action=getUsers&callback=' + cb;
+    document.head.appendChild(s);
   } else {
-    err.style.display = 'block';
+    // No Sheets URL — use local USERS only
+    var localUser = USERS[u];
+    if (localUser) attemptLogin(localUser);
+    else { err.textContent = 'Invalid username or password.'; err.style.display='block'; }
   }
 }
 
@@ -3262,6 +3323,15 @@ function confirmDeleteUser() {
   delete USERS[target.key];
   saveUsersToStorage();
   if (target.rowEl) target.rowEl.remove();
+  // Sync to Sheets
+  var url3 = localStorage.getItem('mcmbc_sheet_url') || '';
+  if (url3 && url3.indexOf('script.google.com') !== -1) {
+    var cb4 = 'usrDelCb_' + Date.now();
+    window[cb4] = function(data){ delete window[cb4]; };
+    var s4 = document.createElement('script');
+    s4.src = url3 + '?action=deleteUser&callback=' + cb4 + '&username=' + encodeURIComponent(target.key);
+    document.head.appendChild(s4);
+  }
   showToast('🗑 User "' + target.key + '" deleted.');
 }
 
@@ -3292,7 +3362,22 @@ function saveUser() {
 
   USERS[key] = {name:name, email:email, role:role, init:init, pw:pw, active:active};
   saveUsersToStorage();
-
+  // Sync to Google Sheets
+  var url2 = localStorage.getItem('mcmbc_sheet_url') || '';
+  if (url2 && url2.indexOf('script.google.com') !== -1) {
+    var action = (mode === 'edit') ? 'updateUser' : 'addUser';
+    var cb3 = 'usrSyncCb_' + Date.now();
+    window[cb3] = function(data){ delete window[cb3]; };
+    var s3 = document.createElement('script');
+    s3.src = url2 + '?action=' + action + '&callback=' + cb3
+      + '&username='  + encodeURIComponent(key)
+      + '&fullName='  + encodeURIComponent(name)
+      + '&email='     + encodeURIComponent(email)
+      + '&role='      + encodeURIComponent(role)
+      + '&pw='        + encodeURIComponent(pw)
+      + '&active='    + encodeURIComponent(active);
+    document.head.appendChild(s3);
+  }
   // Refresh table
   loadUsersTable();
   closeUserForm();
