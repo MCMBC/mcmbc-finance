@@ -5493,8 +5493,11 @@ function calcPayroll() {
 function savePayrollEntry() {
   var id       = document.getElementById('pr-id').value;
   var date     = document.getElementById('pr-date').value;
-  var empName  = document.getElementById('pr-employee').options[document.getElementById('pr-employee').selectedIndex].getAttribute('data-fullname') ||
-                 document.getElementById('pr-employee').options[document.getElementById('pr-employee').selectedIndex].text;
+  var empSel   = document.getElementById('pr-employee');
+  var empOpt   = empSel.options[empSel.selectedIndex];
+  // Use data-fullname (FirstName LastName) — strip any pay type suffix from fallback text
+  var empName  = (empOpt && empOpt.getAttribute('data-fullname')) ||
+                 ((empOpt && empOpt.text) ? empOpt.text.replace(/\s*—\s*(W-2|1099).*$/i,'').trim() : '');
   var empId    = document.getElementById('pr-empid').value.trim();
   var period   = document.getElementById('pr-period').value;
   var payType  = document.getElementById('pr-type').value;
