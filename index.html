@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <link rel="icon" href="data:,">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.04.09-1626</title>
+<title>Mount Calvary M.B. Church Financial System v2026.04.09-1807</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -194,7 +194,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.09-1626</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.09-1807</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -249,10 +249,10 @@ nav{flex:1;padding:10px 0;}
           <div style="font-size:.78rem;color:#64748b">Sunday-by-Sunday columns for the month</div>
         </div>
 
-        <div class="rpt-card" onclick="runReport('weekly')" style="background:#fff;border:2px solid #e2e8f0;border-radius:14px;padding:28px 24px;cursor:pointer;transition:all .2s;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.05)" onmouseover="this.style.borderColor='var(--blue)';this.style.boxShadow='0 6px 24px rgba(15,39,68,.12)'" onmouseout="this.style.borderColor='#e2e8f0';this.style.boxShadow='0 2px 8px rgba(0,0,0,.05)'">
-          <div style="font-size:2.4rem;margin-bottom:12px">📅</div>
+        <div class="rpt-card" onclick="showWeeklyFinancialPicker()" style="background:#fff;border:2px solid #e2e8f0;border-radius:14px;padding:28px 24px;cursor:pointer;transition:all .2s;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.05)" onmouseover="this.style.borderColor='var(--blue)';this.style.boxShadow='0 6px 24px rgba(15,39,68,.12)'" onmouseout="this.style.borderColor='#e2e8f0';this.style.boxShadow='0 2px 8px rgba(0,0,0,.05)'">
+          <div style="font-size:2.4rem;margin-bottom:12px">📋</div>
           <div style="font-family:'Lora',serif;font-size:1.05rem;font-weight:700;color:var(--blue);margin-bottom:6px">Weekly Financial Report</div>
-          <div style="font-size:.78rem;color:#64748b">Sunday collections and expenses summary</div>
+          <div style="font-size:.78rem;color:#64748b">Income, salaries, utilities & disbursements</div>
         </div>
 
         <div class="rpt-card" onclick="runReport('contributions')" style="background:#fff;border:2px solid #e2e8f0;border-radius:14px;padding:28px 24px;cursor:pointer;transition:all .2s;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.05)" onmouseover="this.style.borderColor='var(--blue)';this.style.boxShadow='0 6px 24px rgba(15,39,68,.12)'" onmouseout="this.style.borderColor='#e2e8f0';this.style.boxShadow='0 2px 8px rgba(0,0,0,.05)'">
@@ -308,6 +308,32 @@ nav{flex:1;padding:10px 0;}
             <button class="bsv" onclick="generateMonthlyCFReport()" style="padding:9px 22px;font-size:.88rem">📊 Generate Report</button>
             <button class="bcc" onclick="closeMonthPicker()" style="padding:9px 16px;font-size:.88rem">✕ Cancel</button>
           </div>
+        </div>
+      </div>
+
+      <!-- Weekly Financial Report Date Picker -->
+      <div id="rpt-weekly-picker" style="display:none;margin-top:24px;background:#f0f4ff;border:2px solid #bfdbfe;border-radius:12px;padding:22px 24px">
+        <h3 style="margin:0 0 16px;font-family:'Lora',serif;color:var(--blue);font-size:1rem">📋 Weekly Financial Report — Select Date Range</h3>
+        <div style="display:flex;gap:20px;align-items:flex-end;flex-wrap:wrap">
+          <div style="display:flex;flex-direction:column;gap:5px">
+            <label style="font-size:.78rem;font-weight:600;color:#475569;text-transform:uppercase;letter-spacing:.04em">Start Date</label>
+            <input type="date" id="wfr-start" style="padding:9px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit">
+          </div>
+          <div style="display:flex;flex-direction:column;gap:5px">
+            <label style="font-size:.78rem;font-weight:600;color:#475569;text-transform:uppercase;letter-spacing:.04em">End Date</label>
+            <input type="date" id="wfr-end" style="padding:9px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit">
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="bsv" onclick="generateWeeklyFinancialReport()" style="padding:9px 22px;font-size:.88rem">📊 Generate Report</button>
+            <button class="bcc" onclick="closeWeeklyFinancialPicker()" style="padding:9px 16px;font-size:.88rem">✕ Cancel</button>
+          </div>
+        </div>
+        <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
+          <span style="font-size:.75rem;color:#64748b;margin-top:4px">Quick:</span>
+          <button class="bac" onclick="wfrPreset(7)">Last 7 Days</button>
+          <button class="bac" onclick="wfrPreset(30)">Last 30 Days</button>
+          <button class="bac" onclick="wfrPresetMonth()">This Month</button>
+          <button class="bac" onclick="wfrPresetYear()">Year to Date</button>
         </div>
       </div>
 
@@ -3920,7 +3946,261 @@ function saveBillsToSheets() {
   saveNext(0);
 }
 
-var SYSTEM_VERSION = "v2026.04.09-1626";
+var SYSTEM_VERSION = "v2026.04.09-1807";
+
+// ── WEEKLY FINANCIAL REPORT ──────────────────────────────────────
+function showWeeklyFinancialPicker() {
+  var today = new Date();
+  var firstOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+  document.getElementById('wfr-start').value = firstOfMonth.toISOString().split('T')[0];
+  document.getElementById('wfr-end').value   = today.toISOString().split('T')[0];
+  document.getElementById('rpt-weekly-picker').style.display = 'block';
+  document.getElementById('rpt-date-picker').style.display   = 'none';
+  document.getElementById('rpt-month-picker').style.display  = 'none';
+  document.getElementById('rpt-output').style.display        = 'none';
+  document.getElementById('rpt-weekly-picker').scrollIntoView({behavior:'smooth', block:'start'});
+}
+function closeWeeklyFinancialPicker() {
+  document.getElementById('rpt-weekly-picker').style.display = 'none';
+}
+function wfrPreset(days) {
+  var end = new Date(), start = new Date();
+  start.setDate(end.getDate() - days + 1);
+  document.getElementById('wfr-start').value = start.toISOString().split('T')[0];
+  document.getElementById('wfr-end').value   = end.toISOString().split('T')[0];
+}
+function wfrPresetMonth() {
+  var t = new Date();
+  document.getElementById('wfr-start').value = new Date(t.getFullYear(), t.getMonth(), 1).toISOString().split('T')[0];
+  document.getElementById('wfr-end').value   = t.toISOString().split('T')[0];
+}
+function wfrPresetYear() {
+  var t = new Date();
+  document.getElementById('wfr-start').value = new Date(t.getFullYear(), 0, 1).toISOString().split('T')[0];
+  document.getElementById('wfr-end').value   = t.toISOString().split('T')[0];
+}
+
+function generateWeeklyFinancialReport() {
+  var start = document.getElementById('wfr-start').value;
+  var end   = document.getElementById('wfr-end').value;
+  if (!start || !end) { showToast('Please select both a start and end date.'); return; }
+  if (start > end)    { showToast('Start date must be before end date.'); return; }
+  closeWeeklyFinancialPicker();
+
+  var panel = document.getElementById('rpt-output');
+  var title = document.getElementById('rpt-output-title');
+  var body  = document.getElementById('rpt-output-body');
+  var s1 = new Date(start + 'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  var s2 = new Date(end   + 'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  title.textContent = '📋 Weekly Financial Report — ' + s1 + ' to ' + s2;
+  panel.style.display = 'block';
+  body.innerHTML = '';
+  panel.scrollIntoView({behavior:'smooth', block:'start'});
+
+  var url = localStorage.getItem('mcmbc_sheet_url') || '';
+  if (!url || url.indexOf('script.google.com') === -1) {
+    body.innerHTML = '<div style="background:#fef3c7;border-left:4px solid #ca8a04;padding:14px;border-radius:8px;color:#854d0e">⚠️ No Google Sheets URL saved.</div>';
+    return;
+  }
+
+  body.innerHTML = [
+    '<div style="text-align:center;padding:48px 24px">',
+    '<div style="display:inline-block;width:52px;height:52px;border:5px solid #e2e8f0;border-top-color:var(--blue);border-radius:50%;animation:cfSpin 0.9s linear infinite;margin-bottom:20px"></div>',
+    '<div style="font-family:\'Lora\',serif;font-size:1.1rem;font-weight:700;color:var(--blue);margin-bottom:8px">Generating Weekly Financial Report...</div>',
+    '<div id="wfr-loading-msg" style="font-size:.82rem;color:#64748b">Loading data from Google Sheets...</div>',
+    '</div>'
+  ].join('');
+
+  var msgs = ['Reading income records...','Reading payroll...','Reading bills & expenses...','Building report...'];
+  var mIdx = 0, mEl = null;
+  setTimeout(function(){ mEl = document.getElementById('wfr-loading-msg'); }, 50);
+  var mInt = setInterval(function(){ if(mEl) mEl.textContent = msgs[mIdx++ % msgs.length]; }, 2000);
+
+  var cb = 'wfrCb_' + Date.now();
+  var t  = setTimeout(function(){ delete window[cb]; clearInterval(mInt);
+    body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Timed out. Try again.</div>'; }, 28000);
+
+  setTimeout(function() {
+    window[cb] = function(data) {
+      clearTimeout(t); delete window[cb]; clearInterval(mInt);
+      if (!data || data.status !== 'success') {
+        body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Error: ' + JSON.stringify(data) + '</div>';
+        return;
+      }
+      try { renderWeeklyFinancialReport(data, s1, s2, start, end, body); }
+      catch(e) { body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c;font-size:.82rem"><strong>Render error:</strong><br>' + e.message + '</div>'; }
+    };
+    var s = document.createElement('script');
+    s.onerror = function(){ clearTimeout(t); delete window[cb]; clearInterval(mInt);
+      body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Could not reach Google Sheets.</div>'; };
+    s.src = url + '?action=getWeeklyFinancialData&callback=' + cb
+      + '&startDate=' + encodeURIComponent(start)
+      + '&endDate='   + encodeURIComponent(end);
+    document.head.appendChild(s);
+    setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); }, 30000);
+  }, 80);
+}
+
+function renderWeeklyFinancialReport(data, s1, s2, startDate, endDate, body) {
+  var inc     = data.income      || {};
+  var w2      = data.payrollW2   || [];
+  var c1099   = data.payroll1099 || [];
+  var utils   = data.utilBills   || [];
+  var misc    = data.miscBills   || [];
+  var exp     = data.otherExpenses || [];
+
+  function fc(v)  { return fmtCurrency(v||0); }
+  function dots() { return '<span style="letter-spacing:2px;color:#94a3b8">··············································</span>'; }
+  function row(label, checkNo, amount, indent) {
+    return '<tr>' +
+      '<td style="padding:3px 0 3px ' + (indent?'20px':'4px') + ';font-size:.8rem;width:200px">' + label + (checkNo ? ' <span style="color:#94a3b8;font-size:.72rem">#' + checkNo + '</span>' : '') + '</td>' +
+      '<td style="width:60%;color:#94a3b8;font-size:.7rem;letter-spacing:1px">···················································</td>' +
+      '<td style="text-align:right;font-size:.8rem;font-weight:600;white-space:nowrap;padding-left:8px">' + fc(amount) + '</td>' +
+      '</tr>';
+  }
+  function subtotalRow(label, amount) {
+    return '<tr style="border-top:1px solid #cbd5e1"><td style="padding:4px 4px;font-size:.8rem;font-weight:700">' + label + '</td>' +
+      '<td></td><td style="text-align:right;font-size:.8rem;font-weight:700;border-top:2px solid #334155;padding-left:8px">' + fc(amount) + '</td></tr>';
+  }
+  function sectionHead(txt) {
+    return '<tr><td colspan="3" style="padding:8px 4px 2px;font-size:.78rem;font-weight:700;text-decoration:underline;color:#0F2744">' + txt + '</td></tr>';
+  }
+
+  // Totals
+  var incSubtotal = (inc.sundaySchool||0) + (inc.generalOffering||0) + (inc.tithes||0) +
+                    (inc.youth||0) + (inc.building||0) + (inc.benevolent||0) + (inc.youthEducation||0) + (inc.other||0);
+  var totalSalaries   = w2.concat(c1099).reduce(function(s,e){ return s+(e.net||0); }, 0);
+  var w2Total         = w2.reduce(function(s,e){ return s+(e.net||0); }, 0);
+  var c1099Total      = c1099.reduce(function(s,e){ return s+(e.net||0); }, 0);
+  var totalUtils      = utils.reduce(function(s,b){ return s+(b.amount||0); }, 0);
+  var totalMisc       = misc.reduce(function(s,b){ return s+(b.amount||0); }, 0);
+  var totalOtherExp   = exp.reduce(function(s,e){ return s+(e.amount||0); }, 0);
+  var grandExpend     = totalSalaries + totalUtils + totalMisc + totalOtherExp;
+  var gainLoss        = incSubtotal - grandExpend;
+  var glColor         = gainLoss >= 0 ? '#15803d' : '#b91c1c';
+
+  // Build HTML
+  var rpt = '<style>@keyframes cfSpin{to{transform:rotate(360deg)}}</style>';
+  rpt += '<div style="font-family:Arial,sans-serif;max-width:860px;margin:0 auto">';
+
+  // Header
+  rpt += '<div style="text-align:center;margin-bottom:20px">';
+  rpt += '<div style="font-weight:700">Mount Calvary Missionary Baptist Church</div>';
+  rpt += '<div>10314 Canal Rd. &nbsp; Gulfport, Ms. 39503</div>';
+  rpt += '<div style="font-weight:700;text-decoration:underline;margin-top:8px;font-size:1rem">WEEKLY FINANCIAL REPORT</div>';
+  rpt += '<div style="font-size:.78rem;color:#475569;margin-top:4px">' + s1 + ' — ' + s2 + '</div>';
+  rpt += '</div>';
+
+  // Two-column layout
+  rpt += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:32px">';
+
+  // ── LEFT COLUMN ──────────────────────────────────────────────────
+  rpt += '<div>';
+
+  // INCOMING FUNDS / REVENUE
+  rpt += '<table style="width:100%;border-collapse:collapse;margin-bottom:20px">';
+  rpt += sectionHead('INCOMING FUNDS/REVENUE');
+  rpt += row('Sunday School', '', inc.sundaySchool, false);
+  rpt += row('General Offering', '', inc.generalOffering, false);
+  rpt += row('Tithes', '', inc.tithes, false);
+  rpt += row('Benevolent', '', inc.benevolent, false);
+  rpt += row('Building Fund', '', inc.building, false);
+  rpt += row('Youth', '', inc.youth, false);
+  rpt += row('Youth Education', '', inc.youthEducation, false);
+  if (inc.other > 0) rpt += row('Other', '', inc.other, false);
+  rpt += subtotalRow('Subtotal', incSubtotal);
+  rpt += '</table>';
+
+  rpt += '<table style="width:100%;border-collapse:collapse;margin-bottom:8px">';
+  rpt += '<tr><td colspan="3" style="padding:4px;font-size:.8rem"><strong>Grand Tot/Dep. Incoming Monies</strong></td></tr>';
+  rpt += subtotalRow('TOTAL INCOMING', incSubtotal);
+  rpt += '</table>';
+
+  // SALARIES
+  rpt += '<table style="width:100%;border-collapse:collapse;margin-top:24px;margin-bottom:8px">';
+  rpt += sectionHead('SALARIES');
+
+  // W-2
+  if (w2.length > 0) {
+    rpt += '<tr><td colspan="3" style="padding:2px 4px;font-size:.72rem;color:#1e40af;font-weight:700;font-style:italic">W-2 Employees</td></tr>';
+    w2.forEach(function(e){ rpt += row(e.name, e.checkNo, e.net, true); });
+    rpt += subtotalRow('Total W-2', w2Total);
+  }
+  // 1099
+  if (c1099.length > 0) {
+    rpt += '<tr><td colspan="3" style="padding:6px 4px 2px;font-size:.72rem;color:#7e22ce;font-weight:700;font-style:italic">1099 Contractors</td></tr>';
+    c1099.forEach(function(e){ rpt += row(e.name, e.checkNo, e.net, true); });
+    rpt += row('Other Musician Expenses', '', 0, true);
+    rpt += subtotalRow('Total 1099', c1099Total);
+  }
+  if (w2.length === 0 && c1099.length === 0) rpt += '<tr><td colspan="3" style="color:#94a3b8;font-style:italic;padding:6px 4px;font-size:.8rem">No payroll records for this period</td></tr>';
+  rpt += subtotalRow('TOTAL SALARIES', totalSalaries);
+  rpt += '</table>';
+
+  // MISCELLANEOUS (left column)
+  rpt += '<table style="width:100%;border-collapse:collapse;margin-top:24px">';
+  rpt += sectionHead('MISCELLANEOUS');
+  var expAndMisc = exp.concat(misc.filter(function(b){ return utils.indexOf(b) === -1; }));
+  if (expAndMisc.length > 0) {
+    expAndMisc.forEach(function(e){ rpt += row(e.desc||e.type, e.checkNo||'', e.amount, false); });
+  } else {
+    for (var i=0; i<5; i++) rpt += row('OTHER:', '', 0, false);
+  }
+  rpt += subtotalRow('Total Miscellaneous', totalMisc + totalOtherExp);
+  rpt += '</table>';
+
+  rpt += '</div>'; // end left col
+
+  // ── RIGHT COLUMN ────────────────────────────────────────────────
+  rpt += '<div>';
+
+  // UTILITIES
+  rpt += '<table style="width:100%;border-collapse:collapse;margin-top:80px;margin-bottom:20px">';
+  rpt += sectionHead('UTILITIES');
+  var utilOrder = ['Electricity','Electric','Center Gas','Gas','Cable/Internet','Internet & Phone',
+                   'I.R.S 941','Taxes IRS 941','Pest Control'];
+  var utilRendered = {};
+  utilOrder.forEach(function(uname) {
+    var b = utils.find(function(u){ return u.type.toLowerCase().indexOf(uname.toLowerCase()) !== -1; });
+    if (b && !utilRendered[b.type]) {
+      rpt += row(b.type, b.checkNo, b.amount, false);
+      utilRendered[b.type] = true;
+    }
+  });
+  utils.forEach(function(b){ if (!utilRendered[b.type]) rpt += row(b.type, b.checkNo, b.amount, false); });
+  if (utils.length === 0) {
+    ['ELECTRIC #','CENTER GAS #','CABLE/INTERNET #','I.R.S 941 Electronic #','PEST CONTROL #'].forEach(function(l){ rpt += row(l,'',0,false); });
+  }
+  rpt += subtotalRow('TOTAL UTILITIES ETC', totalUtils);
+  rpt += '</table>';
+
+  // Spacer + Grand Totals
+  rpt += '<table style="width:100%;border-collapse:collapse;margin-top:40px">';
+  rpt += '<tr><td colspan="3" style="padding:14px 4px 4px;font-size:.8rem;font-weight:700;border-top:2px solid #334155">GRAND TOT. EXPEND.</td>' +
+    '<td style="text-align:right;font-size:.8rem;font-weight:700;white-space:nowrap;padding-left:8px;border-top:2px solid #334155">' + fc(grandExpend) + '</td></tr>';
+  rpt += '<tr><td colspan="3" style="padding:4px;font-size:.8rem;font-weight:700">GAINS/LOSSES</td>' +
+    '<td style="text-align:right;font-size:.8rem;font-weight:700;color:' + glColor + ';white-space:nowrap;padding-left:8px">' + fc(gainLoss) + '</td></tr>';
+  rpt += '</table>';
+
+  // Other Accounts / Bldg Fund
+  rpt += '<table style="width:100%;border-collapse:collapse;margin-top:24px">';
+  rpt += sectionHead('OTHER ACCOUNTS');
+  rpt += row('BLDG FUND', '', data.bldgBalance||0, false);
+  rpt += row('AUX. FUND (youth education/youth)', '', (inc.youthEducation||0)+(inc.youth||0), false);
+  rpt += '</table>';
+
+  rpt += '</div>'; // end right col
+  rpt += '</div>'; // end grid
+
+  // Print button
+  rpt += '<div style="text-align:center;margin-top:24px">';
+  rpt += '<button class="bsv" onclick="window.print()" style="padding:10px 28px">🖨️ Print Report</button>';
+  rpt += '</div>';
+  rpt += '</div>';
+
+  body.innerHTML = rpt;
+  showToast('✅ Weekly Financial Report generated');
+}
 
 // ── MONTHLY CASH FLOW REPORT ─────────────────────────────────────
 function showMonthlyCFPicker() {
