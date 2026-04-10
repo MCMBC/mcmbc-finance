@@ -16,7 +16,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.04.10-2051</title>
+<title>Mount Calvary M.B. Church Financial System v2026.04.10-2109</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -149,7 +149,7 @@ nav{flex:1;padding:10px 0;}
     <button class="blb" onclick="doLogin()">Sign In</button>
     <div class="lerr" id="lerr">Invalid username or password. Please try again.</div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.10-2051</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.10-2109</span>
     </div>
   </div>
 </div>
@@ -189,6 +189,7 @@ nav{flex:1;padding:10px 0;}
       <div class="ni tonly" onclick="sv('giveify-table',this)">📱 giveify</div>
       <div class="ni" onclick="sv('bills',this)">🧾 Bills</div>
       <div class="ni tonly" onclick="sv('backup',this);loadBackupScreen()">🗄️ Backup &amp; Recovery</div>
+      <div class="ni" onclick="sv('coa',this);loadCOAScreen()">📋 Chart of Accounts</div>
     </nav>
     <div class="sf">
       <div class="uc">
@@ -209,7 +210,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.10-2051</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.10-2109</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -1790,75 +1791,91 @@ nav{flex:1;padding:10px 0;}
     </div>
 
     <!-- CHART OF ACCOUNTS -->
-      <div class="ph"><h1>Chart of Accounts</h1><p>53 accounts across 5 types</p></div>
-      <div style="display:flex;gap:9px;flex-wrap:wrap;margin-bottom:15px;">
-        <span style="background:#D6EAF8;color:#1a5276;padding:3px 11px;border-radius:20px;font-size:.76rem;font-weight:700;">Assets (17)</span>
-        <span style="background:#FADBD8;color:#922b21;padding:3px 11px;border-radius:20px;font-size:.76rem;font-weight:700;">Liabilities (5)</span>
-        <span style="background:#D5F5E3;color:#1e8449;padding:3px 11px;border-radius:20px;font-size:.76rem;font-weight:700;">Equity (3)</span>
-        <span style="background:#D4EFDF;color:#1e8449;padding:3px 11px;border-radius:20px;font-size:.76rem;font-weight:700;">Income (7)</span>
-        <span style="background:#FDEBD0;color:#935116;padding:3px 11px;border-radius:20px;font-size:.76rem;font-weight:700;">Expense (20)</span>
+    <div id="view-coa" class="vw">
+      <div class="ph"><h1>📋 Chart of Accounts</h1><p>Add, edit, and manage your church's full chart of accounts</p></div>
+
+      <!-- Toolbar -->
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+        <div style="display:flex;gap:9px;flex-wrap:wrap">
+          <span id="coa-badge-asset" style="background:#D6EAF8;color:#1a5276;padding:3px 11px;border-radius:20px;font-size:.76rem;font-weight:700;cursor:pointer" onclick="filterCOA('Asset')">Assets (17)</span>
+          <span id="coa-badge-liability" style="background:#FADBD8;color:#922b21;padding:3px 11px;border-radius:20px;font-size:.76rem;font-weight:700;cursor:pointer" onclick="filterCOA('Liability')">Liabilities (5)</span>
+          <span id="coa-badge-equity" style="background:#D5F5E3;color:#1e8449;padding:3px 11px;border-radius:20px;font-size:.76rem;font-weight:700;cursor:pointer" onclick="filterCOA('Equity')">Equity (3)</span>
+          <span id="coa-badge-income" style="background:#D4EFDF;color:#1e8449;padding:3px 11px;border-radius:20px;font-size:.76rem;font-weight:700;cursor:pointer" onclick="filterCOA('Income')">Income (7)</span>
+          <span id="coa-badge-expense" style="background:#FDEBD0;color:#935116;padding:3px 11px;border-radius:20px;font-size:.76rem;font-weight:700;cursor:pointer" onclick="filterCOA('Expense')">Expense (20)</span>
+          <span style="background:#f1f5f9;color:#475569;padding:3px 11px;border-radius:20px;font-size:.76rem;font-weight:700;cursor:pointer" onclick="filterCOA('')">All</span>
+        </div>
+        <button class="bsv" onclick="showAddCOA()" style="padding:7px 18px;font-size:.82rem">+ Add Account</button>
       </div>
-      <table class="vt">
-        <tr><th>Acct ID</th><th>Account Name</th><th>Fund</th><th>Type</th><th>Normal Bal</th></tr>
-        <tr style="background:#EBF5FB"><td colspan="5" style="font-weight:700;color:#1a5276;font-size:.77rem;">ASSETS</td></tr>
-        <tr><td>1010</td><td>General Checking Account</td><td>General Fund</td><td>Asset</td><td>Debit</td></tr>
-        <tr><td>1020</td><td>Building Fund Account</td><td>Building Fund</td><td>Asset</td><td>Debit</td></tr>
-        <tr><td>1030</td><td>Savings Account</td><td>General Fund</td><td>Asset</td><td>Debit</td></tr>
-        <tr><td>1040</td><td>Credit Card</td><td>General Fund</td><td>Asset</td><td>Debit</td></tr>
-        <tr><td>1050</td><td>Christmas Club Savings</td><td>General Fund</td><td>Asset</td><td>Debit</td></tr>
-        <tr><td>1510</td><td>Land</td><td>General Fund</td><td>Asset</td><td>Debit</td></tr>
-        <tr><td>1511</td><td>Land, Depreciation</td><td>General Fund</td><td>Asset</td><td>Credit</td></tr>
-        <tr><td>1520</td><td>Worship and Administrative Building</td><td>Building Fund</td><td>Asset</td><td>Debit</td></tr>
-        <tr><td>1521</td><td>Worship and Admin Building, Depreciation</td><td>Building Fund</td><td>Asset</td><td>Credit</td></tr>
-        <tr><td>1530</td><td>Furniture, Fixtures and Chairs</td><td>General Fund</td><td>Asset</td><td>Debit</td></tr>
-        <tr><td>1540</td><td>Office Equipment</td><td>General Fund</td><td>Asset</td><td>Debit</td></tr>
-        <tr><td>1550</td><td>Musical Equipment</td><td>General Fund</td><td>Asset</td><td>Debit</td></tr>
-        <tr><td>1560</td><td>Kitchen Equipment</td><td>General Fund</td><td>Asset</td><td>Debit</td></tr>
-        <tr><td>1570</td><td>Computers and Peripherals</td><td>General Fund</td><td>Asset</td><td>Debit</td></tr>
-        <tr><td>1580</td><td>Audio / Visual Equipment</td><td>General Fund</td><td>Asset</td><td>Debit</td></tr>
-        <tr><td>1590</td><td>Signs, Outside</td><td>General Fund</td><td>Asset</td><td>Debit</td></tr>
-        <tr><td>1600</td><td>Church Van</td><td>General Fund</td><td>Asset</td><td>Debit</td></tr>
-        <tr><td>1610</td><td>Church Van, Depreciation</td><td>General Fund</td><td>Asset</td><td>Credit</td></tr>
-        <tr style="background:#FDEDEC"><td colspan="5" style="font-weight:700;color:#922b21;font-size:.77rem;">LIABILITIES</td></tr>
-        <tr><td>2010</td><td>Accounts Payable</td><td>General Fund</td><td>Liability</td><td>Credit</td></tr>
-        <tr><td>2020</td><td>Accrued Expenses</td><td>General Fund</td><td>Liability</td><td>Credit</td></tr>
-        <tr><td>2030</td><td>Employee Federal Withholdings</td><td>General Fund</td><td>Liability</td><td>Credit</td></tr>
-        <tr><td>2040</td><td>Payroll Liabilities</td><td>General Fund</td><td>Liability</td><td>Credit</td></tr>
-        <tr><td>2050</td><td>Credit Card Payable</td><td>General Fund</td><td>Liability</td><td>Credit</td></tr>
-        <tr style="background:#EAFAF1"><td colspan="5" style="font-weight:700;color:#1e8449;font-size:.77rem;">EQUITY</td></tr>
-        <tr><td>3010</td><td>General Offering Fund</td><td>General Fund</td><td>Equity</td><td>Credit</td></tr>
-        <tr><td>3020</td><td>Benevolent Offering Fund</td><td>General Fund</td><td>Equity</td><td>Credit</td></tr>
-        <tr><td>3030</td><td>Building Fund</td><td>Building Fund</td><td>Equity</td><td>Credit</td></tr>
-        <tr style="background:#E8F8F5"><td colspan="5" style="font-weight:700;color:#1e8449;font-size:.77rem;">INCOME</td></tr>
-        <tr><td>4010</td><td>Tithes Fund</td><td>General Fund</td><td>Income</td><td>Credit</td></tr>
-        <tr><td>4020</td><td>giveify Fund</td><td>General Fund</td><td>Income</td><td>Credit</td></tr>
-        <tr><td>4030</td><td>Sunday School Fund</td><td>General Fund</td><td>Income</td><td>Credit</td></tr>
-        <tr><td>4040</td><td>Youth Fund</td><td>General Fund</td><td>Income</td><td>Credit</td></tr>
-        <tr><td>4050</td><td>Youth Education Fund</td><td>General Fund</td><td>Income</td><td>Credit</td></tr>
-        <tr><td>4060</td><td>Special Programs Fund</td><td>General Fund</td><td>Income</td><td>Credit</td></tr>
-        <tr><td>4070</td><td>Miscellaneous Funds</td><td>General Fund</td><td>Income</td><td>Credit</td></tr>
-        <tr style="background:#FEF5E7"><td colspan="5" style="font-weight:700;color:#935116;font-size:.77rem;">EXPENSES</td></tr>
-        <tr><td>5010</td><td>Pastor Salary</td><td>General Fund</td><td>Expense</td><td>Debit</td></tr>
-        <tr><td>5020</td><td>Staff Salaries</td><td>General Fund</td><td>Expense</td><td>Debit</td></tr>
-        <tr><td>5030</td><td>Payroll Taxes</td><td>General Fund</td><td>Expense</td><td>Debit</td></tr>
-        <tr><td>5040</td><td>Guest Ministers</td><td>General Fund</td><td>Expense</td><td>Debit</td></tr>
-        <tr><td>5110</td><td>Electricity</td><td>General Fund</td><td>Expense</td><td>Debit</td></tr>
-        <tr><td>5120</td><td>Water &amp; Sewage</td><td>General Fund</td><td>Expense</td><td>Debit</td></tr>
-        <tr><td>5130</td><td>Internet &amp; Telephone</td><td>General Fund</td><td>Expense</td><td>Debit</td></tr>
-        <tr><td>5210</td><td>Building Maintenance</td><td>General Fund</td><td>Expense</td><td>Debit</td></tr>
-        <tr><td>5220</td><td>Building Construction</td><td>Building Fund</td><td>Expense</td><td>Debit</td></tr>
-        <tr><td>5230</td><td>Building Materials</td><td>Building Fund</td><td>Expense</td><td>Debit</td></tr>
-        <tr><td>5240</td><td>Furniture &amp; Equipment</td><td>General Fund</td><td>Expense</td><td>Debit</td></tr>
-        <tr><td>5250</td><td>Audio / Visual Equipment</td><td>General Fund</td><td>Expense</td><td>Debit</td></tr>
-        <tr><td>5260</td><td>Sunday School Material</td><td>General Fund</td><td>Expense</td><td>Debit</td></tr>
-        <tr><td>5270</td><td>Office Supplies</td><td>General Fund</td><td>Expense</td><td>Debit</td></tr>
-        <tr><td>5280</td><td>Printing &amp; Copying</td><td>General Fund</td><td>Expense</td><td>Debit</td></tr>
-        <tr><td>5290</td><td>Postage &amp; Shipping</td><td>General Fund</td><td>Expense</td><td>Debit</td></tr>
-        <tr><td>5310</td><td>Software &amp; Subscriptions</td><td>General Fund</td><td>Expense</td><td>Debit</td></tr>
-        <tr><td>5410</td><td>Bank Charges &amp; Fees</td><td>General Fund</td><td>Expense</td><td>Debit</td></tr>
-        <tr><td>5510</td><td>Christmas Club Expense</td><td>General Fund</td><td>Expense</td><td>Debit</td></tr>
-        <tr><td>5610</td><td>Depreciation Expense</td><td>General Fund</td><td>Expense</td><td>Debit</td></tr>
-      </table>
+
+      <!-- Add/Edit Form -->
+      <div id="coa-form" style="display:none;background:#f0f9ff;border:2px solid #bae6fd;border-radius:12px;padding:20px 24px;margin-bottom:18px">
+        <h3 id="coa-form-title" style="margin:0 0 14px;font-family:'Lora',serif;color:var(--blue);font-size:.95rem">Add Account</h3>
+        <input type="hidden" id="coa-edit-id">
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <label style="font-size:.75rem;font-weight:600;color:#475569;text-transform:uppercase">Acct ID</label>
+            <input type="text" id="coa-id" placeholder="e.g. 1010" style="padding:8px 11px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;width:100px">
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px;flex:1;min-width:200px">
+            <label style="font-size:.75rem;font-weight:600;color:#475569;text-transform:uppercase">Account Name</label>
+            <input type="text" id="coa-name" placeholder="Account name" style="padding:8px 11px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;width:100%">
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <label style="font-size:.75rem;font-weight:600;color:#475569;text-transform:uppercase">Fund</label>
+            <select id="coa-fund" style="padding:8px 11px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;min-width:160px">
+              <option value="General Fund">General Fund</option>
+              <option value="Building Fund">Building Fund</option>
+              <option value="Missions Fund">Missions Fund</option>
+              <option value="Benevolent Fund">Benevolent Fund</option>
+            </select>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <label style="font-size:.75rem;font-weight:600;color:#475569;text-transform:uppercase">Type</label>
+            <select id="coa-type" style="padding:8px 11px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit">
+              <option value="Asset">Asset</option>
+              <option value="Liability">Liability</option>
+              <option value="Equity">Equity</option>
+              <option value="Income">Income</option>
+              <option value="Expense">Expense</option>
+            </select>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <label style="font-size:.75rem;font-weight:600;color:#475569;text-transform:uppercase">Normal Bal</label>
+            <select id="coa-bal" style="padding:8px 11px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit">
+              <option value="Debit">Debit</option>
+              <option value="Credit">Credit</option>
+            </select>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:14px">
+          <button class="bsv" onclick="saveCOAAccount()" style="padding:8px 20px;font-size:.85rem">💾 Save Account</button>
+          <button class="bcc" onclick="cancelCOA()" style="padding:8px 16px;font-size:.85rem">Cancel</button>
+        </div>
+      </div>
+
+      <!-- Delete Confirm Modal -->
+      <div id="coa-del-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;align-items:center;justify-content:center">
+        <div style="background:#fff;border-radius:14px;padding:28px 32px;max-width:380px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.3)">
+          <div style="font-size:2rem;text-align:center;margin-bottom:10px">🗑️</div>
+          <h3 style="font-family:'Lora',serif;color:var(--blue);margin:0 0 10px;text-align:center">Delete Account?</h3>
+          <p id="coa-del-text" style="color:#475569;font-size:.85rem;margin:0 0 20px;text-align:center"></p>
+          <div style="display:flex;gap:10px;justify-content:center">
+            <button class="bsv" style="background:#b91c1c" onclick="confirmDeleteCOA()">🗑️ Delete</button>
+            <button class="bcc" onclick="document.getElementById('coa-del-modal').style.display='none'">Cancel</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Accounts Table -->
+      <div style="overflow-x:auto">
+        <table class="vt" id="coa-table">
+          <tr><th>Acct ID</th><th>Account Name</th><th>Fund</th><th>Type</th><th>Normal Bal</th><th style="text-align:center">Actions</th></tr>
+        </table>
+      </div>
+    </div>
+
+  </main>
+      </div>
     </div>
 
   </main>
@@ -4080,7 +4097,7 @@ function saveBillsToSheets() {
   saveNext(0);
 }
 
-var SYSTEM_VERSION = "v2026.04.10-2051";
+var SYSTEM_VERSION = "v2026.04.10-2109";
 
 // ── WEEKLY FINANCIAL REPORT ──────────────────────────────────────
 function showWeeklyFinancialPicker() {
@@ -6907,6 +6924,188 @@ function saveBill() {
   document.getElementById('blfund').value=''; document.getElementById('bltype').value='';
   document.getElementById('abf').style.display='none';
   showToast('Bill saved!');
+}
+
+// ── CHART OF ACCOUNTS ─────────────────────────────────────────────
+var COA_DATA = [
+  {id:'1010',name:'General Checking Account',fund:'General Fund',type:'Asset',bal:'Debit'},
+  {id:'1020',name:'Building Fund Account',fund:'Building Fund',type:'Asset',bal:'Debit'},
+  {id:'1030',name:'Savings Account',fund:'General Fund',type:'Asset',bal:'Debit'},
+  {id:'1040',name:'Credit Card',fund:'General Fund',type:'Asset',bal:'Debit'},
+  {id:'1050',name:'Christmas Club Savings',fund:'General Fund',type:'Asset',bal:'Debit'},
+  {id:'1510',name:'Land',fund:'General Fund',type:'Asset',bal:'Debit'},
+  {id:'1511',name:'Land, Depreciation',fund:'General Fund',type:'Asset',bal:'Credit'},
+  {id:'1520',name:'Worship and Administrative Building',fund:'Building Fund',type:'Asset',bal:'Debit'},
+  {id:'1521',name:'Worship and Admin Building, Depreciation',fund:'Building Fund',type:'Asset',bal:'Credit'},
+  {id:'1530',name:'Furniture, Fixtures and Chairs',fund:'General Fund',type:'Asset',bal:'Debit'},
+  {id:'1540',name:'Office Equipment',fund:'General Fund',type:'Asset',bal:'Debit'},
+  {id:'1550',name:'Musical Equipment',fund:'General Fund',type:'Asset',bal:'Debit'},
+  {id:'1560',name:'Kitchen Equipment',fund:'General Fund',type:'Asset',bal:'Debit'},
+  {id:'1570',name:'Computers and Peripherals',fund:'General Fund',type:'Asset',bal:'Debit'},
+  {id:'1580',name:'Audio / Visual Equipment',fund:'General Fund',type:'Asset',bal:'Debit'},
+  {id:'1590',name:'Signs, Outside',fund:'General Fund',type:'Asset',bal:'Debit'},
+  {id:'1600',name:'Church Van',fund:'General Fund',type:'Asset',bal:'Debit'},
+  {id:'1610',name:'Church Van, Depreciation',fund:'General Fund',type:'Asset',bal:'Credit'},
+  {id:'2010',name:'Accounts Payable',fund:'General Fund',type:'Liability',bal:'Credit'},
+  {id:'2020',name:'Accrued Expenses',fund:'General Fund',type:'Liability',bal:'Credit'},
+  {id:'2030',name:'Employee Federal Withholdings',fund:'General Fund',type:'Liability',bal:'Credit'},
+  {id:'2040',name:'Payroll Liabilities',fund:'General Fund',type:'Liability',bal:'Credit'},
+  {id:'2050',name:'Credit Card Payable',fund:'General Fund',type:'Liability',bal:'Credit'},
+  {id:'3010',name:'General Offering Fund',fund:'General Fund',type:'Equity',bal:'Credit'},
+  {id:'3020',name:'Benevolent Offering Fund',fund:'General Fund',type:'Equity',bal:'Credit'},
+  {id:'3030',name:'Building Fund',fund:'Building Fund',type:'Equity',bal:'Credit'},
+  {id:'4010',name:'Tithes Fund',fund:'General Fund',type:'Income',bal:'Credit'},
+  {id:'4020',name:'giveify Fund',fund:'General Fund',type:'Income',bal:'Credit'},
+  {id:'4030',name:'Sunday School Fund',fund:'General Fund',type:'Income',bal:'Credit'},
+  {id:'4040',name:'Youth Fund',fund:'General Fund',type:'Income',bal:'Credit'},
+  {id:'4050',name:'Youth Education Fund',fund:'General Fund',type:'Income',bal:'Credit'},
+  {id:'4060',name:'Special Programs Fund',fund:'General Fund',type:'Income',bal:'Credit'},
+  {id:'4070',name:'Miscellaneous Funds',fund:'General Fund',type:'Income',bal:'Credit'},
+  {id:'5010',name:'Pastor Salary',fund:'General Fund',type:'Expense',bal:'Debit'},
+  {id:'5020',name:'Staff Salaries',fund:'General Fund',type:'Expense',bal:'Debit'},
+  {id:'5030',name:'Payroll Taxes',fund:'General Fund',type:'Expense',bal:'Debit'},
+  {id:'5040',name:'Guest Ministers',fund:'General Fund',type:'Expense',bal:'Debit'},
+  {id:'5110',name:'Electricity',fund:'General Fund',type:'Expense',bal:'Debit'},
+  {id:'5120',name:'Water & Sewage',fund:'General Fund',type:'Expense',bal:'Debit'},
+  {id:'5130',name:'Internet & Telephone',fund:'General Fund',type:'Expense',bal:'Debit'},
+  {id:'5210',name:'Building Maintenance',fund:'General Fund',type:'Expense',bal:'Debit'},
+  {id:'5220',name:'Building Construction',fund:'Building Fund',type:'Expense',bal:'Debit'},
+  {id:'5230',name:'Building Materials',fund:'Building Fund',type:'Expense',bal:'Debit'},
+  {id:'5240',name:'Furniture & Equipment',fund:'General Fund',type:'Expense',bal:'Debit'},
+  {id:'5250',name:'Audio / Visual Equipment',fund:'General Fund',type:'Expense',bal:'Debit'},
+  {id:'5260',name:'Sunday School Material',fund:'General Fund',type:'Expense',bal:'Debit'},
+  {id:'5270',name:'Office Supplies',fund:'General Fund',type:'Expense',bal:'Debit'},
+  {id:'5280',name:'Printing & Copying',fund:'General Fund',type:'Expense',bal:'Debit'},
+  {id:'5290',name:'Postage & Shipping',fund:'General Fund',type:'Expense',bal:'Debit'},
+  {id:'5310',name:'Software & Subscriptions',fund:'General Fund',type:'Expense',bal:'Debit'},
+  {id:'5410',name:'Bank Charges & Fees',fund:'General Fund',type:'Expense',bal:'Debit'},
+  {id:'5510',name:'Christmas Club Expense',fund:'General Fund',type:'Expense',bal:'Debit'},
+  {id:'5610',name:'Depreciation Expense',fund:'General Fund',type:'Expense',bal:'Debit'},
+];
+var COA_FILTER = '';
+var COA_DEL_ID = null;
+
+var TYPE_COLORS = {
+  Asset:   {bg:'#EBF5FB',fg:'#1a5276'},
+  Liability:{bg:'#FDEDEC',fg:'#922b21'},
+  Equity:  {bg:'#EAFAF1',fg:'#1e8449'},
+  Income:  {bg:'#E8F8F5',fg:'#117864'},
+  Expense: {bg:'#FEF5E7',fg:'#935116'}
+};
+
+function loadCOAScreen() {
+  renderCOATable();
+  updateCOABadges();
+}
+
+function updateCOABadges() {
+  var counts = {Asset:0,Liability:0,Equity:0,Income:0,Expense:0};
+  COA_DATA.forEach(function(a){ counts[a.type]++; });
+  document.getElementById('coa-badge-asset').textContent     = 'Assets (' + counts.Asset + ')';
+  document.getElementById('coa-badge-liability').textContent = 'Liabilities (' + counts.Liability + ')';
+  document.getElementById('coa-badge-equity').textContent    = 'Equity (' + counts.Equity + ')';
+  document.getElementById('coa-badge-income').textContent    = 'Income (' + counts.Income + ')';
+  document.getElementById('coa-badge-expense').textContent   = 'Expense (' + counts.Expense + ')';
+}
+
+function renderCOATable() {
+  var tb = document.getElementById('coa-table');
+  tb.querySelectorAll('tr:not(:first-child)').forEach(function(r){ r.remove(); });
+  var list = COA_FILTER ? COA_DATA.filter(function(a){ return a.type===COA_FILTER; }) : COA_DATA;
+  var lastType = '';
+  list.forEach(function(acct) {
+    if (acct.type !== lastType) {
+      var hr = document.createElement('tr');
+      var c = TYPE_COLORS[acct.type] || {bg:'#f0f0f0',fg:'#333'};
+      hr.innerHTML = '<td colspan="6" style="font-weight:700;color:'+c.fg+';font-size:.77rem;background:'+c.bg+';padding:6px 12px">'+acct.type.toUpperCase()+'S</td>';
+      tb.appendChild(hr);
+      lastType = acct.type;
+    }
+    var tr = document.createElement('tr');
+    tr.setAttribute('data-id', acct.id);
+    tr.innerHTML = '<td style="font-family:monospace;font-size:.8rem">'+acct.id+'</td>'
+      + '<td>'+acct.name+'</td>'
+      + '<td style="font-size:.8rem">'+acct.fund+'</td>'
+      + '<td style="font-size:.8rem">'+acct.type+'</td>'
+      + '<td style="font-size:.8rem">'+acct.bal+'</td>'
+      + '<td style="text-align:center;white-space:nowrap"><button class="bac" onclick="editCOA(\''+acct.id+'\')" style="margin-right:4px">✏️</button><button class="bac" style="background:#fee2e2;color:#b91c1c" onclick="promptDeleteCOA(\''+acct.id+'\')">🗑️</button></td>';
+    tb.appendChild(tr);
+  });
+  if (list.length === 0) {
+    var empty = document.createElement('tr');
+    empty.innerHTML = '<td colspan="6" style="text-align:center;color:#94a3b8;padding:20px;font-style:italic">No accounts found.</td>';
+    tb.appendChild(empty);
+  }
+}
+
+function filterCOA(type) { COA_FILTER = type; renderCOATable(); }
+
+function showAddCOA() {
+  document.getElementById('coa-form-title').textContent = '+ Add Account';
+  document.getElementById('coa-edit-id').value = '';
+  ['coa-id','coa-name'].forEach(function(i){ document.getElementById(i).value=''; });
+  document.getElementById('coa-fund').value = 'General Fund';
+  document.getElementById('coa-type').value = 'Asset';
+  document.getElementById('coa-bal').value  = 'Debit';
+  document.getElementById('coa-form').style.display = 'block';
+  document.getElementById('coa-id').focus();
+}
+
+function editCOA(id) {
+  var acct = COA_DATA.find(function(a){ return a.id===id; });
+  if (!acct) return;
+  document.getElementById('coa-form-title').textContent = '✏️ Edit Account';
+  document.getElementById('coa-edit-id').value = id;
+  document.getElementById('coa-id').value   = acct.id;
+  document.getElementById('coa-name').value = acct.name;
+  document.getElementById('coa-fund').value = acct.fund;
+  document.getElementById('coa-type').value = acct.type;
+  document.getElementById('coa-bal').value  = acct.bal;
+  document.getElementById('coa-form').style.display = 'block';
+  document.getElementById('coa-name').focus();
+}
+
+function saveCOAAccount() {
+  var eid  = document.getElementById('coa-edit-id').value.trim();
+  var nid  = document.getElementById('coa-id').value.trim();
+  var name = document.getElementById('coa-name').value.trim();
+  var fund = document.getElementById('coa-fund').value;
+  var type = document.getElementById('coa-type').value;
+  var bal  = document.getElementById('coa-bal').value;
+  if (!nid || !name) { showToast('Account ID and Name are required.'); return; }
+  if (eid) {
+    // update existing
+    var idx = COA_DATA.findIndex(function(a){ return a.id===eid; });
+    if (idx > -1) COA_DATA[idx] = {id:nid, name:name, fund:fund, type:type, bal:bal};
+  } else {
+    // check dupe
+    if (COA_DATA.find(function(a){ return a.id===nid; })) { showToast('Account ID '+nid+' already exists.'); return; }
+    COA_DATA.push({id:nid, name:name, fund:fund, type:type, bal:bal});
+    COA_DATA.sort(function(a,b){ return a.id.localeCompare(b.id); });
+  }
+  cancelCOA();
+  updateCOABadges();
+  renderCOATable();
+  showToast('✅ Account saved.');
+}
+
+function cancelCOA() { document.getElementById('coa-form').style.display='none'; }
+
+function promptDeleteCOA(id) {
+  COA_DEL_ID = id;
+  var acct = COA_DATA.find(function(a){ return a.id===id; });
+  document.getElementById('coa-del-text').textContent = 'Delete account ' + id + ' — ' + (acct?acct.name:'') + '?';
+  document.getElementById('coa-del-modal').style.display = 'flex';
+}
+
+function confirmDeleteCOA() {
+  if (!COA_DEL_ID) return;
+  COA_DATA = COA_DATA.filter(function(a){ return a.id !== COA_DEL_ID; });
+  COA_DEL_ID = null;
+  document.getElementById('coa-del-modal').style.display = 'none';
+  updateCOABadges();
+  renderCOATable();
+  showToast('Account deleted.');
 }
 
 document.addEventListener('keydown', function(e) {
