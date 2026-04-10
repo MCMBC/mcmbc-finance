@@ -4247,7 +4247,7 @@ function renderWeeklyFinancialReport(data, s1, s2, startDate, endDate, body) {
   rpt += '</div>';
 
   rpt += '<div style="text-align:center;margin-top:24px">';
-  rpt += '<div class="no-print" style="text-align:center;margin-top:24px"><button class="bsv" onclick="window.print()" style="padding:10px 28px">🖨️ Print Report</button></div>';
+  rpt += '<div class="no-print" style="text-align:center;margin-top:24px"><button class="bsv" onclick="printReport()" style="padding:10px 28px">🖨️ Print Report</button></div>';
   rpt += '</div>';
   rpt += '</div>';
 
@@ -4255,7 +4255,7 @@ function renderWeeklyFinancialReport(data, s1, s2, startDate, endDate, body) {
   showToast('✅ Weekly Financial Report generated');
 }
 
-// ── ANNUAL CONTRIBUTION STATEMENT ────────────────────────────────
+function printReport() { window.print(); }
 function showContributionPicker() {
   var t = new Date();
   document.getElementById('cs-start').value = new Date(t.getFullYear(), 0, 1).toISOString().split('T')[0];
@@ -4432,7 +4432,7 @@ function renderContributionStatement(data, s1, s2, member, body) {
   rpt += '</tbody></table></div>';
 
   // Print button
-  rpt += '<div class="no-print" style="text-align:center;margin-top:24px"><button class="bsv" onclick="window.print()" style="padding:10px 28px">🖨️ Print Statement</button></div>';
+  rpt += '<div class="no-print" style="text-align:center;margin-top:24px"><button class="bsv" onclick="printReport()" style="padding:10px 28px">🖨️ Print Statement</button></div>';
   rpt += '</div>';
   rpt += '<style>@media print { .no-print { display:none !important; } }</style>';
 
@@ -5055,25 +5055,6 @@ function closeReport() {
   document.getElementById('rpt-output').style.display = 'none';
 }
 
-function printReport() {
-  var title = document.getElementById('rpt-output-title').textContent;
-  var body  = document.getElementById('rpt-output-body').innerHTML;
-  var win   = window.open('','_blank');
-  win.document.write('<html><head><title>' + title + '</title>' +
-    '<style>body{font-family:Arial,sans-serif;padding:32px;color:#1e293b}' +
-    'table{width:100%;border-collapse:collapse;margin-bottom:20px}' +
-    'th{background:#0F2744;color:#fff;padding:8px 10px;text-align:left;font-size:.8rem}' +
-    'td{padding:8px 10px;border-bottom:1px solid #e2e8f0;font-size:.82rem}' +
-    'h1{color:#0F2744;font-size:1.4rem;margin-bottom:4px}' +
-    '.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}' +
-    '.kpi{border:1px solid #e2e8f0;border-radius:8px;padding:12px;text-align:center}' +
-    '</style></head><body>' +
-    '<h1>Mount Calvary M.B. Church</h1>' +
-    '<h2 style="color:#0F2744;margin:0 0 20px">' + title + '</h2>' +
-    body + '</body></html>');
-  win.document.close();
-  win.print();
-}
 
 // ── SESSION ROW EDIT / DELETE (all 4 input screens) ──────────────
 
