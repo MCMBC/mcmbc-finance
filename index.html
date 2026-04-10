@@ -16,7 +16,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.04.10-1709</title>
+<title>Mount Calvary M.B. Church Financial System v2026.04.10-1720</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -185,6 +185,7 @@ nav{flex:1;padding:10px 0;}
       <div class="ni tonly" onclick="sv('type-of-bill',this)">🗂️ Type of Bill</div>
       <div class="ni tonly" onclick="sv('giveify-table',this)">📱 giveify</div>
       <div class="ni" onclick="sv('bills',this)">🧾 Bills</div>
+      <div class="ni tonly" onclick="sv('backup',this);loadBackupScreen()">🗄️ Backup &amp; Recovery</div>
       <div class="ni" onclick="sv('coa',this)">📋 Chart of Accounts</div>
     </nav>
     <div class="sf">
@@ -206,7 +207,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.10-1709</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.10-1720</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -1727,7 +1728,66 @@ nav{flex:1;padding:10px 0;}
     </div>
 
     <!-- CHART OF ACCOUNTS -->
-    <div id="view-coa" class="vw">
+    <!-- BACKUP & RECOVERY -->
+    <div id="view-backup" class="vw">
+      <div class="ph"><h1>🗄️ Backup &amp; Recovery</h1><p>Create and restore Google Sheets backups — Treasurer access only</p></div>
+
+      <!-- Create Backup -->
+      <div style="background:#f0fdf4;border:2px solid #bbf7d0;border-radius:12px;padding:20px 24px;margin-bottom:28px">
+        <h3 style="margin:0 0 12px;font-family:'Lora',serif;color:var(--blue);font-size:1rem">💾 Create New Backup</h3>
+        <p style="margin:0 0 14px;font-size:.82rem;color:#475569">Creates a full copy of your Google Sheets database saved to your Google Drive. The backup location, timestamp, and your name will be recorded.</p>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <label style="font-size:.75rem;font-weight:600;color:#475569;text-transform:uppercase;letter-spacing:.04em">Backup Note (optional)</label>
+            <input type="text" id="backup-note" placeholder="e.g. Before year-end closing" style="padding:8px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;min-width:280px">
+          </div>
+          <button class="bsv" onclick="createBackup()" id="backup-btn" style="margin-top:18px;padding:9px 22px">💾 Create Backup</button>
+        </div>
+        <div id="backup-status" style="display:none;margin-top:12px;padding:10px 14px;border-radius:8px;font-size:.82rem"></div>
+      </div>
+
+      <!-- Backup History -->
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <h3 style="margin:0;font-family:'Lora',serif;color:var(--blue);font-size:1rem">📋 Backup History</h3>
+          <button class="bp" onclick="loadBackupScreen()">↻ Refresh</button>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="vt" id="backup-table">
+            <tr>
+              <th>Backup ID</th>
+              <th>Timestamp</th>
+              <th>Performed By</th>
+              <th>File Name</th>
+              <th>Location</th>
+              <th>Note</th>
+              <th style="text-align:center">Actions</th>
+            </tr>
+            <tr id="backup-empty-row">
+              <td colspan="7" style="text-align:center;color:var(--gray);padding:22px;font-style:italic">Click ↻ Refresh to load backup history.</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <!-- Restore Confirm Modal -->
+      <div id="restore-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;align-items:center;justify-content:center">
+        <div style="background:#fff;border-radius:14px;padding:28px 32px;max-width:420px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.3)">
+          <div style="font-size:2.5rem;text-align:center;margin-bottom:12px">⚠️</div>
+          <h3 style="font-family:'Lora',serif;color:var(--blue);margin:0 0 10px;text-align:center">Restore Backup?</h3>
+          <p id="restore-modal-text" style="color:#475569;font-size:.85rem;margin:0 0 8px;text-align:center"></p>
+          <div style="background:#fef3c7;border-left:4px solid #ca8a04;padding:10px 14px;border-radius:8px;font-size:.78rem;color:#854d0e;margin-bottom:20px">
+            ⚠️ This will <strong>overwrite all current data</strong> with the backup. This cannot be undone. Make a new backup first if needed.
+          </div>
+          <div style="display:flex;gap:10px;justify-content:center">
+            <button class="bsv" style="background:#b91c1c" onclick="confirmRestore()">🔄 Yes, Restore</button>
+            <button class="bcc" onclick="cancelRestore()">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHART OF ACCOUNTS -->
       <div class="ph"><h1>Chart of Accounts</h1><p>53 accounts across 5 types</p></div>
       <div style="display:flex;gap:9px;flex-wrap:wrap;margin-bottom:15px;">
         <span style="background:#D6EAF8;color:#1a5276;padding:3px 11px;border-radius:20px;font-size:.76rem;font-weight:700;">Assets (17)</span>
@@ -4018,7 +4078,7 @@ function saveBillsToSheets() {
   saveNext(0);
 }
 
-var SYSTEM_VERSION = "v2026.04.10-1709";
+var SYSTEM_VERSION = "v2026.04.10-1720";
 
 // ── WEEKLY FINANCIAL REPORT ──────────────────────────────────────
 function showWeeklyFinancialPicker() {
@@ -6346,6 +6406,136 @@ function savePayroll() {
 // ── BILL TYPE CRUD ────────────────────────────────────────────────
 var btData = [];
 var btDeleteTarget = null;
+
+// ── BACKUP & RECOVERY ─────────────────────────────────────────────
+var restoreTarget = null;
+
+function loadBackupScreen() {
+  var url = localStorage.getItem('mcmbc_sheet_url') || '';
+  var tb  = document.getElementById('backup-table');
+  if (!url || url.indexOf('script.google.com') === -1) { showToast('No Google Sheets URL saved.'); return; }
+  tb.querySelectorAll('tr:not(:first-child)').forEach(function(r){ r.remove(); });
+  var loading = tb.insertRow();
+  loading.innerHTML = '<td colspan="7" style="text-align:center;padding:18px;color:var(--gray)">⏳ Loading backup history...</td>';
+  var cb = 'backupListCb_' + Date.now();
+  var t  = setTimeout(function(){ delete window[cb]; loading.remove(); showToast('⚠️ Could not load backup history.'); }, 25000);
+  window[cb] = function(data) {
+    clearTimeout(t); delete window[cb]; loading.remove();
+    if (data && data.status === 'success' && data.backups && data.backups.length > 0) {
+      data.backups.forEach(function(b){ renderBackupRow(b); });
+    } else {
+      var r = tb.insertRow(); r.id = 'backup-empty-row';
+      r.innerHTML = '<td colspan="7" style="text-align:center;color:var(--gray);padding:22px;font-style:italic">No backups found. Create your first backup above.</td>';
+    }
+  };
+  var s = document.createElement('script');
+  s.src = url + '?action=getBackups&callback=' + cb;
+  document.head.appendChild(s);
+}
+
+function renderBackupRow(b) {
+  var tb = document.getElementById('backup-table');
+  var empty = document.getElementById('backup-empty-row');
+  if (empty) empty.remove();
+  var tr = document.createElement('tr');
+  tr.setAttribute('data-backupid', b.id);
+  tr.innerHTML = [
+    '<td style="font-family:monospace;font-size:.75rem">' + (b.id||'') + '</td>',
+    '<td style="font-size:.78rem">' + (b.timestamp||'') + '</td>',
+    '<td style="font-size:.78rem">' + (b.performedBy||'') + '</td>',
+    '<td style="font-size:.78rem;font-weight:600">' + (b.fileName||'') + '</td>',
+    '<td style="font-size:.75rem"><a href="' + (b.url||'#') + '" target="_blank" style="color:var(--blue);text-decoration:underline" title="Open in Google Drive">📁 Drive</a></td>',
+    '<td style="font-size:.78rem;color:#64748b;font-style:italic">' + (b.note||'—') + '</td>',
+    '<td style="text-align:center;white-space:nowrap"></td>'
+  ].join('');
+  var td = tr.lastElementChild;
+  var rBtn = document.createElement('button');
+  rBtn.className = 'bac'; rBtn.style.cssText = 'background:#fef3c7;color:#854d0e';
+  rBtn.textContent = '🔄 Restore';
+  rBtn.onclick = (function(backup, row){ return function(){ promptRestore(backup, row); }; })(b, tr);
+  td.appendChild(rBtn);
+  tb.appendChild(tr);
+}
+
+function createBackup() {
+  var url = localStorage.getItem('mcmbc_sheet_url') || '';
+  if (!url || url.indexOf('script.google.com') === -1) { showToast('No Google Sheets URL saved.'); return; }
+  var note = document.getElementById('backup-note').value.trim();
+  var btn  = document.getElementById('backup-btn');
+  var stat = document.getElementById('backup-status');
+  btn.disabled = true; btn.textContent = '⏳ Creating backup...';
+  stat.style.display = 'block';
+  stat.style.background = '#f0f9ff'; stat.style.color = '#0369a1';
+  stat.textContent = 'Copying Google Sheets data to Google Drive... this may take 15-30 seconds.';
+
+  var cb = 'backupCb_' + Date.now();
+  var t  = setTimeout(function(){
+    delete window[cb]; btn.disabled=false; btn.textContent='💾 Create Backup';
+    stat.style.background='#fee2e2'; stat.style.color='#b91c1c';
+    stat.textContent='⚠️ Timed out. Try again.';
+  }, 60000);
+
+  window[cb] = function(data) {
+    clearTimeout(t); delete window[cb];
+    btn.disabled=false; btn.textContent='💾 Create Backup';
+    if (data && data.status === 'success') {
+      stat.style.background='#f0fdf4'; stat.style.color='#15803d';
+      stat.textContent='✅ Backup created: ' + data.fileName + ' — ' + data.timestamp;
+      document.getElementById('backup-note').value = '';
+      // Add row immediately
+      renderBackupRow({id:data.backupId, timestamp:data.timestamp, performedBy:data.performedBy,
+        fileName:data.fileName, url:data.fileUrl, note:note});
+      var empty = document.getElementById('backup-empty-row');
+      if (empty) empty.remove();
+    } else {
+      stat.style.background='#fee2e2'; stat.style.color='#b91c1c';
+      stat.textContent='⚠️ Backup failed: ' + (data && data.message ? data.message : 'Unknown error');
+    }
+  };
+  var s = document.createElement('script');
+  s.onerror = function(){
+    clearTimeout(t); delete window[cb]; btn.disabled=false; btn.textContent='💾 Create Backup';
+    stat.style.background='#fee2e2'; stat.style.color='#b91c1c';
+    stat.textContent='⚠️ Could not reach Google Sheets.';
+  };
+  s.src = url + '?action=createBackup&callback=' + cb
+        + '&performedBy=' + encodeURIComponent(CU ? CU.name : 'Unknown')
+        + '&note='        + encodeURIComponent(note);
+  document.head.appendChild(s);
+  setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); }, 62000);
+}
+
+function promptRestore(backup, rowEl) {
+  restoreTarget = backup;
+  document.getElementById('restore-modal-text').textContent =
+    'Restore backup "' + backup.fileName + '" from ' + backup.timestamp + ' (by ' + backup.performedBy + ')?';
+  document.getElementById('restore-modal').style.display = 'flex';
+}
+function cancelRestore() { restoreTarget=null; document.getElementById('restore-modal').style.display='none'; }
+
+function confirmRestore() {
+  if (!restoreTarget) return;
+  var backup = restoreTarget;
+  document.getElementById('restore-modal').style.display = 'none';
+  restoreTarget = null;
+  var url = localStorage.getItem('mcmbc_sheet_url') || '';
+  showToast('⏳ Restoring backup... do not close this window.');
+  var cb = 'restoreCb_' + Date.now();
+  var t  = setTimeout(function(){ delete window[cb]; showToast('⚠️ Restore timed out. Check Google Sheets.'); }, 90000);
+  window[cb] = function(data) {
+    clearTimeout(t); delete window[cb];
+    if (data && data.status === 'success') {
+      showToast('✅ Restore complete — ' + data.message + '. Reload the dashboard to see restored data.');
+    } else {
+      showToast('⚠️ Restore failed: ' + (data && data.message ? data.message : 'Unknown error'));
+    }
+  };
+  var s = document.createElement('script');
+  s.src = url + '?action=restoreBackup&callback=' + cb
+        + '&fileId='      + encodeURIComponent(backup.fileId||backup.id)
+        + '&performedBy=' + encodeURIComponent(CU ? CU.name : 'Unknown');
+  document.head.appendChild(s);
+}
 
 function loadBillTypesScreen() {
   var url = localStorage.getItem('mcmbc_sheet_url') || '';
