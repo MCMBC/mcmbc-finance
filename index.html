@@ -4195,14 +4195,13 @@ function renderWeeklyFinancialReport(data, s1, s2, startDate, endDate, body) {
   rpt += '<table style="width:100%;border-collapse:collapse;margin-top:32px">';
   rpt += '<tr><td colspan="2" style="padding:6px 4px;font-size:.8rem;font-weight:700;border-top:2px solid #334155">GRAND TOT. EXPEND.</td>' +
     '<td style="text-align:right;font-size:.8rem;font-weight:700;border-top:2px solid #334155;white-space:nowrap;padding-left:8px">' + fc(grandExpend) + '</td></tr>';
-  rpt += '<tr><td colspan="2" style="padding:4px 4px;font-size:.8rem;font-weight:700">GAINS/LOSSES</td>' +
-    '<td style="text-align:right;font-size:.8rem;font-weight:700;color:' + glColor + ';white-space:nowrap;padding-left:8px">' + fc(gainLoss) + '</td></tr>';
-  rpt += '</table>';
-
-  rpt += '<table style="width:100%;border-collapse:collapse;margin-top:24px">';
-  rpt += sectionHead('OTHER ACCOUNTS');
-  rpt += row('BLDG FUND',                       '', data.bldgBalance||0, false);
-  rpt += row('AUX. FUND (youth education/youth)','', (inc.youthEducation||0)+(inc.youth||0), false);
+  if (gainLoss >= 0) {
+    rpt += '<tr><td colspan="2" style="padding:4px 4px;font-size:.8rem;font-weight:700;color:#15803d">GAIN</td>' +
+      '<td style="text-align:right;font-size:.8rem;font-weight:700;color:#15803d;white-space:nowrap;padding-left:8px">' + fc(gainLoss) + '</td></tr>';
+  } else {
+    rpt += '<tr><td colspan="2" style="padding:4px 4px;font-size:.8rem;font-weight:700;color:#b91c1c">LOSS</td>' +
+      '<td style="text-align:right;font-size:.8rem;font-weight:700;color:#b91c1c;white-space:nowrap;padding-left:8px">-' + fc(Math.abs(gainLoss)) + '</td></tr>';
+  }
   rpt += '</table>';
 
   rpt += '</div>'; // end right col
