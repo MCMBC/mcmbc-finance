@@ -16,7 +16,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.04.10-2109</title>
+<title>Mount Calvary M.B. Church Financial System v2026.04.10-2119</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -149,7 +149,7 @@ nav{flex:1;padding:10px 0;}
     <button class="blb" onclick="doLogin()">Sign In</button>
     <div class="lerr" id="lerr">Invalid username or password. Please try again.</div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.10-2109</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.10-2119</span>
     </div>
   </div>
 </div>
@@ -210,7 +210,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.10-2109</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.10-2119</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -4097,7 +4097,7 @@ function saveBillsToSheets() {
   saveNext(0);
 }
 
-var SYSTEM_VERSION = "v2026.04.10-2109";
+var SYSTEM_VERSION = "v2026.04.10-2119";
 
 // ── WEEKLY FINANCIAL REPORT ──────────────────────────────────────
 function showWeeklyFinancialPicker() {
@@ -4985,6 +4985,25 @@ function generateCashFlowReport() {
   if (!start || !end) { showToast('Please select both a start and end date.'); return; }
   if (start > end)    { showToast('Start date must be before end date.');       return; }
   closeDatePicker();
+
+  var panel = document.getElementById('rpt-output');
+  var title = document.getElementById('rpt-output-title');
+  var body  = document.getElementById('rpt-output-body');
+
+  title.textContent = '💵 Weekly Cash Flow Report';
+  panel.style.display = 'block';
+
+  // Show spinner immediately — same pattern as Monthly report
+  body.innerHTML = [
+    '<div style="text-align:center;padding:48px 24px">',
+    '<div style="display:inline-block;width:52px;height:52px;border:5px solid #e2e8f0;border-top-color:var(--blue);border-radius:50%;animation:cfSpin 0.9s linear infinite;margin-bottom:20px"></div>',
+    '<div style="font-family:\'Lora\',serif;font-size:1.1rem;font-weight:700;color:var(--blue);margin-bottom:8px">Generating Weekly Cash Flow Report...</div>',
+    '<div id="cf-loading-msg" style="font-size:.82rem;color:#64748b">Loading data from Google Sheets...</div>',
+    '</div>',
+    '<style>@keyframes cfSpin{to{transform:rotate(360deg)}}</style>'
+  ].join('');
+
+  panel.scrollIntoView({behavior:'smooth', block:'start'});
   runReport('cashflow', start, end);
 }
 
@@ -4994,13 +5013,15 @@ function runReport(type, startDate, endDate) {
   var panel = document.getElementById('rpt-output');
   var title = document.getElementById('rpt-output-title');
   var body  = document.getElementById('rpt-output-body');
-  panel.style.display = 'block';
-  body.innerHTML = '';  // clear immediately so panel is visible
-  panel.scrollIntoView({behavior:'smooth', block:'start'});
 
-  var titles = {cashflow:'💵 Weekly Cash Flow Report', weekly:'📅 Weekly Financial Report',
-                contributions:'🙏 Contributions Statement', benevolent:'❤️ Benevolent Report'};
-  title.textContent = titles[type] || 'Report';
+  // For cashflow the spinner + panel are already set by generateCashFlowReport()
+  if (type !== 'cashflow') {
+    panel.style.display = 'block';
+    body.innerHTML = '';
+    panel.scrollIntoView({behavior:'smooth', block:'start'});
+    var titles = {weekly:'📅 Weekly Financial Report', contributions:'🙏 Contributions Statement', benevolent:'❤️ Benevolent Report'};
+    title.textContent = titles[type] || 'Report';
+  }
 
   if (!data && type !== 'cashflow') {
     body.innerHTML = '<div style="background:#fef3c7;border-left:4px solid #ca8a04;padding:14px 16px;border-radius:8px;color:#854d0e;font-size:.85rem">⚠️ No data loaded — click <strong>↻ Refresh</strong> on the dashboard first.</div>';
@@ -5012,17 +5033,7 @@ function runReport(type, startDate, endDate) {
   var html = '';
 
   if (type === 'cashflow') {
-    // Load detailed cash flow data from Sheets
-    body.innerHTML = [
-      '<div style="text-align:center;padding:48px 24px">',
-      '  <div style="display:inline-block;width:52px;height:52px;border:5px solid #e2e8f0;border-top-color:var(--blue);border-radius:50%;animation:cfSpin 0.9s linear infinite;margin-bottom:20px"></div>',
-      '  <div style="font-family:\'Lora\',serif;font-size:1.1rem;font-weight:700;color:var(--blue);margin-bottom:8px">Generating Weekly Cash Flow Report...</div>',
-      '  <div id="cf-loading-msg" style="font-size:.82rem;color:#64748b">Loading data from Google Sheets...</div>',
-      '</div>',
-      '<style>@keyframes cfSpin{to{transform:rotate(360deg)}}</style>'
-    ].join('');
-
-    // Animate loading messages and progress bar
+    // Spinner already painted by generateCashFlowReport() — animate the loading messages
     var loadingMsgs = [
       'Reading Offerings...',
       'Reading Tithes by Members...',
