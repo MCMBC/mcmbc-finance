@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <link rel="icon" href="data:,">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.04.10-1403</title>
+<title>Mount Calvary M.B. Church Financial System v2026.04.10-1546</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -194,7 +194,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.10-1403</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.10-1546</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -255,9 +255,9 @@ nav{flex:1;padding:10px 0;}
           <div style="font-size:.78rem;color:#64748b">Income, salaries, utilities & disbursements</div>
         </div>
 
-        <div class="rpt-card" onclick="runReport('contributions')" style="background:#fff;border:2px solid #e2e8f0;border-radius:14px;padding:28px 24px;cursor:pointer;transition:all .2s;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.05)" onmouseover="this.style.borderColor='var(--blue)';this.style.boxShadow='0 6px 24px rgba(15,39,68,.12)'" onmouseout="this.style.borderColor='#e2e8f0';this.style.boxShadow='0 2px 8px rgba(0,0,0,.05)'">
+        <div class="rpt-card" onclick="showContributionPicker()" style="background:#fff;border:2px solid #e2e8f0;border-radius:14px;padding:28px 24px;cursor:pointer;transition:all .2s;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.05)" onmouseover="this.style.borderColor='var(--blue)';this.style.boxShadow='0 6px 24px rgba(15,39,68,.12)'" onmouseout="this.style.borderColor='#e2e8f0';this.style.boxShadow='0 2px 8px rgba(0,0,0,.05)'">
           <div style="font-size:2.4rem;margin-bottom:12px">🙏</div>
-          <div style="font-family:'Lora',serif;font-size:1.05rem;font-weight:700;color:var(--blue);margin-bottom:6px">Contributions Statement</div>
+          <div style="font-family:'Lora',serif;font-size:1.05rem;font-weight:700;color:var(--blue);margin-bottom:6px">Annual Contribution Statement</div>
           <div style="font-size:.78rem;color:#64748b">Member and donor giving history</div>
         </div>
 
@@ -334,6 +334,40 @@ nav{flex:1;padding:10px 0;}
           <button class="bac" onclick="wfrPreset(30)">Last 30 Days</button>
           <button class="bac" onclick="wfrPresetMonth()">This Month</button>
           <button class="bac" onclick="wfrPresetYear()">Year to Date</button>
+        </div>
+      </div>
+
+      <!-- Annual Contribution Statement Picker -->
+      <div id="rpt-contrib-picker" style="display:none;margin-top:24px;background:#fdf4ff;border:2px solid #e9d5ff;border-radius:12px;padding:22px 24px">
+        <h3 style="margin:0 0 16px;font-family:'Lora',serif;color:var(--blue);font-size:1rem">🙏 Annual Contribution Statement — Select Period &amp; Member</h3>
+        <div style="display:flex;gap:20px;align-items:flex-end;flex-wrap:wrap;margin-bottom:14px">
+          <div style="display:flex;flex-direction:column;gap:5px">
+            <label style="font-size:.78rem;font-weight:600;color:#475569;text-transform:uppercase;letter-spacing:.04em">Start Date</label>
+            <input type="date" id="cs-start" style="padding:9px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit">
+          </div>
+          <div style="display:flex;flex-direction:column;gap:5px">
+            <label style="font-size:.78rem;font-weight:600;color:#475569;text-transform:uppercase;letter-spacing:.04em">End Date</label>
+            <input type="date" id="cs-end" style="padding:9px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit">
+          </div>
+          <div style="display:flex;flex-direction:column;gap:5px;min-width:200px">
+            <label style="font-size:.78rem;font-weight:600;color:#475569;text-transform:uppercase;letter-spacing:.04em">Member <span style="font-weight:400;text-transform:none;color:#94a3b8">(optional)</span></label>
+            <select id="cs-member" style="padding:9px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit">
+              <option value="">All Members</option>
+            </select>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+          <span style="font-size:.75rem;color:#64748b;margin-top:4px">Quick:</span>
+          <button class="bac" onclick="csPresetYear(new Date().getFullYear())">This Year</button>
+          <button class="bac" onclick="csPresetYear(new Date().getFullYear()-1)">Last Year</button>
+          <button class="bac" onclick="csPresetYear(2022)">2022</button>
+          <button class="bac" onclick="csPresetYear(2023)">2023</button>
+          <button class="bac" onclick="csPresetYear(2024)">2024</button>
+          <button class="bac" onclick="csPresetYear(2025)">2025</button>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="bsv" onclick="generateContributionStatement()" style="padding:9px 22px;font-size:.88rem">📊 Generate Statement</button>
+          <button class="bcc" onclick="closeContributionPicker()" style="padding:9px 16px;font-size:.88rem">✕ Cancel</button>
         </div>
       </div>
 
@@ -3946,7 +3980,7 @@ function saveBillsToSheets() {
   saveNext(0);
 }
 
-var SYSTEM_VERSION = "v2026.04.10-1403";
+var SYSTEM_VERSION = "v2026.04.10-1546";
 
 // ── WEEKLY FINANCIAL REPORT ──────────────────────────────────────
 function showWeeklyFinancialPicker() {
@@ -4218,6 +4252,190 @@ function renderWeeklyFinancialReport(data, s1, s2, startDate, endDate, body) {
 
   body.innerHTML = rpt;
   showToast('✅ Weekly Financial Report generated');
+}
+
+// ── ANNUAL CONTRIBUTION STATEMENT ────────────────────────────────
+function showContributionPicker() {
+  var t = new Date();
+  document.getElementById('cs-start').value = new Date(t.getFullYear(), 0, 1).toISOString().split('T')[0];
+  document.getElementById('cs-end').value   = new Date(t.getFullYear(), 11, 31).toISOString().split('T')[0];
+  ['rpt-date-picker','rpt-month-picker','rpt-weekly-picker','rpt-output'].forEach(function(id){
+    document.getElementById(id).style.display = 'none';
+  });
+  document.getElementById('rpt-contrib-picker').style.display = 'block';
+  document.getElementById('rpt-contrib-picker').scrollIntoView({behavior:'smooth', block:'start'});
+  // Load members into dropdown
+  var url = localStorage.getItem('mcmbc_sheet_url') || '';
+  if (url && url.indexOf('script.google.com') !== -1) {
+    var cb = 'csMbrCb_' + Date.now();
+    window[cb] = function(data) {
+      delete window[cb];
+      if (data && data.members) {
+        var sel = document.getElementById('cs-member');
+        sel.innerHTML = '<option value="">All Members</option>';
+        data.members.forEach(function(m){ var o=document.createElement('option'); o.value=m; o.textContent=m; sel.appendChild(o); });
+      }
+    };
+    var s = document.createElement('script');
+    s.src = url + '?action=getContributionStatement&callback=' + cb + '&startDate=2020-01-01&endDate=2020-01-01';
+    document.head.appendChild(s);
+  }
+}
+
+function closeContributionPicker() {
+  document.getElementById('rpt-contrib-picker').style.display = 'none';
+}
+
+function csPresetYear(yr) {
+  document.getElementById('cs-start').value = yr + '-01-01';
+  document.getElementById('cs-end').value   = yr + '-12-31';
+}
+
+function generateContributionStatement() {
+  var start  = document.getElementById('cs-start').value;
+  var end    = document.getElementById('cs-end').value;
+  var member = document.getElementById('cs-member').value;
+  if (!start || !end) { showToast('Please select both a start and end date.'); return; }
+  if (start > end)    { showToast('Start date must be before end date.'); return; }
+  closeContributionPicker();
+
+  var panel = document.getElementById('rpt-output');
+  var title = document.getElementById('rpt-output-title');
+  var body  = document.getElementById('rpt-output-body');
+  var s1 = new Date(start + 'T00:00:00').toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  var s2 = new Date(end   + 'T00:00:00').toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  title.textContent = '🙏 Annual Contribution Statement — ' + s1 + ' to ' + s2;
+  panel.style.display = 'block';
+  body.innerHTML = '';
+  panel.scrollIntoView({behavior:'smooth', block:'start'});
+
+  var url = localStorage.getItem('mcmbc_sheet_url') || '';
+  if (!url || url.indexOf('script.google.com') === -1) {
+    body.innerHTML = '<div style="background:#fef3c7;border-left:4px solid #ca8a04;padding:14px;border-radius:8px;color:#854d0e">⚠️ No Google Sheets URL saved.</div>';
+    return;
+  }
+
+  body.innerHTML = [
+    '<div style="text-align:center;padding:48px 24px">',
+    '<div style="display:inline-block;width:52px;height:52px;border:5px solid #e2e8f0;border-top-color:var(--blue);border-radius:50%;animation:cfSpin 0.9s linear infinite;margin-bottom:20px"></div>',
+    '<div style="font-family:\'Lora\',serif;font-size:1.1rem;font-weight:700;color:var(--blue);margin-bottom:8px">Generating Annual Contribution Statement...</div>',
+    '<div style="font-size:.82rem;color:#64748b">Loading contribution records...</div>',
+    '</div>'
+  ].join('');
+
+  var cb = 'csCb_' + Date.now();
+  var t  = setTimeout(function(){ delete window[cb]; body.innerHTML='<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Timed out. Try again.</div>'; }, 30000);
+
+  setTimeout(function() {
+    window[cb] = function(data) {
+      clearTimeout(t); delete window[cb];
+      if (!data || data.status !== 'success') {
+        body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Error: ' + JSON.stringify(data) + '</div>';
+        return;
+      }
+      try { renderContributionStatement(data, s1, s2, member, body); }
+      catch(e) { body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c;font-size:.82rem"><strong>Render error:</strong><br>' + e.message + '</div>'; }
+    };
+    var s = document.createElement('script');
+    s.onerror = function(){ clearTimeout(t); delete window[cb]; body.innerHTML='<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Could not reach Google Sheets.</div>'; };
+    s.src = url + '?action=getContributionStatement&callback=' + cb
+      + '&startDate='   + encodeURIComponent(start)
+      + '&endDate='     + encodeURIComponent(end)
+      + '&memberName='  + encodeURIComponent(member);
+    document.head.appendChild(s);
+    setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); }, 32000);
+  }, 80);
+}
+
+function renderContributionStatement(data, s1, s2, member, body) {
+  var rows = data.rows || [];
+  var cols = ['tithes','offering','benevolent','youth','youthEdu','other'];
+  var colLabels = ['Tithes','Gen. Offering','Benevolent','Youth','Youth Edu.','Other'];
+
+  function fc(v) { return fmtCurrency(v||0); }
+  function fmtDate(iso) {
+    var d = new Date(iso + 'T00:00:00');
+    return (d.getMonth()+1) + '/' + d.getDate() + '/' + d.getFullYear();
+  }
+  function satDate(iso) {
+    var d = new Date(iso + 'T00:00:00');
+    d.setDate(d.getDate() + 6);
+    return (d.getMonth()+1) + '/' + d.getDate() + '/' + d.getFullYear();
+  }
+
+  // Column totals
+  var totals = {}; cols.forEach(function(c){ totals[c]=0; });
+  var grandTotal = 0;
+  rows.forEach(function(r){
+    cols.forEach(function(c){ totals[c] += r[c]||0; });
+    grandTotal += cols.reduce(function(s,c){ return s+(r[c]||0); }, 0);
+  });
+
+  var thStyle = 'padding:5px 10px;border-bottom:2px solid #334155;font-size:.78rem;text-align:right;white-space:nowrap;font-style:italic;font-weight:600;color:#334155';
+  var thFirstStyle = 'padding:5px 10px;border-bottom:2px solid #334155;font-size:.78rem;text-align:left;white-space:nowrap;font-weight:600;color:#334155';
+  var tdStyle = 'padding:3px 10px;font-size:.78rem;text-align:right;white-space:nowrap;border-bottom:1px solid #f1f5f9';
+  var tdDateStyle = 'padding:3px 10px;font-size:.78rem;text-align:left;white-space:nowrap;border-bottom:1px solid #f1f5f9;color:#475569;font-style:italic';
+  var totStyle = 'padding:5px 10px;font-size:.8rem;font-weight:700;text-align:right;border-top:2px solid #334155;white-space:nowrap';
+  var totLblStyle = 'padding:5px 10px;font-size:.8rem;font-weight:700;text-align:left;border-top:2px solid #334155';
+
+  var rpt = '<style>@keyframes cfSpin{to{transform:rotate(360deg)}}</style>';
+  rpt += '<div style="font-family:Arial,sans-serif;max-width:900px;margin:0 auto">';
+
+  // Header
+  rpt += '<div style="text-align:center;margin-bottom:20px">';
+  rpt += '<div style="font-weight:700;font-size:.95rem">Mount Calvary Missionary Baptist Church</div>';
+  rpt += '<div>10314 Canal Rd. &nbsp; Gulfport, Ms. 39503</div>';
+  rpt += '<div style="font-weight:700;margin-top:8px">Annual Contribution Statement</div>';
+  rpt += '<div style="color:#475569;font-size:.85rem">' + s1 + ' - ' + s2 + '</div>';
+  rpt += '</div>';
+
+  // Name line
+  rpt += '<div style="margin-bottom:16px;font-size:.88rem"><strong>Name:</strong> ' + (member || '(All Members)') + '</div>';
+
+  // Table
+  rpt += '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse">';
+
+  // Header row
+  rpt += '<thead><tr>';
+  rpt += '<th style="' + thFirstStyle + '">Date Range</th>';
+  colLabels.forEach(function(l){ rpt += '<th style="' + thStyle + '">' + l + '</th>'; });
+  rpt += '<th style="' + thStyle + ';color:#0F2744">Total</th>';
+  rpt += '</tr></thead>';
+
+  // Data rows
+  rpt += '<tbody>';
+  rows.forEach(function(r) {
+    var rowTotal = cols.reduce(function(s,c){ return s+(r[c]||0); }, 0);
+    var hasData  = rowTotal > 0;
+    var rowStyle = hasData ? '' : 'color:#94a3b8';
+    rpt += '<tr style="' + rowStyle + '">';
+    rpt += '<td style="' + tdDateStyle + '">' + fmtDate(r.sunday) + ' – ' + satDate(r.sunday) + '</td>';
+    cols.forEach(function(c){ rpt += '<td style="' + tdStyle + (hasData?'':';color:#cbd5e1') + '">' + fc(r[c]) + '</td>'; });
+    rpt += '<td style="' + tdStyle + ';font-weight:' + (hasData?'700':'400') + '">' + fc(rowTotal) + '</td>';
+    rpt += '</tr>';
+  });
+
+  // Totals row
+  rpt += '<tr>';
+  rpt += '<td style="' + totLblStyle + '">Total</td>';
+  cols.forEach(function(c){ rpt += '<td style="' + totStyle + '">' + fc(totals[c]) + '</td>'; });
+  rpt += '<td style="' + totStyle + ';color:#0F2744">' + fc(grandTotal) + '</td>';
+  rpt += '</tr>';
+
+  // Other + Grand Total
+  rpt += '<tr><td style="padding:4px 10px;font-size:.8rem;font-weight:700">Other</td>' +
+    '<td colspan="' + (cols.length+1) + '" style="padding:4px 10px;font-size:.8rem;font-weight:700">$0.00</td></tr>';
+  rpt += '<tr style="background:#f0fdf4"><td style="padding:6px 10px;font-size:.85rem;font-weight:700;color:#15803d">Grand Total</td>' +
+    '<td colspan="' + (cols.length+1) + '" style="padding:6px 10px;font-size:.95rem;font-weight:700;color:#15803d;text-align:right">' + fc(grandTotal) + '</td></tr>';
+
+  rpt += '</tbody></table></div>';
+
+  // Print button
+  rpt += '<div style="text-align:center;margin-top:24px"><button class="bsv" onclick="window.print()" style="padding:10px 28px">🖨️ Print Statement</button></div>';
+  rpt += '</div>';
+
+  body.innerHTML = rpt;
+  showToast('✅ Annual Contribution Statement generated — ' + rows.length + ' weeks');
 }
 
 // ── MONTHLY CASH FLOW REPORT ─────────────────────────────────────
