@@ -16,7 +16,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.04.10-2119</title>
+<title>Mount Calvary M.B. Church Financial System v2026.04.10-2128</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -149,7 +149,7 @@ nav{flex:1;padding:10px 0;}
     <button class="blb" onclick="doLogin()">Sign In</button>
     <div class="lerr" id="lerr">Invalid username or password. Please try again.</div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.10-2119</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.10-2128</span>
     </div>
   </div>
 </div>
@@ -210,7 +210,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.10-2119</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.10-2128</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -4097,7 +4097,7 @@ function saveBillsToSheets() {
   saveNext(0);
 }
 
-var SYSTEM_VERSION = "v2026.04.10-2119";
+var SYSTEM_VERSION = "v2026.04.10-2128";
 
 // ── WEEKLY FINANCIAL REPORT ──────────────────────────────────────
 function showWeeklyFinancialPicker() {
@@ -5280,7 +5280,10 @@ function runReport(type, startDate, endDate) {
     html += '<div style="background:#fef3c7;border-left:4px solid #ca8a04;padding:12px 16px;border-radius:8px;font-size:.82rem;color:#854d0e;margin-top:14px">💡 Individual disbursement records are tracked in the Expenses screen under the Benevolent Offering Fund.</div>';
   }
 
-  body.innerHTML = html;
+  // cashflow renders itself inside the JSONP callback — don't overwrite its spinner
+  if (type !== 'cashflow') {
+    body.innerHTML = html;
+  }
 }
 
 function kpiMini(label, icon, value, color) {
