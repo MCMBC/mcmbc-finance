@@ -16,7 +16,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.04.10-1628</title>
+<title>Mount Calvary M.B. Church Financial System v2026.04.10-1639</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -206,7 +206,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.10-1628</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.10-1639</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -273,10 +273,10 @@ nav{flex:1;padding:10px 0;}
           <div style="font-size:.78rem;color:#64748b">Member and donor giving history</div>
         </div>
 
-        <div class="rpt-card" onclick="runReport('benevolent')" style="background:#fff;border:2px solid #e2e8f0;border-radius:14px;padding:28px 24px;cursor:pointer;transition:all .2s;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.05)" onmouseover="this.style.borderColor='var(--blue)';this.style.boxShadow='0 6px 24px rgba(15,39,68,.12)'" onmouseout="this.style.borderColor='#e2e8f0';this.style.boxShadow='0 2px 8px rgba(0,0,0,.05)'">
+        <div class="rpt-card" onclick="showBenevolentPicker()" style="background:#fff;border:2px solid #e2e8f0;border-radius:14px;padding:28px 24px;cursor:pointer;transition:all .2s;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.05)" onmouseover="this.style.borderColor='var(--blue)';this.style.boxShadow='0 6px 24px rgba(15,39,68,.12)'" onmouseout="this.style.borderColor='#e2e8f0';this.style.boxShadow='0 2px 8px rgba(0,0,0,.05)'">
           <div style="font-size:2.4rem;margin-bottom:12px">❤️</div>
-          <div style="font-family:'Lora',serif;font-size:1.05rem;font-weight:700;color:var(--blue);margin-bottom:6px">Benevolent</div>
-          <div style="font-size:.78rem;color:#64748b">Benevolent fund disbursements and balance</div>
+          <div style="font-family:'Lora',serif;font-size:1.05rem;font-weight:700;color:var(--blue);margin-bottom:6px">Benevolent Report</div>
+          <div style="font-size:.78rem;color:#64748b">Date, amount and running total of benevolent fund</div>
         </div>
 
       </div>
@@ -346,6 +346,32 @@ nav{flex:1;padding:10px 0;}
           <button class="bac" onclick="wfrPreset(30)">Last 30 Days</button>
           <button class="bac" onclick="wfrPresetMonth()">This Month</button>
           <button class="bac" onclick="wfrPresetYear()">Year to Date</button>
+        </div>
+      </div>
+
+      <!-- Benevolent Report Picker -->
+      <div id="rpt-benv-picker" style="display:none;margin-top:24px;background:#fff1f2;border:2px solid #fecaca;border-radius:12px;padding:22px 24px">
+        <h3 style="margin:0 0 16px;font-family:'Lora',serif;color:var(--blue);font-size:1rem">❤️ Benevolent Report — Select Date Range</h3>
+        <div style="display:flex;gap:20px;align-items:flex-end;flex-wrap:wrap">
+          <div style="display:flex;flex-direction:column;gap:5px">
+            <label style="font-size:.78rem;font-weight:600;color:#475569;text-transform:uppercase;letter-spacing:.04em">Start Date</label>
+            <input type="date" id="benv-start" style="padding:9px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit">
+          </div>
+          <div style="display:flex;flex-direction:column;gap:5px">
+            <label style="font-size:.78rem;font-weight:600;color:#475569;text-transform:uppercase;letter-spacing:.04em">End Date</label>
+            <input type="date" id="benv-end" style="padding:9px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit">
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
+            <button class="bsv" onclick="generateBenevolentReport()" style="padding:9px 22px;font-size:.88rem">📊 Generate Report</button>
+            <button class="bcc" onclick="closeBenevolentPicker()" style="padding:9px 16px;font-size:.88rem">✕ Cancel</button>
+          </div>
+        </div>
+        <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
+          <span style="font-size:.75rem;color:#64748b;margin-top:4px">Quick:</span>
+          <button class="bac" onclick="benvPreset(30)">Last 30 Days</button>
+          <button class="bac" onclick="benvPresetMonth()">This Month</button>
+          <button class="bac" onclick="benvPresetYear()">Year to Date</button>
+          <button class="bac" onclick="benvPresetYear(new Date().getFullYear()-1)">Last Year</button>
         </div>
       </div>
 
@@ -3992,7 +4018,7 @@ function saveBillsToSheets() {
   saveNext(0);
 }
 
-var SYSTEM_VERSION = "v2026.04.10-1628";
+var SYSTEM_VERSION = "v2026.04.10-1639";
 
 // ── WEEKLY FINANCIAL REPORT ──────────────────────────────────────
 function showWeeklyFinancialPicker() {
@@ -4290,6 +4316,107 @@ function printReport() {
   ].join('\n'));
   win.document.close();
 }
+// ── BENEVOLENT REPORT ─────────────────────────────────────────────
+function showBenevolentPicker() {
+  var t = new Date();
+  document.getElementById('benv-start').value = new Date(t.getFullYear(), 0, 1).toISOString().split('T')[0];
+  document.getElementById('benv-end').value   = t.toISOString().split('T')[0];
+  ['rpt-date-picker','rpt-month-picker','rpt-weekly-picker','rpt-contrib-picker','rpt-output'].forEach(function(id){
+    document.getElementById(id).style.display = 'none';
+  });
+  document.getElementById('rpt-benv-picker').style.display = 'block';
+  document.getElementById('rpt-benv-picker').scrollIntoView({behavior:'smooth', block:'start'});
+}
+function closeBenevolentPicker() { document.getElementById('rpt-benv-picker').style.display = 'none'; }
+function benvPreset(days) {
+  var e = new Date(), s = new Date(); s.setDate(e.getDate()-days+1);
+  document.getElementById('benv-start').value = s.toISOString().split('T')[0];
+  document.getElementById('benv-end').value   = e.toISOString().split('T')[0];
+}
+function benvPresetMonth() {
+  var t = new Date();
+  document.getElementById('benv-start').value = new Date(t.getFullYear(), t.getMonth(), 1).toISOString().split('T')[0];
+  document.getElementById('benv-end').value   = t.toISOString().split('T')[0];
+}
+function benvPresetYear(yr) {
+  var y = yr || new Date().getFullYear();
+  document.getElementById('benv-start').value = y + '-01-01';
+  document.getElementById('benv-end').value   = y + '-12-31';
+}
+
+function generateBenevolentReport() {
+  var start = document.getElementById('benv-start').value;
+  var end   = document.getElementById('benv-end').value;
+  if (!start || !end) { showToast('Please select both a start and end date.'); return; }
+  if (start > end)    { showToast('Start date must be before end date.'); return; }
+  closeBenevolentPicker();
+  var panel = document.getElementById('rpt-output');
+  var title = document.getElementById('rpt-output-title');
+  var body  = document.getElementById('rpt-output-body');
+  var s1 = new Date(start+'T00:00:00').toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  var s2 = new Date(end  +'T00:00:00').toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  title.textContent = '❤️ Benevolent Report — ' + s1 + ' to ' + s2;
+  panel.style.display = 'block'; body.innerHTML = '';
+  panel.scrollIntoView({behavior:'smooth', block:'start'});
+  var url = localStorage.getItem('mcmbc_sheet_url') || '';
+  if (!url || url.indexOf('script.google.com') === -1) {
+    body.innerHTML = '<div style="background:#fef3c7;border-left:4px solid #ca8a04;padding:14px;border-radius:8px;color:#854d0e">⚠️ No Google Sheets URL saved.</div>'; return;
+  }
+  body.innerHTML = '<div style="text-align:center;padding:48px 24px"><div style="display:inline-block;width:52px;height:52px;border:5px solid #e2e8f0;border-top-color:var(--blue);border-radius:50%;animation:cfSpin 0.9s linear infinite;margin-bottom:20px"></div><div style="font-family:\'Lora\',serif;font-size:1.1rem;font-weight:700;color:var(--blue);margin-bottom:8px">Generating Benevolent Report...</div><div style="font-size:.82rem;color:#64748b">Loading records...</div></div>';
+  var cb = 'benvCb_' + Date.now();
+  var t  = setTimeout(function(){ delete window[cb]; body.innerHTML='<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Timed out.</div>'; }, 28000);
+  setTimeout(function() {
+    window[cb] = function(data) {
+      clearTimeout(t); delete window[cb];
+      if (!data || data.status !== 'success') { body.innerHTML='<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Error: '+JSON.stringify(data)+'</div>'; return; }
+      try { renderBenevolentReport(data, s1, s2, body); }
+      catch(e) { body.innerHTML='<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c;font-size:.82rem"><strong>Render error:</strong><br>'+e.message+'</div>'; }
+    };
+    var s = document.createElement('script');
+    s.onerror = function(){ clearTimeout(t); delete window[cb]; body.innerHTML='<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Could not reach Google Sheets.</div>'; };
+    s.src = url + '?action=getBenevolentReport&callback=' + cb + '&startDate=' + encodeURIComponent(start) + '&endDate=' + encodeURIComponent(end);
+    document.head.appendChild(s);
+    setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); }, 30000);
+  }, 80);
+}
+
+function renderBenevolentReport(data, s1, s2, body) {
+  var rows = data.rows || [], total = data.total || 0, receivedBy = data.receivedBy || '';
+  function fc(v) { return fmtCurrency(v||0); }
+  var thS  = 'padding:8px 14px;background:#0F2744;color:#fff;font-size:.8rem;text-align:left';
+  var thRS = 'padding:8px 14px;background:#0F2744;color:#fff;font-size:.8rem;text-align:right';
+  var tdS  = 'padding:6px 14px;font-size:.82rem;border-bottom:1px solid #e2e8f0';
+  var tdRS = 'padding:6px 14px;font-size:.82rem;border-bottom:1px solid #e2e8f0;text-align:right';
+  var rpt = '<style>@keyframes cfSpin{to{transform:rotate(360deg)}}</style>';
+  rpt += '<div style="font-family:Arial,sans-serif;max-width:700px;margin:0 auto">';
+  rpt += '<div style="text-align:center;margin-bottom:20px"><div style="font-weight:700;font-size:.95rem">Mount Calvary Missionary Baptist Church</div>';
+  rpt += '<div>10314 Canal Rd. &nbsp; Gulfport, Ms. 39503</div>';
+  rpt += '<div style="font-weight:700;text-decoration:underline;margin-top:8px;font-size:1rem">Benevolent-</div>';
+  rpt += '<div style="font-size:.78rem;color:#475569;margin-top:4px">' + s1 + ' — ' + s2 + '</div></div>';
+  rpt += '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse">';
+  rpt += '<thead><tr><th style="'+thS+'">Date</th><th style="'+thS+'">Source</th><th style="'+thRS+'">Amount</th><th style="'+thRS+'">Total</th></tr></thead>';
+  rpt += '<tbody>';
+  if (rows.length === 0) {
+    rpt += '<tr><td colspan="4" style="'+tdS+';color:#94a3b8;font-style:italic;text-align:center;padding:20px">No benevolent records for this period.</td></tr>';
+  } else {
+    rows.forEach(function(r){
+      rpt += '<tr><td style="'+tdS+'">'+r.date+'</td><td style="'+tdS+'">'+(r.source||'')+'</td><td style="'+tdRS+'">'+fc(r.amount)+'</td><td style="'+tdRS+'">'+fc(r.runningTotal)+'</td></tr>';
+    });
+  }
+  rpt += '<tr style="background:#f8fafc"><td colspan="2" style="'+tdS+';font-weight:700;border-top:2px solid #334155">Total</td>';
+  rpt += '<td style="'+tdRS+';font-weight:700;border-top:2px solid #334155">'+fc(total)+'</td>';
+  rpt += '<td style="'+tdRS+';font-weight:700;border-top:2px solid #334155">'+fc(total)+'</td></tr>';
+  rpt += '</tbody></table></div>';
+  rpt += '<div style="display:flex;justify-content:space-between;margin-top:32px;font-size:.85rem">';
+  rpt += '<div>Received by: <span style="border-bottom:1px solid #334155;display:inline-block;min-width:180px;padding-bottom:2px">'+(receivedBy||'')+'</span></div>';
+  rpt += '<div>Date: <span style="border-bottom:1px solid #334155;display:inline-block;min-width:140px;padding-bottom:2px">'+new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})+'</span></div>';
+  rpt += '</div>';
+  rpt += '<div class="no-print" style="text-align:center;margin-top:24px"><button class="bsv" onclick="printReport()" style="padding:10px 28px">🖨️ Print Report</button></div>';
+  rpt += '</div>';
+  body.innerHTML = rpt;
+  showToast('✅ Benevolent Report — ' + rows.length + ' record(s)');
+}
+
 function showContributionPicker() {
   var t = new Date();
   document.getElementById('cs-start').value = new Date(t.getFullYear(), 0, 1).toISOString().split('T')[0];
