@@ -3,9 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <link rel="icon" href="data:,">
-<style>@media print { .no-print { display:none !important; } }</style>
+<style>
+@media print {
+  .no-print { display:none !important; }
+  body > * { display:none !important; }
+  #rpt-output { display:block !important; position:static !important; margin:0 !important; padding:0 !important; box-shadow:none !important; border:none !important; }
+  #rpt-output * { visibility:visible !important; }
+  #rpt-output-title { display:block !important; }
+  #rpt-output-body  { display:block !important; }
+  #app  { display:none !important; }
+  #lp   { display:none !important; }
+}
+</style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.04.10-1621</title>
+<title>Mount Calvary M.B. Church Financial System v2026.04.10-1628</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -195,7 +206,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.10-1621</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.10-1628</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -3981,7 +3992,7 @@ function saveBillsToSheets() {
   saveNext(0);
 }
 
-var SYSTEM_VERSION = "v2026.04.10-1621";
+var SYSTEM_VERSION = "v2026.04.10-1628";
 
 // ── WEEKLY FINANCIAL REPORT ──────────────────────────────────────
 function showWeeklyFinancialPicker() {
@@ -4255,7 +4266,30 @@ function renderWeeklyFinancialReport(data, s1, s2, startDate, endDate, body) {
   showToast('✅ Weekly Financial Report generated');
 }
 
-function printReport() { window.print(); }
+function printReport() {
+  var title = document.getElementById('rpt-output-title').textContent || 'Report';
+  var body  = document.getElementById('rpt-output-body').innerHTML;
+  var win   = window.open('', '_blank', 'width=900,height=700');
+  win.document.write([
+    '<!DOCTYPE html><html><head>',
+    '<title>' + title + '</title>',
+    '<style>',
+    '  body { font-family: Arial, sans-serif; padding: 24px; color: #1e293b; margin: 0; }',
+    '  table { width: 100%; border-collapse: collapse; margin-bottom: 16px; }',
+    '  th { background: #0F2744; color: #fff; padding: 6px 10px; text-align: left; font-size: .78rem; }',
+    '  td { padding: 4px 10px; font-size: .78rem; border-bottom: 1px solid #e2e8f0; }',
+    '  .no-print { display: none !important; }',
+    '  @keyframes cfSpin { to { transform: rotate(360deg); } }',
+    '  @media print { .no-print { display: none !important; } }',
+    '</style>',
+    '</head><body>',
+    '<h2 style="font-family: Georgia, serif; color: #0F2744; margin: 0 0 16px">' + title + '</h2>',
+    body,
+    '<script>window.onload = function(){ window.print(); window.onafterprint = function(){ window.close(); }; }<\/script>',
+    '</body></html>'
+  ].join('\n'));
+  win.document.close();
+}
 function showContributionPicker() {
   var t = new Date();
   document.getElementById('cs-start').value = new Date(t.getFullYear(), 0, 1).toISOString().split('T')[0];
