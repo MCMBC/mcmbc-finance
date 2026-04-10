@@ -4050,11 +4050,10 @@ function renderWeeklyFinancialReport(data, s1, s2, startDate, endDate, body) {
   var exp     = data.otherExpenses || [];
 
   function fc(v)  { return fmtCurrency(v||0); }
-  function dots() { return '<span style="letter-spacing:2px;color:#94a3b8">··············································</span>'; }
   function row(label, checkNo, amount, indent) {
     return '<tr>' +
       '<td style="padding:3px 0 3px ' + (indent?'20px':'4px') + ';font-size:.8rem;width:200px">' + label + (checkNo ? ' <span style="color:#94a3b8;font-size:.72rem">#' + checkNo + '</span>' : '') + '</td>' +
-      '<td style="width:60%;color:#94a3b8;font-size:.7rem;letter-spacing:1px">···················································</td>' +
+      '<td style="color:#94a3b8;font-size:.7rem;letter-spacing:1px">···················································</td>' +
       '<td style="text-align:right;font-size:.8rem;font-weight:600;white-space:nowrap;padding-left:8px">' + fc(amount) + '</td>' +
       '</tr>';
   }
@@ -4066,26 +4065,20 @@ function renderWeeklyFinancialReport(data, s1, s2, startDate, endDate, body) {
     return '<tr><td colspan="3" style="padding:8px 4px 2px;font-size:.78rem;font-weight:700;text-decoration:underline;color:#0F2744">' + txt + '</td></tr>';
   }
 
-  // Totals
   var incSubtotal   = (inc.sundaySchool||0) + (inc.generalOffering||0) + (inc.tithes||0) +
                       (inc.building||0) + (inc.benevolent||0);
   var auxTotal      = (inc.youth||0) + (inc.youthEducation||0);
   var grandIncoming = incSubtotal + auxTotal;
-  var totalSalaries   = w2.concat(c1099).reduce(function(s,e){ return s+(e.net||0); }, 0);
-  var w2Total         = w2.reduce(function(s,e){ return s+(e.net||0); }, 0);
-  var c1099Total      = c1099.reduce(function(s,e){ return s+(e.net||0); }, 0);
-  var totalUtils      = utils.reduce(function(s,b){ return s+(b.amount||0); }, 0);
-  var totalMisc       = misc.reduce(function(s,b){ return s+(b.amount||0); }, 0);
-  var totalOtherExp   = exp.reduce(function(s,e){ return s+(e.amount||0); }, 0);
-  var grandExpend     = totalSalaries + totalUtils + totalMisc + totalOtherExp;
-  var gainLoss        = grandIncoming - grandExpend;
-  var glColor         = gainLoss >= 0 ? '#15803d' : '#b91c1c';
 
-  // Build HTML
+  var w2Total       = w2.reduce(function(s,e){ return s+(e.net||0); }, 0);
+  var c1099Total    = c1099.reduce(function(s,e){ return s+(e.net||0); }, 0);
+  var totalSalaries = w2Total + c1099Total;
+  var totalUtils    = utils.reduce(function(s,b){ return s+(b.amount||0); }, 0);
+
   var rpt = '<style>@keyframes cfSpin{to{transform:rotate(360deg)}}</style>';
-  rpt += '<div style="font-family:Arial,sans-serif;max-width:860px;margin:0 auto">';
+  rpt += '<div style="font-family:Arial,sans-serif;max-width:900px;margin:0 auto">';
 
-  // Header
+  // ── HEADER ───────────────────────────────────────────────────────
   rpt += '<div style="text-align:center;margin-bottom:20px">';
   rpt += '<div style="font-weight:700">Mount Calvary Missionary Baptist Church</div>';
   rpt += '<div>10314 Canal Rd. &nbsp; Gulfport, Ms. 39503</div>';
@@ -4093,14 +4086,11 @@ function renderWeeklyFinancialReport(data, s1, s2, startDate, endDate, body) {
   rpt += '<div style="font-size:.78rem;color:#475569;margin-top:4px">' + s1 + ' — ' + s2 + '</div>';
   rpt += '</div>';
 
-  // Two-column layout
-  rpt += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:32px">';
+  // ── FULL-WIDTH TOP — INCOMING + AUXILIARIES ───────────────────
+  rpt += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-bottom:24px">';
 
-  // ── LEFT COLUMN ──────────────────────────────────────────────────
-  rpt += '<div>';
-
-  // INCOMING FUNDS / REVENUE
-  rpt += '<table style="width:100%;border-collapse:collapse;margin-bottom:16px">';
+  // INCOMING FUNDS / REVENUE (left half of top)
+  rpt += '<table style="width:100%;border-collapse:collapse">';
   rpt += sectionHead('INCOMING FUNDS/REVENUE');
   rpt += row('Sunday School',    '', inc.sundaySchool,    false);
   rpt += row('General Offering', '', inc.generalOffering, false);
@@ -4112,75 +4102,88 @@ function renderWeeklyFinancialReport(data, s1, s2, startDate, endDate, body) {
   rpt += subtotalRow('Subtotal', incSubtotal);
   rpt += '</table>';
 
-  // AUXILIARIES
-  rpt += '<table style="width:100%;border-collapse:collapse;margin-bottom:16px">';
+  // AUXILIARIES (right half of top)
+  rpt += '<table style="width:100%;border-collapse:collapse">';
   rpt += sectionHead('AUXILIARIES');
-  rpt += row('Brotherhood',        '', 0, false);
-  rpt += row('Inspirational Choir','', 0, false);
-  rpt += row('Senior Usher',       '', 0, false);
-  rpt += row('Youth',              '', inc.youth,         false);
-  rpt += row('Youth Education',    '', inc.youthEducation,false);
-  rpt += row('Misc:',              '', 0, false);
-  rpt += row('Misc:',              '', 0, false);
-  rpt += row('Misc:',              '', 0, false);
-  rpt += row('Misc:',              '', 0, false);
+  rpt += row('Brotherhood',         '', 0, false);
+  rpt += row('Inspirational Choir', '', 0, false);
+  rpt += row('Senior Usher',        '', 0, false);
+  rpt += row('Youth',               '', inc.youth,          false);
+  rpt += row('Youth Education',     '', inc.youthEducation, false);
+  rpt += row('Misc:',               '', 0, false);
+  rpt += row('Misc:',               '', 0, false);
+  rpt += row('Misc:',               '', 0, false);
+  rpt += row('Misc:',               '', 0, false);
   rpt += subtotalRow('Total', auxTotal);
   rpt += '</table>';
 
+  rpt += '</div>'; // end top grid
+
+  // Grand incoming — full width
   rpt += '<table style="width:100%;border-collapse:collapse;margin-bottom:24px">';
   rpt += subtotalRow('Grand Tot/Dep. Incoming Monies', grandIncoming);
   rpt += '</table>';
 
-  // SALARIES
-  rpt += '<table style="width:100%;border-collapse:collapse;margin-top:24px;margin-bottom:8px">';
-  rpt += sectionHead('SALARIES');
+  // ── TWO-COLUMN BOTTOM ─────────────────────────────────────────
+  rpt += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:32px">';
 
-  // W-2
+  // ── LEFT COLUMN: SALARIES + MISCELLANEOUS ────────────────────
+  rpt += '<div>';
+
+  rpt += '<table style="width:100%;border-collapse:collapse;margin-bottom:20px">';
+  rpt += sectionHead('SALARIES');
   if (w2.length > 0) {
     rpt += '<tr><td colspan="3" style="padding:2px 4px;font-size:.72rem;color:#1e40af;font-weight:700;font-style:italic">W-2 Employees</td></tr>';
     w2.forEach(function(e){ rpt += row(e.name, e.checkNo, e.net, true); });
     rpt += subtotalRow('Total W-2', w2Total);
   }
-  // 1099
   if (c1099.length > 0) {
     rpt += '<tr><td colspan="3" style="padding:6px 4px 2px;font-size:.72rem;color:#7e22ce;font-weight:700;font-style:italic">1099 Contractors</td></tr>';
     c1099.forEach(function(e){ rpt += row(e.name, e.checkNo, e.net, true); });
     rpt += row('Other Musician Expenses', '', 0, true);
     rpt += subtotalRow('Total 1099', c1099Total);
   }
-  if (w2.length === 0 && c1099.length === 0) rpt += '<tr><td colspan="3" style="color:#94a3b8;font-style:italic;padding:6px 4px;font-size:.8rem">No payroll records for this period</td></tr>';
+  if (w2.length === 0 && c1099.length === 0) {
+    rpt += '<tr><td colspan="3" style="color:#94a3b8;font-style:italic;padding:6px 4px;font-size:.8rem">No payroll records</td></tr>';
+  }
   rpt += subtotalRow('TOTAL SALARIES', totalSalaries);
   rpt += '</table>';
 
-  // MISCELLANEOUS (left column)
-  rpt += '<table style="width:100%;border-collapse:collapse;margin-top:24px">';
+  // MISCELLANEOUS
+  rpt += '<table style="width:100%;border-collapse:collapse;margin-top:16px">';
   rpt += sectionHead('MISCELLANEOUS');
-  var expAndMisc = exp.concat(misc.filter(function(b){ return utils.indexOf(b) === -1; }));
-  if (expAndMisc.length > 0) {
-    expAndMisc.forEach(function(e){ rpt += row(e.desc||e.type, e.checkNo||'', e.amount, false); });
-  } else {
-    for (var i=0; i<5; i++) rpt += row('OTHER:', '', 0, false);
+  var expAndMisc = exp.concat(misc);
+  var miscTotal = 0;
+  expAndMisc.forEach(function(e){
+    var amt = parseFloat(e.amount||0);
+    if (amt === 0) return;
+    miscTotal += amt;
+    rpt += row(e.desc||e.type, e.checkNo||'', amt, false);
+  });
+  if (miscTotal === 0) {
+    rpt += '<tr><td colspan="3" style="color:#94a3b8;font-style:italic;padding:6px 4px;font-size:.8rem">No miscellaneous records</td></tr>';
   }
-  rpt += subtotalRow('Total Miscellaneous', totalMisc + totalOtherExp);
+  rpt += subtotalRow('Total Miscellaneous', miscTotal);
   rpt += '</table>';
 
   rpt += '</div>'; // end left col
 
-  // ── RIGHT COLUMN ────────────────────────────────────────────────
+  // ── RIGHT COLUMN: UTILITIES + TOTALS ─────────────────────────
+  var grandExpend = totalSalaries + totalUtils + miscTotal;
+  var gainLoss    = grandIncoming - grandExpend;
+  var glColor     = gainLoss >= 0 ? '#15803d' : '#b91c1c';
+
   rpt += '<div>';
 
-  // UTILITIES
-  rpt += '<table style="width:100%;border-collapse:collapse;margin-top:80px;margin-bottom:20px">';
-  rpt += sectionHead('UTILITIES');
+  rpt += '<table style="width:100%;border-collapse:collapse;margin-bottom:20px">';
+  rpt += sectionHead('DISBURSEMENTS/EXPENDITURES');
+  rpt += '<tr><td colspan="3" style="padding:2px 4px 4px;font-size:.72rem;color:#1e40af;font-weight:700;font-style:italic">UTILITIES</td></tr>';
   var utilOrder = ['Electricity','Electric','Center Gas','Gas','Cable/Internet','Internet & Phone',
                    'I.R.S 941','Taxes IRS 941','Pest Control'];
   var utilRendered = {};
   utilOrder.forEach(function(uname) {
     var b = utils.find(function(u){ return u.type.toLowerCase().indexOf(uname.toLowerCase()) !== -1; });
-    if (b && !utilRendered[b.type]) {
-      rpt += row(b.type, b.checkNo, b.amount, false);
-      utilRendered[b.type] = true;
-    }
+    if (b && !utilRendered[b.type]) { rpt += row(b.type, b.checkNo, b.amount, false); utilRendered[b.type] = true; }
   });
   utils.forEach(function(b){ if (!utilRendered[b.type]) rpt += row(b.type, b.checkNo, b.amount, false); });
   if (utils.length === 0) {
@@ -4189,25 +4192,22 @@ function renderWeeklyFinancialReport(data, s1, s2, startDate, endDate, body) {
   rpt += subtotalRow('TOTAL UTILITIES ETC', totalUtils);
   rpt += '</table>';
 
-  // Spacer + Grand Totals
-  rpt += '<table style="width:100%;border-collapse:collapse;margin-top:40px">';
-  rpt += '<tr><td colspan="3" style="padding:14px 4px 4px;font-size:.8rem;font-weight:700;border-top:2px solid #334155">GRAND TOT. EXPEND.</td>' +
-    '<td style="text-align:right;font-size:.8rem;font-weight:700;white-space:nowrap;padding-left:8px;border-top:2px solid #334155">' + fc(grandExpend) + '</td></tr>';
-  rpt += '<tr><td colspan="3" style="padding:4px;font-size:.8rem;font-weight:700">GAINS/LOSSES</td>' +
+  rpt += '<table style="width:100%;border-collapse:collapse;margin-top:32px">';
+  rpt += '<tr><td colspan="2" style="padding:6px 4px;font-size:.8rem;font-weight:700;border-top:2px solid #334155">GRAND TOT. EXPEND.</td>' +
+    '<td style="text-align:right;font-size:.8rem;font-weight:700;border-top:2px solid #334155;white-space:nowrap;padding-left:8px">' + fc(grandExpend) + '</td></tr>';
+  rpt += '<tr><td colspan="2" style="padding:4px 4px;font-size:.8rem;font-weight:700">GAINS/LOSSES</td>' +
     '<td style="text-align:right;font-size:.8rem;font-weight:700;color:' + glColor + ';white-space:nowrap;padding-left:8px">' + fc(gainLoss) + '</td></tr>';
   rpt += '</table>';
 
-  // Other Accounts / Bldg Fund
   rpt += '<table style="width:100%;border-collapse:collapse;margin-top:24px">';
   rpt += sectionHead('OTHER ACCOUNTS');
-  rpt += row('BLDG FUND', '', data.bldgBalance||0, false);
-  rpt += row('AUX. FUND (youth education/youth)', '', (inc.youthEducation||0)+(inc.youth||0), false);
+  rpt += row('BLDG FUND',                       '', data.bldgBalance||0, false);
+  rpt += row('AUX. FUND (youth education/youth)','', (inc.youthEducation||0)+(inc.youth||0), false);
   rpt += '</table>';
 
   rpt += '</div>'; // end right col
-  rpt += '</div>'; // end grid
+  rpt += '</div>'; // end bottom grid
 
-  // Print button
   rpt += '<div style="text-align:center;margin-top:24px">';
   rpt += '<button class="bsv" onclick="window.print()" style="padding:10px 28px">🖨️ Print Report</button>';
   rpt += '</div>';
