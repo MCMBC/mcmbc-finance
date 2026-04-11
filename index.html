@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.04.11-1702</title>
+<title>Mount Calvary M.B. Church Financial System v2026.04.11-1712</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -152,7 +152,7 @@ nav{flex:1;padding:10px 0;}
     <button class="blb" onclick="doLogin()">Sign In</button>
     <div class="lerr" id="lerr">Invalid username or password. Please try again.</div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.11-1702</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.11-1712</span>
     </div>
   </div>
 </div>
@@ -216,7 +216,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.11-1702</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.11-1712</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -4055,7 +4055,7 @@ function saveBillsToSheets() {
   saveNext(0);
 }
 
-var SYSTEM_VERSION = "v2026.04.11-1702";
+var SYSTEM_VERSION = "v2026.04.11-1712";
 
 // ── WEEKLY FINANCIAL REPORT ──────────────────────────────────────
 function showWeeklyFinancialPicker() {
@@ -7257,6 +7257,26 @@ function renderAdjTable(type) {
   }
 
   var fmt = function(v, t) {
+    if (t === 'date' && v && v !== '—') {
+      // Try to parse — handles ISO strings like "2024-01-15" or "2024-01-15T10:30:00"
+      var d = new Date(v);
+      if (!isNaN(d.getTime())) {
+        var hasTime = String(v).includes('T') || String(v).includes(' ');
+        var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+        var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        var day   = days[d.getDay()];
+        var date  = months[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
+        if (hasTime) {
+          var hr = d.getHours(), mn = d.getMinutes();
+          var ampm = hr >= 12 ? 'PM' : 'AM';
+          hr = hr % 12 || 12;
+          var time = hr + ':' + (mn < 10 ? '0' : '') + mn + ' ' + ampm;
+          return '<span style="white-space:nowrap"><strong>' + day + '</strong><br>' + date + '<br><span style="color:#64748b;font-size:.75rem">' + time + '</span></span>';
+        }
+        return '<span style="white-space:nowrap"><strong>' + day + '</strong><br>' + date + '</span>';
+      }
+      return v;
+    }
     if (t === 'number') return isNaN(v) || v === 0 ? '—' : '$' + parseFloat(v).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',');
     return v || '—';
   };
