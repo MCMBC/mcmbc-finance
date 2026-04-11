@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.04.11-1359</title>
+<title>Mount Calvary M.B. Church Financial System v2026.04.11-1412</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -152,7 +152,7 @@ nav{flex:1;padding:10px 0;}
     <button class="blb" onclick="doLogin()">Sign In</button>
     <div class="lerr" id="lerr">Invalid username or password. Please try again.</div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.11-1359</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.11-1412</span>
     </div>
   </div>
 </div>
@@ -209,7 +209,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.11-1359</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.11-1412</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -2320,11 +2320,10 @@ function doLogin() {
     document.getElementById('unm').textContent = CU.name;
     document.getElementById('uro').textContent = CU.role;
     document.getElementById('uav').textContent = CU.init || u.substring(0,2).toUpperCase();
-    document.getElementById('received-by').value    = CU.name;
-    document.getElementById('to-received-by').value = CU.name;
-    document.getElementById('tm-received-by').value = CU.name;
-    document.getElementById('gd-received-by').value = CU.name;
-    document.getElementById('od-received-by').value = CU.name;
+    // Set received-by fields safely (null-check — some screens may have been removed)
+    ['to-received-by','tm-received-by','gd-received-by','od-received-by'].forEach(function(id){
+      var el = document.getElementById(id); if (el) el.value = CU.name;
+    });
     var h = new Date().getHours();
     var g = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
     document.getElementById('dg').textContent = g + ', ' + CU.name + ' — here\'s your financial overview';
@@ -2334,12 +2333,9 @@ function doLogin() {
     document.getElementById('lp').style.display = 'none';
     document.getElementById('app').style.display = 'block';
     var today = new Date().toISOString().split('T')[0];
-    document.getElementById('of-date').value = today;
-    document.getElementById('ex-date').value = today;
-    document.getElementById('to-date').value = today;
-    document.getElementById('tm-date').value = today;
-    document.getElementById('gd-date').value = today;
-    document.getElementById('od-date').value = today;
+    ['of-date','to-date','tm-date','gd-date','od-date'].forEach(function(id){
+      var el = document.getElementById(id); if (el) el.value = today;
+    });
     buildChart();
     loadDashboardData();
   }
@@ -4021,7 +4017,7 @@ function saveBillsToSheets() {
   saveNext(0);
 }
 
-var SYSTEM_VERSION = "v2026.04.11-1359";
+var SYSTEM_VERSION = "v2026.04.11-1412";
 
 // ── WEEKLY FINANCIAL REPORT ──────────────────────────────────────
 function showWeeklyFinancialPicker() {
@@ -6862,6 +6858,263 @@ function saveBill() {
   document.getElementById('blfund').value=''; document.getElementById('bltype').value='';
   document.getElementById('abf').style.display='none';
   showToast('Bill saved!');
+}
+
+
+// ── CHART OF ACCOUNTS ─────────────────────────────────────────────
+var COA_DATA   = [];
+var COA_FILTER = '';
+var COA_DEL_ID = null;
+
+var DEFAULT_COA = [
+  {id:'1010',name:'General Checking Account',fund:'General Fund',type:'Asset',bal:'Debit'},
+  {id:'1020',name:'Building Fund Account',fund:'Building Fund',type:'Asset',bal:'Debit'},
+  {id:'1030',name:'Savings Account',fund:'General Fund',type:'Asset',bal:'Debit'},
+  {id:'1040',name:'Credit Card',fund:'General Fund',type:'Asset',bal:'Debit'},
+  {id:'1050',name:'Christmas Club Savings',fund:'General Fund',type:'Asset',bal:'Debit'},
+  {id:'1510',name:'Land',fund:'General Fund',type:'Asset',bal:'Debit'},
+  {id:'1511',name:'Land, Depreciation',fund:'General Fund',type:'Asset',bal:'Credit'},
+  {id:'1520',name:'Worship and Administrative Building',fund:'Building Fund',type:'Asset',bal:'Debit'},
+  {id:'1521',name:'Worship and Admin Building, Depreciation',fund:'Building Fund',type:'Asset',bal:'Credit'},
+  {id:'1530',name:'Furniture, Fixtures and Chairs',fund:'General Fund',type:'Asset',bal:'Debit'},
+  {id:'1540',name:'Office Equipment',fund:'General Fund',type:'Asset',bal:'Debit'},
+  {id:'1550',name:'Musical Equipment',fund:'General Fund',type:'Asset',bal:'Debit'},
+  {id:'1560',name:'Kitchen Equipment',fund:'General Fund',type:'Asset',bal:'Debit'},
+  {id:'1570',name:'Computers and Peripherals',fund:'General Fund',type:'Asset',bal:'Debit'},
+  {id:'1580',name:'Audio / Visual Equipment',fund:'General Fund',type:'Asset',bal:'Debit'},
+  {id:'1590',name:'Signs, Outside',fund:'General Fund',type:'Asset',bal:'Debit'},
+  {id:'1600',name:'Church Van',fund:'General Fund',type:'Asset',bal:'Debit'},
+  {id:'1610',name:'Church Van, Depreciation',fund:'General Fund',type:'Asset',bal:'Credit'},
+  {id:'2010',name:'Accounts Payable',fund:'General Fund',type:'Liability',bal:'Credit'},
+  {id:'2020',name:'Accrued Expenses',fund:'General Fund',type:'Liability',bal:'Credit'},
+  {id:'2030',name:'Employee Federal Withholdings',fund:'General Fund',type:'Liability',bal:'Credit'},
+  {id:'2040',name:'Payroll Liabilities',fund:'General Fund',type:'Liability',bal:'Credit'},
+  {id:'2050',name:'Credit Card Payable',fund:'General Fund',type:'Liability',bal:'Credit'},
+  {id:'3010',name:'General Offering Fund',fund:'General Fund',type:'Equity',bal:'Credit'},
+  {id:'3020',name:'Benevolent Offering Fund',fund:'General Fund',type:'Equity',bal:'Credit'},
+  {id:'3030',name:'Building Fund',fund:'Building Fund',type:'Equity',bal:'Credit'},
+  {id:'4010',name:'Tithes Fund',fund:'General Fund',type:'Income',bal:'Credit'},
+  {id:'4020',name:'giveify Fund',fund:'General Fund',type:'Income',bal:'Credit'},
+  {id:'4030',name:'Sunday School Fund',fund:'General Fund',type:'Income',bal:'Credit'},
+  {id:'4040',name:'Youth Fund',fund:'General Fund',type:'Income',bal:'Credit'},
+  {id:'4050',name:'Youth Education Fund',fund:'General Fund',type:'Income',bal:'Credit'},
+  {id:'4060',name:'Special Programs Fund',fund:'General Fund',type:'Income',bal:'Credit'},
+  {id:'4070',name:'Miscellaneous Funds',fund:'General Fund',type:'Income',bal:'Credit'},
+  {id:'5010',name:'Pastor Salary',fund:'General Fund',type:'Expense',bal:'Debit'},
+  {id:'5020',name:'Staff Salaries',fund:'General Fund',type:'Expense',bal:'Debit'},
+  {id:'5030',name:'Payroll Taxes',fund:'General Fund',type:'Expense',bal:'Debit'},
+  {id:'5040',name:'Guest Ministers',fund:'General Fund',type:'Expense',bal:'Debit'},
+  {id:'5110',name:'Electricity',fund:'General Fund',type:'Expense',bal:'Debit'},
+  {id:'5120',name:'Water & Sewage',fund:'General Fund',type:'Expense',bal:'Debit'},
+  {id:'5130',name:'Internet & Telephone',fund:'General Fund',type:'Expense',bal:'Debit'},
+  {id:'5210',name:'Building Maintenance',fund:'General Fund',type:'Expense',bal:'Debit'},
+  {id:'5220',name:'Building Construction',fund:'Building Fund',type:'Expense',bal:'Debit'},
+  {id:'5230',name:'Building Materials',fund:'Building Fund',type:'Expense',bal:'Debit'},
+  {id:'5240',name:'Furniture & Equipment',fund:'General Fund',type:'Expense',bal:'Debit'},
+  {id:'5250',name:'Audio / Visual Equipment',fund:'General Fund',type:'Expense',bal:'Debit'},
+  {id:'5260',name:'Sunday School Material',fund:'General Fund',type:'Expense',bal:'Debit'},
+  {id:'5270',name:'Office Supplies',fund:'General Fund',type:'Expense',bal:'Debit'},
+  {id:'5280',name:'Printing & Copying',fund:'General Fund',type:'Expense',bal:'Debit'},
+  {id:'5290',name:'Postage & Shipping',fund:'General Fund',type:'Expense',bal:'Debit'},
+  {id:'5310',name:'Software & Subscriptions',fund:'General Fund',type:'Expense',bal:'Debit'},
+  {id:'5410',name:'Bank Charges & Fees',fund:'General Fund',type:'Expense',bal:'Debit'},
+  {id:'5510',name:'Christmas Club Expense',fund:'General Fund',type:'Expense',bal:'Debit'},
+  {id:'5610',name:'Depreciation Expense',fund:'General Fund',type:'Expense',bal:'Debit'}
+];
+
+var COA_TYPE_COLORS = {
+  Asset:    {bg:'#EBF5FB',fg:'#1a5276'},
+  Liability:{bg:'#FDEDEC',fg:'#922b21'},
+  Equity:   {bg:'#EAFAF1',fg:'#1e8449'},
+  Income:   {bg:'#E8F8F5',fg:'#117864'},
+  Expense:  {bg:'#FEF5E7',fg:'#935116'}
+};
+
+function loadCOAScreen() {
+  var url = localStorage.getItem('mcmbc_sheet_url') || '';
+  var tb  = document.getElementById('coa-table');
+  tb.querySelectorAll('tr:not(:first-child)').forEach(function(r){ r.remove(); });
+  var loading = tb.insertRow();
+  loading.innerHTML = '<td colspan="6" style="text-align:center;padding:20px;color:#64748b">&#9203; Loading from Google Sheets...</td>';
+
+  if (!url || url.indexOf('script.google.com') === -1) {
+    COA_DATA = DEFAULT_COA.slice();
+    loading.remove();
+    updateCOABadges(); renderCOATable(); return;
+  }
+  var cb = 'coaListCb_' + Date.now();
+  var t  = setTimeout(function(){
+    delete window[cb];
+    if (!COA_DATA.length) COA_DATA = DEFAULT_COA.slice();
+    if (loading.parentNode) loading.remove();
+    updateCOABadges(); renderCOATable();
+    showToast('Could not reach Google Sheets - showing local data.');
+  }, 20000);
+  window[cb] = function(data) {
+    clearTimeout(t); delete window[cb];
+    if (loading.parentNode) loading.remove();
+    if (data && data.status === 'success' && data.accounts && data.accounts.length) {
+      COA_DATA = data.accounts;
+    } else {
+      COA_DATA = DEFAULT_COA.slice();
+      seedCOAToSheets(url);
+    }
+    updateCOABadges(); renderCOATable();
+  };
+  var s  = document.createElement('script');
+  s.onerror = function(){ clearTimeout(t); delete window[cb]; if (loading.parentNode) loading.remove(); COA_DATA = DEFAULT_COA.slice(); updateCOABadges(); renderCOATable(); };
+  s.src = url + '?action=getCOA&callback=' + cb;
+  document.head.appendChild(s);
+}
+
+function seedCOAToSheets(url) {
+  DEFAULT_COA.forEach(function(acct, i) {
+    setTimeout(function(){
+      var cb = 'coaSeed_' + Date.now() + '_' + i;
+      window[cb] = function(){ delete window[cb]; };
+      var s = document.createElement('script');
+      s.src = url + '?action=saveCOA&callback=' + cb
+            + '&acctId=' + encodeURIComponent(acct.id)
+            + '&oldId='  + encodeURIComponent(acct.id)
+            + '&name='   + encodeURIComponent(acct.name)
+            + '&fund='   + encodeURIComponent(acct.fund)
+            + '&type='   + encodeURIComponent(acct.type)
+            + '&bal='    + encodeURIComponent(acct.bal);
+      document.head.appendChild(s);
+    }, i * 150);
+  });
+}
+
+function updateCOABadges() {
+  var counts = {Asset:0,Liability:0,Equity:0,Income:0,Expense:0};
+  COA_DATA.forEach(function(a){ if (counts[a.type] !== undefined) counts[a.type]++; });
+  document.getElementById('coa-badge-asset').textContent     = 'Assets ('     + counts.Asset     + ')';
+  document.getElementById('coa-badge-liability').textContent = 'Liabilities (' + counts.Liability + ')';
+  document.getElementById('coa-badge-equity').textContent    = 'Equity ('     + counts.Equity    + ')';
+  document.getElementById('coa-badge-income').textContent    = 'Income ('     + counts.Income    + ')';
+  document.getElementById('coa-badge-expense').textContent   = 'Expense ('    + counts.Expense   + ')';
+}
+
+function renderCOATable() {
+  var tb = document.getElementById('coa-table');
+  tb.querySelectorAll('tr:not(:first-child)').forEach(function(r){ r.remove(); });
+  var list = COA_FILTER ? COA_DATA.filter(function(a){ return a.type === COA_FILTER; }) : COA_DATA;
+  var lastType = '';
+  list.forEach(function(acct) {
+    if (acct.type !== lastType) {
+      var hr = document.createElement('tr');
+      var c  = COA_TYPE_COLORS[acct.type] || {bg:'#f0f0f0',fg:'#333'};
+      hr.innerHTML = '<td colspan="6" style="font-weight:700;color:'+c.fg+';font-size:.77rem;background:'+c.bg+';padding:6px 12px">'+acct.type.toUpperCase()+'S</td>';
+      tb.appendChild(hr);
+      lastType = acct.type;
+    }
+    var tr = document.createElement('tr');
+    tr.setAttribute('data-id', acct.id);
+    tr.innerHTML = '<td style="font-family:monospace;font-size:.8rem">'+acct.id+'</td>'
+      + '<td>'+acct.name+'</td>'
+      + '<td style="font-size:.8rem">'+acct.fund+'</td>'
+      + '<td style="font-size:.8rem">'+acct.type+'</td>'
+      + '<td style="font-size:.8rem">'+acct.bal+'</td>'
+      + '<td style="text-align:center;white-space:nowrap">'
+      + '<button class="bac" onclick="editCOA(\''+acct.id+'\')" style="margin-right:4px">&#9999;&#65039;</button>'
+      + '<button class="bac" style="background:#fee2e2;color:#b91c1c" onclick="promptDeleteCOA(\''+acct.id+'\')">&#128465;&#65039;</button>'
+      + '</td>';
+    tb.appendChild(tr);
+  });
+  if (!list.length) {
+    var empty = document.createElement('tr');
+    empty.innerHTML = '<td colspan="6" style="text-align:center;color:#94a3b8;padding:20px;font-style:italic">No accounts found.</td>';
+    tb.appendChild(empty);
+  }
+}
+
+function filterCOA(type) { COA_FILTER = type; renderCOATable(); }
+
+function showAddCOA() {
+  document.getElementById('coa-form-title').textContent = '+ Add Account';
+  document.getElementById('coa-edit-id').value = '';
+  ['coa-id','coa-name'].forEach(function(x){ document.getElementById(x).value = ''; });
+  document.getElementById('coa-fund').value = 'General Fund';
+  document.getElementById('coa-type').value = 'Asset';
+  document.getElementById('coa-bal').value  = 'Debit';
+  document.getElementById('coa-form').style.display = 'block';
+  document.getElementById('coa-id').focus();
+}
+
+function editCOA(id) {
+  var acct = COA_DATA.find(function(a){ return a.id === id; });
+  if (!acct) return;
+  document.getElementById('coa-form-title').textContent = 'Edit Account';
+  document.getElementById('coa-edit-id').value = id;
+  document.getElementById('coa-id').value   = acct.id;
+  document.getElementById('coa-name').value = acct.name;
+  document.getElementById('coa-fund').value = acct.fund;
+  document.getElementById('coa-type').value = acct.type;
+  document.getElementById('coa-bal').value  = acct.bal;
+  document.getElementById('coa-form').style.display = 'block';
+  document.getElementById('coa-name').focus();
+}
+
+function saveCOAAccount() {
+  var oldId = document.getElementById('coa-edit-id').value.trim();
+  var nid   = document.getElementById('coa-id').value.trim();
+  var name  = document.getElementById('coa-name').value.trim();
+  var fund  = document.getElementById('coa-fund').value;
+  var type  = document.getElementById('coa-type').value;
+  var bal   = document.getElementById('coa-bal').value;
+  if (!nid || !name) { showToast('Account ID and Name are required.'); return; }
+  if (!oldId && COA_DATA.find(function(a){ return a.id === nid; })) {
+    showToast('Account ID ' + nid + ' already exists.'); return;
+  }
+  // Update local array immediately
+  if (oldId) {
+    var idx = COA_DATA.findIndex(function(a){ return a.id === oldId; });
+    if (idx > -1) COA_DATA[idx] = {id:nid,name:name,fund:fund,type:type,bal:bal};
+  } else {
+    COA_DATA.push({id:nid,name:name,fund:fund,type:type,bal:bal});
+    COA_DATA.sort(function(a,b){ return a.id.localeCompare(b.id); });
+  }
+  cancelCOA(); updateCOABadges(); renderCOATable();
+
+  // Sync to Google Sheets
+  var url = localStorage.getItem('mcmbc_sheet_url') || '';
+  if (!url || url.indexOf('script.google.com') === -1) { showToast('Saved locally (no Sheets URL set).'); return; }
+  var cb = 'coaSaveCb_' + Date.now();
+  window[cb] = function(data){ delete window[cb]; showToast(data && data.status === 'success' ? 'Account saved to Google Sheets.' : 'Saved locally. Sheets error: ' + (data ? data.message : 'unknown')); };
+  var s = document.createElement('script');
+  s.src = url + '?action=saveCOA&callback=' + cb
+        + '&acctId=' + encodeURIComponent(nid)
+        + '&oldId='  + encodeURIComponent(oldId || nid)
+        + '&name='   + encodeURIComponent(name)
+        + '&fund='   + encodeURIComponent(fund)
+        + '&type='   + encodeURIComponent(type)
+        + '&bal='    + encodeURIComponent(bal);
+  document.head.appendChild(s);
+}
+
+function cancelCOA() { document.getElementById('coa-form').style.display = 'none'; }
+
+function promptDeleteCOA(id) {
+  COA_DEL_ID = id;
+  var acct = COA_DATA.find(function(a){ return a.id === id; });
+  document.getElementById('coa-del-text').textContent = 'Delete account ' + id + ' — ' + (acct ? acct.name : '') + '?';
+  document.getElementById('coa-del-modal').style.display = 'flex';
+}
+
+function confirmDeleteCOA() {
+  if (!COA_DEL_ID) return;
+  var delId = COA_DEL_ID;
+  COA_DATA = COA_DATA.filter(function(a){ return a.id !== delId; });
+  COA_DEL_ID = null;
+  document.getElementById('coa-del-modal').style.display = 'none';
+  updateCOABadges(); renderCOATable();
+  var url = localStorage.getItem('mcmbc_sheet_url') || '';
+  if (!url || url.indexOf('script.google.com') === -1) { showToast('Account deleted locally.'); return; }
+  var cb = 'coaDelCb_' + Date.now();
+  window[cb] = function(data){ delete window[cb]; showToast(data && data.status === 'success' ? 'Account deleted from Google Sheets.' : 'Deleted locally. Sheets error: ' + (data ? data.message : 'unknown')); };
+  var s = document.createElement('script');
+  s.src = url + '?action=deleteCOAAccount&callback=' + cb + '&acctId=' + encodeURIComponent(delId);
+  document.head.appendChild(s);
 }
 
 document.addEventListener('keydown', function(e) {
