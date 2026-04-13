@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.04.11-1723</title>
+<title>Mount Calvary M.B. Church Financial System v2026.04.13-2327</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -152,7 +152,7 @@ nav{flex:1;padding:10px 0;}
     <button class="blb" onclick="doLogin()">Sign In</button>
     <div class="lerr" id="lerr">Invalid username or password. Please try again.</div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.11-1723</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.13-2327</span>
     </div>
   </div>
 </div>
@@ -199,10 +199,42 @@ nav{flex:1;padding:10px 0;}
       <div class="uc">
         <div class="ua" id="uav">RH</div>
         <div><div class="un" id="unm">Rachal</div><div class="ur" id="uro">Treasurer</div></div>
+        <button class="bo" onclick="showChangePw()" title="Change password" style="margin-right:4px">🔑</button>
         <button class="bo" onclick="doLogout()" title="Sign out">⏻</button>
       </div>
     </div>
   </aside>
+
+  <!-- CHANGE PASSWORD MODAL -->
+  <div id="cpw-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;align-items:center;justify-content:center">
+    <div style="background:#fff;border-radius:16px;padding:32px 36px;max-width:400px;width:90%;box-shadow:0 24px 64px rgba(0,0,0,.35)">
+      <div style="text-align:center;font-size:2rem;margin-bottom:8px">🔑</div>
+      <h3 style="font-family:'Lora',serif;color:var(--blue);margin:0 0 6px;text-align:center">Change Password</h3>
+      <p style="font-size:.8rem;color:#64748b;text-align:center;margin:0 0 20px">Logged in as <strong id="cpw-username"></strong></p>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;flex-direction:column;gap:5px">
+          <label style="font-size:.75rem;font-weight:600;color:#475569;text-transform:uppercase;letter-spacing:.04em">Current Password</label>
+          <input type="password" id="cpw-current" placeholder="Enter current password"
+            style="padding:10px 13px;border:1.5px solid #cbd5e1;border-radius:9px;font-size:.88rem;font-family:inherit">
+        </div>
+        <div style="display:flex;flex-direction:column;gap:5px">
+          <label style="font-size:.75rem;font-weight:600;color:#475569;text-transform:uppercase;letter-spacing:.04em">New Password</label>
+          <input type="password" id="cpw-new" placeholder="Enter new password"
+            style="padding:10px 13px;border:1.5px solid #cbd5e1;border-radius:9px;font-size:.88rem;font-family:inherit">
+        </div>
+        <div style="display:flex;flex-direction:column;gap:5px">
+          <label style="font-size:.75rem;font-weight:600;color:#475569;text-transform:uppercase;letter-spacing:.04em">Confirm New Password</label>
+          <input type="password" id="cpw-confirm" placeholder="Re-enter new password"
+            style="padding:10px 13px;border:1.5px solid #cbd5e1;border-radius:9px;font-size:.88rem;font-family:inherit">
+        </div>
+        <div id="cpw-error" style="display:none;background:#fee2e2;color:#b91c1c;padding:10px 13px;border-radius:8px;font-size:.82rem"></div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:20px">
+        <button id="cpw-save-btn" class="bsv" onclick="doChangePw()" style="flex:1">💾 Save Password</button>
+        <button class="bcc" onclick="closeChangePw()" style="flex:1">Cancel</button>
+      </div>
+    </div>
+  </div>
 
   <main class="mn">
 
@@ -214,7 +246,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.11-1723</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.13-2327</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -1844,12 +1876,7 @@ nav{flex:1;padding:10px 0;}
 <div class="to" id="toast"></div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-var USERS = {
-  'rachel':  {name:'Rachel',    role:'Treasurer',     init:'RH', pw:'password'},
-  'brandi':  {name:'Brandi',    role:'Secretary',     init:'BR', pw:'password'},
-  'willie':  {name:'Willie',    role:'Trustee Board', init:'WI', pw:'password'},
-  'viewonly':{name:'View Only', role:'View Only',     init:'VO', pw:'password'}
-};
+var USERS = {}; // accounts loaded from Google Sheets — no hardcoded credentials
 function calcODTotal() {
   var tithes   = parseFloat(document.getElementById('od-tithes').value) || 0;
   var yth      = parseFloat(document.getElementById('od-youth').value) || 0;
@@ -4053,7 +4080,7 @@ function saveBillsToSheets() {
   saveNext(0);
 }
 
-var SYSTEM_VERSION = "v2026.04.11-1723";
+var SYSTEM_VERSION = "v2026.04.13-2327";
 
 // ── WEEKLY FINANCIAL REPORT ──────────────────────────────────────
 function showWeeklyFinancialPicker() {
@@ -7405,6 +7432,82 @@ function adjDelete(type, idx) {
 
   var s = document.createElement('script');
   s.src = url + '?action=' + cfg.deleteAction + '&rowNum=' + encodeURIComponent(rec.rowNum) + '&callback=' + cb;
+  document.head.appendChild(s);
+}
+
+// ── CHANGE PASSWORD ───────────────────────────────────────────────
+function showChangePw() {
+  document.getElementById('cpw-username').textContent = CU.name + ' (' + CU.key + ')';
+  document.getElementById('cpw-current').value = '';
+  document.getElementById('cpw-new').value = '';
+  document.getElementById('cpw-confirm').value = '';
+  document.getElementById('cpw-error').style.display = 'none';
+  document.getElementById('cpw-modal').style.display = 'flex';
+  setTimeout(function(){ document.getElementById('cpw-current').focus(); }, 100);
+}
+
+function closeChangePw() {
+  document.getElementById('cpw-modal').style.display = 'none';
+}
+
+function doChangePw() {
+  var current = document.getElementById('cpw-current').value;
+  var newPw   = document.getElementById('cpw-new').value;
+  var confirm = document.getElementById('cpw-confirm').value;
+  var errEl   = document.getElementById('cpw-error');
+  var btn     = document.getElementById('cpw-save-btn');
+
+  function showErr(msg) {
+    errEl.textContent = msg;
+    errEl.style.display = 'block';
+  }
+
+  errEl.style.display = 'none';
+
+  if (!current || !newPw || !confirm) { showErr('All three fields are required.'); return; }
+  if (current !== CU.pw)              { showErr('Current password is incorrect.'); return; }
+  if (newPw.length < 6)               { showErr('New password must be at least 6 characters.'); return; }
+  if (newPw !== confirm)              { showErr('New passwords do not match.'); return; }
+  if (newPw === current)              { showErr('New password must be different from your current password.'); return; }
+
+  var url = localStorage.getItem('mcmbc_sheet_url') || '';
+  if (!url || url.indexOf('script.google.com') === -1) {
+    showErr('No Google Sheets URL saved — cannot save password change.');
+    return;
+  }
+
+  btn.disabled = true; btn.textContent = '⏳ Saving…';
+
+  var cb = 'cpwCb_' + Date.now();
+  var t = setTimeout(function(){
+    delete window[cb];
+    btn.disabled = false; btn.textContent = '💾 Save Password';
+    showErr('Request timed out. Please try again.');
+  }, 15000);
+
+  window[cb] = function(data) {
+    clearTimeout(t); delete window[cb];
+    btn.disabled = false; btn.textContent = '💾 Save Password';
+    if (data && data.status === 'success') {
+      // Update local session so current password check stays accurate
+      CU.pw = newPw;
+      if (USERS[CU.key]) USERS[CU.key].pw = newPw;
+      closeChangePw();
+      showToast('✅ Password changed successfully.');
+    } else {
+      showErr('Error saving password: ' + (data ? data.message : 'unknown error'));
+    }
+  };
+
+  var s = document.createElement('script');
+  s.src = url + '?action=updateUser'
+        + '&callback='  + cb
+        + '&username='  + encodeURIComponent(CU.key)
+        + '&fullName='  + encodeURIComponent(CU.name)
+        + '&email='     + encodeURIComponent(CU.email || '')
+        + '&role='      + encodeURIComponent(CU.role)
+        + '&pw='        + encodeURIComponent(newPw)
+        + '&active=Yes';
   document.head.appendChild(s);
 }
 
