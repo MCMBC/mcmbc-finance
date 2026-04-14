@@ -160,6 +160,17 @@ nav{flex:1;padding:10px 0;}
     </div>
     <button class="blb" onclick="doLogin()">Sign In</button>
     <div class="lerr" id="lerr">Invalid username or password. Please try again.</div>
+
+    <!-- First-time setup panel (shown when Users sheet is empty) -->
+    <div id="setup-panel" style="display:none;margin-top:18px;background:#f0fdf4;border:1.5px solid #86efac;border-radius:10px;padding:16px;">
+      <div style="font-size:.82rem;font-weight:700;color:#15803d;margin-bottom:10px;">⚙️ First Time Setup — Create Admin Account</div>
+      <div style="font-size:.75rem;color:#166534;margin-bottom:12px;">No users found in Google Sheets. Create the first administrator account below.</div>
+      <input type="text" id="setup-name" placeholder="Full Name" style="width:100%;padding:8px 11px;border:1.5px solid #86efac;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.82rem;margin-bottom:8px;box-sizing:border-box;">
+      <input type="text" id="setup-user" placeholder="Username (no spaces)" style="width:100%;padding:8px 11px;border:1.5px solid #86efac;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.82rem;margin-bottom:8px;box-sizing:border-box;">
+      <input type="password" id="setup-pw" placeholder="Password" style="width:100%;padding:8px 11px;border:1.5px solid #86efac;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.82rem;margin-bottom:12px;box-sizing:border-box;">
+      <button onclick="doFirstSetup()" style="width:100%;background:#15803d;color:#fff;border:none;padding:10px;border-radius:8px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:.85rem;cursor:pointer;">✅ Create Admin &amp; Sign In</button>
+      <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
+    </div>
     <div style="text-align:center;margin-top:14px">
       <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.14-2</span>
     </div>
@@ -2516,6 +2527,13 @@ function doLogin() {
         data.users.forEach(function(su) { USERS[su.username] = {name:su.name, email:su.email, role:su.role, pw:su.pw, active:su.active, init:(su.username||'').substring(0,2).toUpperCase()}; });
         saveUsersToStorage();
       }
+      // If Users sheet is empty — show first-time setup
+      if (data && data.empty) {
+        if (loginBtn) { loginBtn.textContent = 'Sign In'; loginBtn.disabled = false; }
+        document.getElementById('setup-panel').style.display = 'block';
+        err.style.display = 'none';
+        return;
+      }
       var sheetUser = data && data.users ? data.users.find(function(su){ return su.username === u; }) : null;
       if (sheetUser) {
         attemptLogin({name:sheetUser.name, email:sheetUser.email, role:sheetUser.role, pw:sheetUser.pw, active:sheetUser.active, init:(u).substring(0,2).toUpperCase()});
@@ -2542,6 +2560,48 @@ function doLogin() {
     if (localUser) attemptLogin(localUser);
     else { err.textContent = 'Invalid username or password.'; err.style.display='block'; }
   }
+}
+
+function doFirstSetup() {
+  var name  = document.getElementById('setup-name').value.trim();
+  var uname = document.getElementById('setup-user').value.trim().toLowerCase().replace(/\s+/g,'');
+  var pw    = document.getElementById('setup-pw').value;
+  var serr  = document.getElementById('setup-err');
+  if (!name)  { serr.textContent='Full name is required.'; serr.style.display='block'; return; }
+  if (!uname) { serr.textContent='Username is required.'; serr.style.display='block'; return; }
+  if (!pw)    { serr.textContent='Password is required.'; serr.style.display='block'; return; }
+  var url = localStorage.getItem('mcmbc_sheet_url') || '';
+  if (!url || url.indexOf('script.google.com') === -1) { serr.textContent='No Apps Script URL saved.'; serr.style.display='block'; return; }
+  serr.style.display = 'none';
+  var cb = 'setupCb_' + Date.now();
+  var t = setTimeout(function() {
+    delete window[cb];
+    serr.textContent = 'Timed out — check your Apps Script URL and redeploy.';
+    serr.style.display = 'block';
+  }, 20000);
+  window[cb] = function(data) {
+    clearTimeout(t); delete window[cb];
+    if (data && data.status === 'success') {
+      // Log in as the new admin immediately
+      USERS[uname] = { name:name, email:'', role:'Treasurer', pw:pw, active:'Yes', init:uname.substring(0,2).toUpperCase() };
+      saveUsersToStorage();
+      document.getElementById('lu').value  = uname;
+      document.getElementById('lpw').value = pw;
+      doLogin();
+    } else {
+      serr.textContent = 'Error saving user: ' + (data && data.message ? data.message : 'unknown');
+      serr.style.display = 'block';
+    }
+  };
+  var s = document.createElement('script');
+  s.src = url + '?action=addUser&callback=' + cb
+    + '&username=' + encodeURIComponent(uname)
+    + '&fullName=' + encodeURIComponent(name)
+    + '&email='
+    + '&role=Treasurer'
+    + '&pw=' + encodeURIComponent(pw)
+    + '&active=Yes';
+  document.head.appendChild(s);
 }
 
 function saveDashUrl() {
