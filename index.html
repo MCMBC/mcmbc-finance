@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.04.13-2334</title>
+<title>Mount Calvary M.B. Church Financial System v2026.04.14</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -149,10 +149,16 @@ nav{flex:1;padding:10px 0;}
     <hr class="ld">
     <div class="fg"><label><em>Username</em></label><input type="text" id="lu" placeholder="username" autocomplete="username"></div>
     <div class="fg"><label>Password</label><input type="password" id="lpw" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" autocomplete="current-password"></div>
+    <div id="lp-url-wrap" style="margin-top:10px;">
+      <label style="display:block;font-size:.75rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;">Apps Script URL <span style="font-weight:400;text-transform:none;letter-spacing:0;color:#64748b;">(required on first use)</span></label>
+      <input type="text" id="lp-url" placeholder="https://script.google.com/macros/s/…/exec"
+        style="width:100%;padding:9px 12px;border:1.5px solid rgba(255,255,255,.15);border-radius:9px;font-family:'DM Sans',sans-serif;font-size:.8rem;color:#1e293b;outline:none;background:#f8fafc;box-sizing:border-box;">
+      <div style="font-size:.7rem;color:#94a3b8;margin-top:4px;">Paste once — saved automatically for future logins on this device.</div>
+    </div>
     <button class="blb" onclick="doLogin()">Sign In</button>
     <div class="lerr" id="lerr">Invalid username or password. Please try again.</div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.13-2334</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.14</span>
     </div>
   </div>
 </div>
@@ -246,7 +252,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.13-2334</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.14</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -848,7 +854,10 @@ nav{flex:1;padding:10px 0;}
 
       <!-- Saved Records -->
       <div id="od-saved-wrap" style="display:none;margin-top:28px;">
-        <div style="font-family:'Lora',serif;font-size:1.1rem;font-weight:700;color:var(--navy);margin-bottom:12px;">📋 Saved Other Offerings &amp; Donations</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+          <div style="font-family:'Lora',serif;font-size:1.1rem;font-weight:700;color:var(--navy);">📋 Saved Other Offerings &amp; Donations</div>
+          <button class="bp" onclick="saveODToSheets()" id="od-save-sheet-btn" style="font-size:.8rem">💾 Save All to Google Sheet</button>
+        </div>
         <div style="overflow-x:auto">
           <table class="vt" id="od-saved-table">
             <tr><th>ID</th><th>Date</th><th>Tithes</th><th>Youth</th><th>Building Fund</th><th>Benevolent</th><th>Youth Education</th><th>Offering</th><th>Special Event</th><th>Other</th><th>Total</th><th>Received By</th><th>Saved?</th><th style="text-align:center">Actions</th></tr>
@@ -1952,7 +1961,74 @@ function saveODRec() {
     document.getElementById(i).value = '';
   });
   calcODTotal();
-  showToast('Other offering saved!');
+  showToast('Entry added — click Save All to Google Sheet to sync.');
+}
+
+function saveODToSheets() {
+  var url = localStorage.getItem('mcmbc_sheet_url') || '';
+  if (!url || url.indexOf('script.google.com') === -1) {
+    showToast('No Google Sheets URL saved. Set it on the Dashboard first.');
+    return;
+  }
+  var pending = odPendingRows.filter(function(r){ return !r._saved; });
+  if (pending.length === 0) { showToast('No pending entries to save.'); return; }
+
+  var btn = document.getElementById('od-save-sheet-btn');
+  btn.textContent = 'Saving...'; btn.disabled = true;
+  var saved = 0;
+
+  function saveNext(i) {
+    if (i >= pending.length) {
+      btn.textContent = 'Save All to Google Sheet'; btn.disabled = false;
+      showToast(saved + ' other offering record(s) saved to Google Sheets!');
+      return;
+    }
+    var r = pending[i];
+    var cb = 'odCb_' + Date.now();
+    var t = setTimeout(function() {
+      delete window[cb];
+      var el = document.getElementById('od-status-' + r.id);
+      if (el) el.innerHTML = '<span class="sb2" style="background:#fee2e2;color:#b91c1c">Timed out</span>';
+      showToast('Timed out — redeploy Apps Script and try again.');
+      btn.textContent = 'Save All to Google Sheet'; btn.disabled = false;
+    }, 25000);
+    window[cb] = function(data) {
+      clearTimeout(t); delete window[cb];
+      var el = document.getElementById('od-status-' + r.id);
+      if (data && data.status === 'success') {
+        r._saved = true; saved++;
+        if (el) el.innerHTML = '<span class="sb2 sa">Saved</span>';
+      } else {
+        if (el) el.innerHTML = '<span class="sb2" style="background:#fee2e2;color:#b91c1c">Error: ' + (data&&data.message?data.message:'unknown') + '</span>';
+      }
+      saveNext(i + 1);
+    };
+    var s = document.createElement('script');
+    s.onerror = function() {
+      clearTimeout(t); delete window[cb];
+      var el = document.getElementById('od-status-' + r.id);
+      if (el) el.innerHTML = '<span class="sb2" style="background:#fee2e2;color:#b91c1c">Network error</span>';
+      showToast('Could not reach Google Sheets — check URL and redeploy.');
+      btn.textContent = 'Save All to Google Sheet'; btn.disabled = false;
+    };
+    s.src = url + '?action=addOtherOfferings'
+      + '&callback='       + cb
+      + '&offeringId='     + encodeURIComponent(r.id)
+      + '&date='           + encodeURIComponent(r.date)
+      + '&tithes='         + encodeURIComponent(r.tithes)
+      + '&youth='          + encodeURIComponent(r.youth)
+      + '&buildingFund='   + encodeURIComponent(r.bldg)
+      + '&benevolent='     + encodeURIComponent(r.benv)
+      + '&youthEducation=' + encodeURIComponent(r.yedu)
+      + '&offering='       + encodeURIComponent(r.offering)
+      + '&specialEvent='   + encodeURIComponent(r.special)
+      + '&other='          + encodeURIComponent(r.other)
+      + '&totalDeposit='   + encodeURIComponent(r.total)
+      + '&receivedBy='     + encodeURIComponent(r.rcvd);
+    document.head.appendChild(s);
+    setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); }, 27000);
+  }
+  saveNext(0);
 }
 
 function calcGDTotal() {
@@ -2362,6 +2438,14 @@ function doLogin() {
   var pw  = document.getElementById('lpw').value;
   var err = document.getElementById('lerr');
   if (!u || !pw) { err.textContent = 'Please enter username and password.'; err.style.display='block'; return; }
+
+  // If a URL was typed in the login screen field, save it now
+  var lpUrl = document.getElementById('lp-url');
+  if (lpUrl && lpUrl.value.trim().indexOf('script.google.com') !== -1) {
+    localStorage.setItem('mcmbc_sheet_url', lpUrl.value.trim());
+    var ofField = document.getElementById('sheet-url');
+    if (ofField) ofField.value = lpUrl.value.trim();
+  }
 
   var url = localStorage.getItem('mcmbc_sheet_url') || '';
 
@@ -3575,6 +3659,10 @@ function saveUsersToStorage() {
 }
 
 function loadUsersFromStorage() {
+  // Hide the login URL field if an Apps Script URL is already saved on this device
+  var savedUrl = localStorage.getItem('mcmbc_sheet_url') || '';
+  var lpUrlWrap = document.getElementById('lp-url-wrap');
+  if (lpUrlWrap) lpUrlWrap.style.display = (savedUrl && savedUrl.indexOf('script.google.com') !== -1) ? 'none' : 'block';
   try {
     var stored = localStorage.getItem('mcmbc_users');
     if (stored) {
@@ -4085,7 +4173,7 @@ function saveBillsToSheets() {
   saveNext(0);
 }
 
-var SYSTEM_VERSION = "v2026.04.13-2334";
+var SYSTEM_VERSION = "v2026.04.14";
 
 // ── WEEKLY FINANCIAL REPORT ──────────────────────────────────────
 function showWeeklyFinancialPicker() {
