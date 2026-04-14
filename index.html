@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.04.13-2327</title>
+<title>Mount Calvary M.B. Church Financial System v2026.04.13-2334</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -152,7 +152,7 @@ nav{flex:1;padding:10px 0;}
     <button class="blb" onclick="doLogin()">Sign In</button>
     <div class="lerr" id="lerr">Invalid username or password. Please try again.</div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.13-2327</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.13-2334</span>
     </div>
   </div>
 </div>
@@ -168,32 +168,32 @@ nav{flex:1;padding:10px 0;}
       <div class="ns">Main</div>
       <div class="ni active" onclick="sv('dashboard',this)">🏠 Dashboard</div>
       <div class="ni" onclick="sv('reports',this)">📊 Financial Reports</div>
-      <div class="ns">Income</div>
-      <div class="ni" onclick="sv('tithes',this)">💵 Offerings</div>
-      <div class="ni" onclick="sv('tithes-members',this);loadTithesMembers()">🙏 Tithes by Members</div>
-      <div class="ni" onclick="sv('giveify-donors',this);loadGDDonors()">📱 giveify by Donors</div>
-      <div class="ni" onclick="sv('other-offerings',this)">🎁 Other Offerings &amp; Donations</div>
-      <div class="ns">Expenses</div>
-      <div class="ni" onclick="sv('payroll-view',this);initPayrollForm()">💼 Payroll</div>
-      <div class="ni" onclick="sv('pay-bills',this);initBillForm();loadFundDropdowns()">🧾 Pay Bills</div>
-      <div class="ns">Adjustments (Updates)</div>
-      <div class="ni" onclick="sv('adj-offerings',this);loadAdjScreen('offerings')">💵 Offerings</div>
-      <div class="ni" onclick="sv('adj-tithes',this);loadAdjScreen('tithes')">🙏 Tithes by Members</div>
-      <div class="ni" onclick="sv('adj-giveify',this);loadAdjScreen('giveify')">📱 giveify by Donors</div>
-      <div class="ni" onclick="sv('adj-other',this);loadAdjScreen('other')">🎁 Other Offerings</div>
-      <div class="ni" onclick="sv('adj-payroll',this);loadAdjScreen('payroll')">💼 Payroll</div>
-      <div class="ni" onclick="sv('adj-bills',this);loadAdjScreen('bills')">🧾 Bills</div>
-      <div class="ns">Management</div>
-      <div class="ni" onclick="sv('members',this)">👥 Members</div>
-      <div class="ni" onclick="sv('donors',this);loadDonorsScreen()">🤝 Donors</div>
+      <div class="ns sec-up">Income</div>
+      <div class="ni sec-up" onclick="sv('tithes',this)">💵 Offerings</div>
+      <div class="ni sec-up" onclick="sv('tithes-members',this);loadTithesMembers()">🙏 Tithes by Members</div>
+      <div class="ni sec-up" onclick="sv('giveify-donors',this);loadGDDonors()">📱 giveify by Donors</div>
+      <div class="ni sec-up" onclick="sv('other-offerings',this)">🎁 Other Offerings &amp; Donations</div>
+      <div class="ns sec-up">Expenses</div>
+      <div class="ni sec-up" onclick="sv('payroll-view',this);initPayrollForm()">💼 Payroll</div>
+      <div class="ni sec-up" onclick="sv('pay-bills',this);initBillForm();loadFundDropdowns()">🧾 Pay Bills</div>
+      <div class="ns sec-up">Adjustments (Updates)</div>
+      <div class="ni sec-up" onclick="sv('adj-offerings',this);loadAdjScreen('offerings')">💵 Offerings</div>
+      <div class="ni sec-up" onclick="sv('adj-tithes',this);loadAdjScreen('tithes')">🙏 Tithes by Members</div>
+      <div class="ni sec-up" onclick="sv('adj-giveify',this);loadAdjScreen('giveify')">📱 giveify by Donors</div>
+      <div class="ni sec-up" onclick="sv('adj-other',this);loadAdjScreen('other')">🎁 Other Offerings</div>
+      <div class="ni sec-up" onclick="sv('adj-payroll',this);loadAdjScreen('payroll')">💼 Payroll</div>
+      <div class="ni sec-up" onclick="sv('adj-bills',this);loadAdjScreen('bills')">🧾 Bills</div>
+      <div class="ns sec-up">Management</div>
+      <div class="ni sec-up" onclick="sv('members',this)">👥 Members</div>
+      <div class="ni sec-up" onclick="sv('donors',this);loadDonorsScreen()">🤝 Donors</div>
       <div class="ni tonly" onclick="sv('users',this);loadUsersTable()">🔐 Users</div>
       <div class="ni tonly" onclick="sv('employees',this)">👤 Employees</div>
       <div class="ni tonly" onclick="sv('vendors',this);loadVendorsScreen()">🏢 Vendors</div>
       <div class="ni tonly" onclick="sv('type-of-bill',this)">🗂️ Type of Bill</div>
-      <div class="ni" onclick="sv('funds',this);loadFundsScreen()">🏦 Funds</div>
+      <div class="ni sec-up" onclick="sv('funds',this);loadFundsScreen()">🏦 Funds</div>
       <div class="ni tonly" onclick="sv('giveify-table',this)">📱 giveify Type</div>
       <div class="ni tonly" onclick="sv('backup',this);loadBackupScreen()">🗄️ Backup &amp; Recovery</div>
-      <div class="ni" onclick="sv('coa',this);loadCOAScreen()">📋 Chart of Accounts</div>
+      <div class="ni sec-up" onclick="sv('coa',this);loadCOAScreen()">📋 Chart of Accounts</div>
     </nav>
     <div class="sf">
       <div class="uc">
@@ -246,7 +246,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.13-2327</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.13-2334</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -2391,7 +2391,12 @@ function doLogin() {
     var g = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
     document.getElementById('dg').textContent = g + ', ' + CU.name + ' — here\'s your financial overview';
     document.querySelectorAll('.tonly').forEach(function(el) {
-      el.style.display = CU.role === 'Treasurer' ? 'flex' : 'none';
+      el.style.display = CU.role === 'Treasurer' ? (el.classList.contains('ns') ? 'block' : 'flex') : 'none';
+    });
+    // sec-up = Secretary and above (Secretary + Treasurer)
+    var secUp = (CU.role === 'Treasurer' || CU.role === 'Secretary');
+    document.querySelectorAll('.sec-up').forEach(function(el) {
+      el.style.display = secUp ? (el.classList.contains('ns') ? 'block' : 'flex') : 'none';
     });
     document.getElementById('lp').style.display = 'none';
     document.getElementById('app').style.display = 'block';
@@ -4080,7 +4085,7 @@ function saveBillsToSheets() {
   saveNext(0);
 }
 
-var SYSTEM_VERSION = "v2026.04.13-2327";
+var SYSTEM_VERSION = "v2026.04.13-2334";
 
 // ── WEEKLY FINANCIAL REPORT ──────────────────────────────────────
 function showWeeklyFinancialPicker() {
