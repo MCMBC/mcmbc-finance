@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.04.14-7</title>
+<title>Mount Calvary M.B. Church Financial System v2026.04.14-8</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -172,7 +172,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.14-7</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.14-8</span>
     </div>
   </div>
 </div>
@@ -266,7 +266,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.14-7</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.14-8</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -4245,7 +4245,7 @@ function saveBillsToSheets() {
   saveNext(0);
 }
 
-var SYSTEM_VERSION = "v2026.04.14-7";
+var SYSTEM_VERSION = "v2026.04.14-8";
 
 // ── WEEKLY FINANCIAL REPORT ──────────────────────────────────────
 function showWeeklyFinancialPicker() {
@@ -7420,10 +7420,10 @@ var ADJ_CFG = {
   payroll: {
     action:'getPayrollRecords', updateAction:'updatePayroll', deleteAction:'deletePayroll',
     title:'Payroll', contentId:'adj-payroll-content',
-    cols:['Date Paid','Employee','Pay Type','Pay Period','Fund','Gross','Fed Tax','State Tax','FICA','Medicare','Other Ded','Net Pay','Check No','Memo'],
-    fields:['datePaid','empName','payType','payPeriod','fund','gross','fedTax','stateTax','fica','medicare','otherDed','net','checkNo','memo'],
-    labels:['Date Paid','Employee Name','Pay Type','Pay Period','Fund','Gross Wages','Fed Tax W/H','State Tax W/H','FICA','Medicare','Other Deductions','Net Pay','Check No.','Memo'],
-    types: ['date','text','text','text','text','number','number','number','number','number','number','number','text','text'],
+    cols:['Date Paid','Employee','Pay Type','Pay Period','Fund','Gross','Fed Tax','State Tax','FICA','Medicare','Other Ded','Net Pay','Check No','Memo','Saved By'],
+    fields:['datePaid','empName','payType','payPeriod','fund','gross','fedTax','stateTax','fica','medicare','otherDed','net','checkNo','memo','savedBy'],
+    labels:['Date Paid','Employee Name','Pay Type','Pay Period','Fund','Gross Wages','Fed Tax W/H','State Tax W/H','FICA','Medicare','Other Deductions','Net Pay','Check No.','Memo','Saved By'],
+    types: ['date','text','text','text','text','number','number','number','number','number','number','number','text','text','text'],
     idField:'id'
   },
   bills: {
