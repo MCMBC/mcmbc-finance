@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.04.14-5</title>
+<title>Mount Calvary M.B. Church Financial System v2026.04.14-6</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -172,7 +172,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.14-5</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.14-6</span>
     </div>
   </div>
 </div>
@@ -204,7 +204,7 @@ nav{flex:1;padding:10px 0;}
       <div class="ni sec-up" onclick="sv('adj-payroll',this);loadAdjScreen('payroll')">💼 Payroll</div>
       <div class="ni sec-up" onclick="sv('adj-bills',this);loadAdjScreen('bills')">🧾 Bills</div>
       <div class="ns sec-up">Management</div>
-      <div class="ni sec-up" onclick="sv('members',this)">👥 Members</div>
+      <div class="ni sec-up" onclick="sv('members',this);loadMembersFromSheets()">👥 Members</div>
       <div class="ni sec-up" onclick="sv('donors',this);loadDonorsScreen()">🤝 Donors</div>
       <div class="ni tonly" onclick="sv('users',this);loadUsersTable()">🔐 Users</div>
       <div class="ni tonly" onclick="sv('employees',this)">👤 Employees</div>
@@ -266,7 +266,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.14-5</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.14-6</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -4244,7 +4244,7 @@ function saveBillsToSheets() {
   saveNext(0);
 }
 
-var SYSTEM_VERSION = "v2026.04.14-5";
+var SYSTEM_VERSION = "v2026.04.14-6";
 
 // ── WEEKLY FINANCIAL REPORT ──────────────────────────────────────
 function showWeeklyFinancialPicker() {
@@ -5938,22 +5938,41 @@ function saveMember() {
 
   // ADD mode
   var tb   = document.getElementById('member-table');
-  var rows = tb.querySelectorAll('tr').length;
-  var newId = 'MB-' + String(rows).padStart(3,'0');
+  var newId = 'MB-' + String(Date.now()).slice(-6); // unique timestamp-based ID
   var newMem = {id:newId, fullName:name, phone:phone, email:email, status:status, joinDate:joined, address1:addr1, address2:addr2, city:city, state:state, zip:zip};
-  memberData.push(newMem);
-  renderMemberRow(newMem);
+
+  var saveBtn = document.getElementById('member-save-btn');
+  if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = '⏳ Saving...'; }
   closeMemberForm();
 
   if (url && url.indexOf('script.google.com') !== -1) {
     var cb2 = 'memSaveCb_' + Date.now();
-    var t2 = setTimeout(function(){ delete window[cb2]; showToast('⚠️ Timed out — redeploy Apps Script and try again.'); }, 25000);
+    var t2 = setTimeout(function(){
+      delete window[cb2];
+      if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = '💾 Save Member'; }
+      showToast('⚠️ Timed out — redeploy Apps Script and try again.');
+    }, 25000);
     window[cb2] = function(data) {
       clearTimeout(t2); delete window[cb2];
-      showToast(data && data.status === 'success' ? '✅ ' + name + ' saved to Google Sheets (' + (data.memberId||newId) + ').' : '⚠️ Sheets error: ' + (data && data.message ? data.message : 'unknown'));
+      if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = '💾 Save Member'; }
+      if (data && data.status === 'success') {
+        showToast('✅ ' + name + ' saved to Google Sheets.');
+        loadMembersFromSheets(); // reload table from Sheets to avoid duplicates
+      } else {
+        showToast('⚠️ Sheets error: ' + (data && data.message ? data.message : 'unknown'));
+        // Only render locally if Sheets failed
+        memberData.push(newMem);
+        renderMemberRow(newMem);
+      }
     };
     var s2 = document.createElement('script');
-    s2.onerror = function(){ clearTimeout(t2); delete window[cb2]; showToast('⚠️ Could not reach Google Sheets — check URL and redeploy.'); };
+    s2.onerror = function(){
+      clearTimeout(t2); delete window[cb2];
+      if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = '💾 Save Member'; }
+      showToast('⚠️ Could not reach Google Sheets — check URL and redeploy.');
+      memberData.push(newMem);
+      renderMemberRow(newMem);
+    };
     s2.src = url + '?action=addMember&callback=' + cb2
       + '&memberId='   + encodeURIComponent(newId)
       + '&fullName='   + encodeURIComponent(name)
@@ -5967,7 +5986,12 @@ function saveMember() {
       + '&state='      + encodeURIComponent(state)
       + '&zip='        + encodeURIComponent(zip);
     document.head.appendChild(s2);
-  } else { showToast('✅ Member added locally. Connect Google Sheets to sync.'); }
+  } else {
+    if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = '💾 Save Member'; }
+    memberData.push(newMem);
+    renderMemberRow(newMem);
+    showToast('✅ Member added locally. Connect Google Sheets to sync.');
+  }
 }
 
 // ── EMPLOYEES CRUD ───────────────────────────────────────────────
