@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.04.14-6</title>
+<title>Mount Calvary M.B. Church Financial System v2026.04.14-7</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -172,7 +172,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.14-6</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.14-7</span>
     </div>
   </div>
 </div>
@@ -266,7 +266,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.14-6</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.14-7</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -1271,8 +1271,8 @@ nav{flex:1;padding:10px 0;}
 
       <div style="overflow-x:auto">
         <table class="vt" id="member-table">
-          <tr><th>ID</th><th>Full Name</th><th>Phone</th><th>Email</th><th>City</th><th>Status</th><th>Joined</th><th style="text-align:center">Actions</th></tr>
-          <tr id="member-empty-row"><td colspan="8" style="text-align:center;color:var(--gray);padding:22px;font-style:italic;">Click ↻ Refresh to load members from Google Sheets.</td></tr>
+          <tr><th>ID</th><th>First Name</th><th>Last Name</th><th>Phone</th><th>Email</th><th>City</th><th>Status</th><th>Joined</th><th style="text-align:center">Actions</th></tr>
+          <tr id="member-empty-row"><td colspan="9" style="text-align:center;color:var(--gray);padding:22px;font-style:italic;">Click ↻ Refresh to load members from Google Sheets.</td></tr>
         </table>
       </div>
 
@@ -1284,7 +1284,8 @@ nav{flex:1;padding:10px 0;}
           <input type="hidden" id="mb-id" value="">
 
           <div class="fr" style="gap:14px;margin-bottom:14px">
-            <div class="fg3" style="flex:2"><label>Full Name <span style="color:var(--red)">*</span></label><input type="text" id="mb-name" placeholder="Full Name"></div>
+            <div class="fg3"><label>First Name <span style="color:var(--red)">*</span></label><input type="text" id="mb-fname" placeholder="First Name"></div>
+            <div class="fg3"><label>Last Name <span style="color:var(--red)">*</span></label><input type="text" id="mb-lname" placeholder="Last Name"></div>
             <div class="fg3">
               <label>Status <span style="color:var(--red)">*</span></label>
               <select id="mb-status">
@@ -4244,7 +4245,7 @@ function saveBillsToSheets() {
   saveNext(0);
 }
 
-var SYSTEM_VERSION = "v2026.04.14-6";
+var SYSTEM_VERSION = "v2026.04.14-7";
 
 // ── WEEKLY FINANCIAL REPORT ──────────────────────────────────────
 function showWeeklyFinancialPicker() {
@@ -5730,8 +5731,8 @@ function populateTithesDropdown(members) {
   members.forEach(function(m) {
     if (m.status === 'Inactive') return;  // only show active members
     var opt = document.createElement('option');
-    opt.value = m.fullName || m.name || m.id;
-    opt.textContent = (m.fullName || m.name || m.id) + ' (' + m.id + ')';
+    opt.value = (m.firstName||'') + ' ' + (m.lastName||'');
+    opt.textContent = ((m.firstName||'') + ' ' + (m.lastName||'')).trim() + ' (' + m.id + ')';
     sel.appendChild(opt);
   });
   var anon = document.createElement('option');
@@ -5787,7 +5788,8 @@ function renderMemberRow(m) {
   tr.setAttribute('data-memberid', m.id);
   tr.innerHTML = [
     '<td style="font-family:monospace;font-size:.78rem">' + m.id + '</td>',
-    '<td style="font-weight:600">' + (m.fullName||'—') + '</td>',
+    '<td style="font-weight:600">' + (m.firstName||'—') + '</td>',
+    '<td style="font-weight:600">' + (m.lastName||'—') + '</td>',
     '<td>' + (m.phone||'—') + '</td>',
     '<td>' + (m.email||'—') + '</td>',
     '<td>' + (m.city||'—') + '</td>',
@@ -5803,7 +5805,7 @@ function renderMemberRow(m) {
 
   var delBtn = document.createElement('button');
   delBtn.className = 'bac'; delBtn.style.cssText = 'background:#fee2e2;color:#b91c1c'; delBtn.textContent = '🗑 Remove';
-  delBtn.onclick = (function(id, name, row){ return function(){ deleteMember(id, name, row); }; })(m.id, m.fullName||'', tr);
+  delBtn.onclick = (function(id, name, row){ return function(){ deleteMember(id, name, row); }; })(m.id, ((m.firstName||'') + ' ' + (m.lastName||'')).trim(), tr);
 
   td.appendChild(editBtn); td.appendChild(delBtn);
   tb.appendChild(tr);
@@ -5825,7 +5827,7 @@ function openMemberForm(mode) {
 
 function closeMemberForm() {
   document.getElementById('member-form-wrap').style.display = 'none';
-  ['mb-name','mb-phone','mb-email','mb-addr1','mb-addr2','mb-city','mb-state','mb-zip','mb-joined'].forEach(function(x){ document.getElementById(x).value=''; });
+  ['mb-fname','mb-lname','mb-phone','mb-email','mb-addr1','mb-addr2','mb-city','mb-state','mb-zip','mb-joined'].forEach(function(x){ document.getElementById(x).value=''; });
   document.getElementById('mb-status').value = 'Active';
   document.getElementById('mb-id').value = '';
   document.getElementById('mb-mode').value = 'add';
@@ -5835,7 +5837,8 @@ function editMember(id) {
   var m = memberData.find(function(x){ return x.id === id; });
   if (!m) { showToast('Member not found — click Refresh.'); return; }
   document.getElementById('mb-id').value     = m.id;
-  document.getElementById('mb-name').value   = m.fullName   || '';
+  document.getElementById('mb-fname').value  = m.firstName  || '';
+  document.getElementById('mb-lname').value  = m.lastName   || '';
   document.getElementById('mb-phone').value  = m.phone      || '';
   document.getElementById('mb-email').value  = m.email      || '';
   document.getElementById('mb-status').value = m.status     || 'Active';
@@ -5883,45 +5886,50 @@ function confirmDeleteMember() {
 }
 
 function saveMember() {
-  var mode    = document.getElementById('mb-mode').value;
-  var id      = document.getElementById('mb-id').value.trim();
-  var name    = document.getElementById('mb-name').value.trim();
-  var phone   = document.getElementById('mb-phone').value.trim();
-  var email   = document.getElementById('mb-email').value.trim();
-  var status  = document.getElementById('mb-status').value;
-  var joined  = document.getElementById('mb-joined').value;
-  var addr1   = document.getElementById('mb-addr1').value.trim();
-  var addr2   = document.getElementById('mb-addr2').value.trim();
-  var city    = document.getElementById('mb-city').value.trim();
-  var state   = document.getElementById('mb-state').value.trim();
-  var zip     = document.getElementById('mb-zip').value.trim();
-  if (!name) { showToast('Full Name is required.'); return; }
+  var mode      = document.getElementById('mb-mode').value;
+  var id        = document.getElementById('mb-id').value.trim();
+  var firstName = document.getElementById('mb-fname').value.trim();
+  var lastName  = document.getElementById('mb-lname').value.trim();
+  var phone     = document.getElementById('mb-phone').value.trim();
+  var email     = document.getElementById('mb-email').value.trim();
+  var status    = document.getElementById('mb-status').value;
+  var joined    = document.getElementById('mb-joined').value;
+  var addr1     = document.getElementById('mb-addr1').value.trim();
+  var addr2     = document.getElementById('mb-addr2').value.trim();
+  var city      = document.getElementById('mb-city').value.trim();
+  var state     = document.getElementById('mb-state').value.trim();
+  var zip       = document.getElementById('mb-zip').value.trim();
+  var fullName  = (firstName + ' ' + lastName).trim();
+  if (!firstName) { showToast('First Name is required.'); return; }
+  if (!lastName)  { showToast('Last Name is required.'); return; }
 
   var url = localStorage.getItem('mcmbc_sheet_url') || '';
 
   if (mode === 'edit') {
     var m = memberData.find(function(x){ return x.id === id; });
-    if (m) { m.fullName=name; m.phone=phone; m.email=email; m.status=status; m.joinDate=joined; }
+    if (m) { m.firstName=firstName; m.lastName=lastName; m.phone=phone; m.email=email; m.status=status; m.joinDate=joined; }
     var row = document.querySelector('tr[data-memberid="' + id + '"]');
     if (row) {
-      row.cells[1].textContent = name;
-      row.cells[2].textContent = phone||'—';
-      row.cells[3].textContent = email||'—';
-      row.cells[4].textContent = city||'—';
-      row.cells[5].innerHTML   = '<span class="sb2 ' + (status==='Active'?'sa':'si') + '">' + status + '</span>';
-      row.cells[6].textContent = joined||'—';
+      row.cells[1].textContent = firstName;
+      row.cells[2].textContent = lastName;
+      row.cells[3].textContent = phone||'—';
+      row.cells[4].textContent = email||'—';
+      row.cells[5].textContent = city||'—';
+      row.cells[6].innerHTML   = '<span class="sb2 ' + (status==='Active'?'sa':'si') + '">' + status + '</span>';
+      row.cells[7].textContent = joined||'—';
     }
     closeMemberForm();
     if (url && url.indexOf('script.google.com') !== -1) {
       var cb = 'memUpdCb_' + Date.now();
       window[cb] = function(data) {
         delete window[cb];
-        showToast(data && data.status === 'success' ? '✅ ' + name + ' updated in Google Sheets.' : '⚠️ Updated locally but Sheets sync failed.');
+        showToast(data && data.status === 'success' ? '✅ ' + fullName + ' updated in Google Sheets.' : '⚠️ Updated locally but Sheets sync failed.');
       };
       var s = document.createElement('script');
       s.src = url + '?action=updateMember&callback=' + cb
         + '&memberId='   + encodeURIComponent(id)
-        + '&fullName='   + encodeURIComponent(name)
+        + '&firstName='  + encodeURIComponent(firstName)
+        + '&lastName='   + encodeURIComponent(lastName)
         + '&phone='      + encodeURIComponent(phone)
         + '&email='      + encodeURIComponent(email)
         + '&status='     + encodeURIComponent(status)
@@ -5939,7 +5947,7 @@ function saveMember() {
   // ADD mode
   var tb   = document.getElementById('member-table');
   var newId = 'MB-' + String(Date.now()).slice(-6); // unique timestamp-based ID
-  var newMem = {id:newId, fullName:name, phone:phone, email:email, status:status, joinDate:joined, address1:addr1, address2:addr2, city:city, state:state, zip:zip};
+  var newMem = {id:newId, firstName:firstName, lastName:lastName, phone:phone, email:email, status:status, joinDate:joined, address1:addr1, address2:addr2, city:city, state:state, zip:zip};
 
   var saveBtn = document.getElementById('member-save-btn');
   if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = '⏳ Saving...'; }
@@ -5956,11 +5964,10 @@ function saveMember() {
       clearTimeout(t2); delete window[cb2];
       if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = '💾 Save Member'; }
       if (data && data.status === 'success') {
-        showToast('✅ ' + name + ' saved to Google Sheets.');
+        showToast('✅ ' + fullName + ' saved to Google Sheets.');
         loadMembersFromSheets(); // reload table from Sheets to avoid duplicates
       } else {
         showToast('⚠️ Sheets error: ' + (data && data.message ? data.message : 'unknown'));
-        // Only render locally if Sheets failed
         memberData.push(newMem);
         renderMemberRow(newMem);
       }
@@ -5975,7 +5982,8 @@ function saveMember() {
     };
     s2.src = url + '?action=addMember&callback=' + cb2
       + '&memberId='   + encodeURIComponent(newId)
-      + '&fullName='   + encodeURIComponent(name)
+      + '&firstName='  + encodeURIComponent(firstName)
+      + '&lastName='   + encodeURIComponent(lastName)
       + '&phone='      + encodeURIComponent(phone)
       + '&email='      + encodeURIComponent(email)
       + '&status='     + encodeURIComponent(status)
