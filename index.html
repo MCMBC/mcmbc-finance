@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.04.14-10</title>
+<title>Mount Calvary M.B. Church Financial System v2026.04.14-13</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -63,7 +63,7 @@ nav{flex:1;padding:10px 0;}
 .kg{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-bottom:22px;}
 .kc{background:#fff;border-radius:12px;padding:17px;box-shadow:0 2px 12px rgba(15,39,68,.07);border-top:3px solid transparent;position:relative;overflow:hidden;transition:transform .2s;}
 .kc:hover{transform:translateY(-2px);}
-.kc.bl2{border-top-color:#3b82f6;}.kc.gn{border-top-color:#22c55e;}.kc.rd{border-top-color:#ef4444;}.kc.gd{border-top-color:var(--gold);}
+.kc.bl2{border-top-color:#3b82f6;}.kc.gn{border-top-color:#22c55e;}.kc.rd{border-top-color:#ef4444;}.kc.gd{border-top-color:var(--gold);}.kc.pu{border-top-color:#8b5cf6;}
 .kl{font-size:.7rem;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:.8px;}
 .kv{font-size:1.55rem;font-weight:700;color:var(--navy);margin:5px 0 2px;font-family:'Lora',serif;}
 .ks{font-size:.72rem;color:var(--gray);}
@@ -172,7 +172,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.14-10</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.14-13</span>
     </div>
   </div>
 </div>
@@ -266,7 +266,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.14-10</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.14-13</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -281,6 +281,7 @@ nav{flex:1;padding:10px 0;}
       <div class="kg">
         <div class="kc bl2"><div class="kl">Total Offerings</div><div class="kv">$0.00</div><div class="ks">No records yet</div><div class="ki">💰</div></div>
         <div class="kc rd"><div class="kl">Total Expenses</div><div class="kv">$0.00</div><div class="ks">No records yet</div><div class="ki">💸</div></div>
+        <div class="kc pu"><div class="kl">Payroll</div><div class="kv" id="kpi-payroll">$0.00</div><div class="ks" id="kpi-payroll-sub">No payroll yet</div><div class="ki">👤</div></div>
         <div class="kc gd"><div class="kl">Bills Paid</div><div class="kv" id="kpi-bills">$0.00</div><div class="ks" id="kpi-bills-sub">No bills yet</div><div class="ki">🧾</div></div>
         <div class="kc bl2"><div class="kl">giveify</div><div class="kv" id="kpi-giveify">$0.00</div><div class="ks" id="kpi-giveify-sub">No records yet</div><div class="ki">📱</div></div>
         <div class="kc gn"><div class="kl">Active Members</div><div class="kv">0</div><div class="ks">Active members</div><div class="ki">👥</div></div>
@@ -2761,6 +2762,11 @@ function loadDashboardData() {
     var kpis = document.querySelectorAll('#view-dashboard .kc');
     if (kpis[0]) { kpis[0].querySelector('.kv').textContent = fmtCurrency(data.offeringsTotal); kpis[0].querySelector('.ks').textContent = data.offeringsCount + ' record(s)'; }
     if (kpis[1]) { kpis[1].querySelector('.kv').textContent = fmtCurrency(data.expensesTotal); kpis[1].querySelector('.ks').textContent = data.expensesCount + ' record(s)'; }
+    // Payroll KPI
+    var payrollKpi = document.getElementById('kpi-payroll');
+    var payrollSub = document.getElementById('kpi-payroll-sub');
+    if (payrollKpi) payrollKpi.textContent = fmtCurrency(data.payrollTotal || 0);
+    if (payrollSub) payrollSub.textContent = (data.payrollCount || 0) + ' payment(s)';
     // Bills Paid KPI
     var billsKpi = document.getElementById('kpi-bills');
     var billsSub = document.getElementById('kpi-bills-sub');
@@ -2772,8 +2778,8 @@ function loadDashboardData() {
     if (giveifyKpi) giveifyKpi.textContent = fmtCurrency(data.giveifyBreakdown || 0);
     var giveifySub2 = document.getElementById('kpi-giveify-sub');
     if (giveifySub2) giveifySub2.textContent = (data.giveifyBreakdownCount || 0) + ' record(s)';
-    if (kpis[4]) { kpis[4].querySelector('.kv').textContent = data.activeMembers; kpis[4].querySelector('.ks').textContent = 'Active members'; }
-    if (kpis[5]) { kpis[5].querySelector('.kv').textContent = data.pendingCount; kpis[5].querySelector('.ks').textContent = fmtCurrency(data.pendingAmount) + ' awaiting approval'; }
+    if (kpis[5]) { kpis[5].querySelector('.kv').textContent = data.activeMembers; kpis[5].querySelector('.ks').textContent = 'Active members'; }
+    if (kpis[6]) { kpis[6].querySelector('.kv').textContent = data.pendingCount; kpis[6].querySelector('.ks').textContent = fmtCurrency(data.pendingAmount) + ' awaiting approval'; }
 
     // Fund Cards — match by fund name order
     var fundOrder = ['Sunday School Fund','Benevolent Offering Fund','General Offering Fund',
@@ -4278,7 +4284,7 @@ function saveBillsToSheets() {
   saveNext(0);
 }
 
-var SYSTEM_VERSION = "v2026.04.14-10";
+var SYSTEM_VERSION = "v2026.04.14-13";
 
 // ── WEEKLY FINANCIAL REPORT ──────────────────────────────────────
 // ── WEEKLY DISBURSEMENTS REPORT ──────────────────────────────────
@@ -4475,24 +4481,26 @@ function renderDisbursementsReport(data, s1, s2, body) {
   }
 
   // Bills
-  if (bills.length > 0) {
+  var billsFiltered = bills.filter(function(b){ return (b.amount||0) > 0; });
+  if (billsFiltered.length > 0) {
     rpt += sectionHead('Bills & Utilities', '#b45309');
-    bills.forEach(function(b){
+    billsFiltered.forEach(function(b){
       rpt += dataRow(b.date, b.payee, b.type||'Bill', b.fund, b.checkNo, b.memo, b.amount, true);
     });
     rpt += totalRow('Bills & Utilities Subtotal', billTotal, true);
   }
 
   // Other Expenses
-  if (exps.length > 0) {
+  var expsFiltered = exps.filter(function(e){ return (e.amount||0) > 0; });
+  if (expsFiltered.length > 0) {
     rpt += sectionHead('Other Expenses', '#b91c1c');
-    exps.forEach(function(e){
+    expsFiltered.forEach(function(e){
       rpt += dataRow(e.date, e.paidTo||e.desc, e.category||e.desc, e.fund, e.receiptNo, e.approvedBy, e.amount, true);
     });
     rpt += totalRow('Other Expenses Subtotal', expTotal, true);
   }
 
-  if (w2.length === 0 && c1099.length === 0 && bills.length === 0 && exps.length === 0) {
+  if (w2.length === 0 && c1099.length === 0 && billsFiltered.length === 0 && expsFiltered.length === 0) {
     rpt += '<tr><td colspan="7" style="text-align:center;padding:40px;color:#94a3b8;font-style:italic">No disbursements found for this date range.</td></tr>';
   }
 
