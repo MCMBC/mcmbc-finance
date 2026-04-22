@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.04.22-12</title>
+<title>Mount Calvary M.B. Church Financial System v2026.04.22-13</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -41,7 +41,7 @@ hr.ld{border:none;border-top:1px solid rgba(255,255,255,.12);margin:18px 0;}
 .lerr{color:#fca5a5;font-size:.83rem;margin-top:10px;text-align:center;display:none;}
 #app{display:none;min-height:100vh;}
 .sb{position:fixed;top:0;left:0;bottom:0;width:var(--sw);background:var(--navy);display:flex;flex-direction:column;z-index:100;border-right:1px solid rgba(201,168,76,.2);overflow-y:auto;}
-.sl{padding:18px 20px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:12px;}
+.sl{padding:18px 20px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;align-items:flex-start;gap:2px;}
 .sl h2{font-family:'Lora',serif;color:#fff;font-size:.92rem;line-height:1.3;}
 nav{flex:1;padding:10px 0;}
 .ns{padding:8px 18px 4px;font-size:.62rem;color:rgba(255,255,255,.3);font-weight:600;text-transform:uppercase;letter-spacing:1.5px;}
@@ -172,7 +172,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.22-12</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.22-13</span>
     </div>
   </div>
 </div>
@@ -181,8 +181,11 @@ nav{flex:1;padding:10px 0;}
 <div id="app">
   <aside class="sb">
     <div class="sl">
-      <div style="font-size:1.4rem;color:var(--gold)">✝</div>
-      <h2>Church Financial System</h2>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="font-size:1.4rem;color:var(--gold)">✝</div>
+        <h2 style="margin:0">Church Financial System</h2>
+      </div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.04.22-13</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -266,7 +269,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.22-12</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.22-13</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -2535,6 +2538,9 @@ function doLogin() {
     });
     document.getElementById('lp').style.display = 'none';
     document.getElementById('app').style.display = 'block';
+    var sysVer = document.getElementById('sys-version');
+    var sbVer  = document.getElementById('sb-version');
+    if (sysVer && sbVer) sbVer.textContent = sysVer.textContent;
     var today = new Date().toISOString().split('T')[0];
     ['of-date','to-date','tm-date','gd-date','od-date'].forEach(function(id){
       var el = document.getElementById(id); if (el) el.value = today;
@@ -4287,7 +4293,7 @@ function saveBillsToSheets() {
   saveNext(0);
 }
 
-var SYSTEM_VERSION = "v2026.04.22-12";
+var SYSTEM_VERSION = "v2026.04.22-13";
 
 // ── WEEKLY FINANCIAL REPORT ──────────────────────────────────────
 // ── WEEKLY DISBURSEMENTS REPORT ──────────────────────────────────
