@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.04.22-14</title>
+<title>Mount Calvary M.B. Church Financial System v2026.04.22-15</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -172,7 +172,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.22-14</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.22-15</span>
     </div>
   </div>
 </div>
@@ -185,7 +185,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.04.22-14</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.04.22-15</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -269,7 +269,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.22-14</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.22-15</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -4293,7 +4293,7 @@ function saveBillsToSheets() {
   saveNext(0);
 }
 
-var SYSTEM_VERSION = "v2026.04.22-14";
+var SYSTEM_VERSION = "v2026.04.22-15";
 
 // ── WEEKLY FINANCIAL REPORT ──────────────────────────────────────
 // ── WEEKLY DISBURSEMENTS REPORT ──────────────────────────────────
@@ -4497,6 +4497,13 @@ function renderDisbursementsReport(data, s1, s2, body) {
       rpt += dataRow(e.date, e.name, '1099 Contractor', e.fund, e.checkNo, e.memo, e.gross, true);
     });
     rpt += totalRow('1099 Subtotal', pr99Total, true);
+  }
+
+  // Total Payroll subtotal (W-2 + 1099) — shown whenever at least one payroll section exists
+  if (w2.length > 0 || c1099.length > 0) {
+    var payrollTotal = w2Total + pr99Total;
+    rpt += '<tr><td colspan="6" style="padding:7px 8px;font-size:.84rem;font-weight:700;background:#e0e7ff;border-top:2px solid #4338ca;border-bottom:2px solid #4338ca;color:#1e1b4b">Total Payroll (W-2 + 1099)</td>' +
+           '<td style="padding:7px 8px;font-size:.87rem;font-weight:700;text-align:right;background:#e0e7ff;border-top:2px solid #4338ca;border-bottom:2px solid #4338ca;color:#1e1b4b;white-space:nowrap">' + fc(payrollTotal) + '</td></tr>';
   }
 
   // Bills — sort by date
