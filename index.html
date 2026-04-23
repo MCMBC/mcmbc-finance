@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.04.22-13</title>
+<title>Mount Calvary M.B. Church Financial System v2026.04.22-14</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -172,7 +172,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.22-13</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.22-14</span>
     </div>
   </div>
 </div>
@@ -185,7 +185,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.04.22-13</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.04.22-14</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -269,7 +269,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.22-13</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.22-14</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -4293,7 +4293,7 @@ function saveBillsToSheets() {
   saveNext(0);
 }
 
-var SYSTEM_VERSION = "v2026.04.22-13";
+var SYSTEM_VERSION = "v2026.04.22-14";
 
 // ── WEEKLY FINANCIAL REPORT ──────────────────────────────────────
 // ── WEEKLY DISBURSEMENTS REPORT ──────────────────────────────────
@@ -4471,8 +4471,13 @@ function renderDisbursementsReport(data, s1, s2, body) {
   rpt += '<th style="' + thR + ';width:90px">Amount</th>';
   rpt += '</tr></thead><tbody>';
 
-  // W-2 Payroll
+  // W-2 Payroll — sort by date then name
   if (w2.length > 0) {
+    w2.sort(function(a,b){
+      var da = new Date(a.date||0), db = new Date(b.date||0);
+      if (da - db !== 0) return da - db;
+      return (a.name||'').toLowerCase().localeCompare((b.name||'').toLowerCase());
+    });
     rpt += sectionHead('W-2 Payroll', '#1e40af');
     w2.forEach(function(e){
       rpt += dataRow(e.date, e.name, 'W-2 Employee', e.fund, e.checkNo, e.memo, e.gross, true);
@@ -4480,8 +4485,13 @@ function renderDisbursementsReport(data, s1, s2, body) {
     rpt += totalRow('W-2 Payroll Subtotal', w2Total, true);
   }
 
-  // 1099 Payroll
+  // 1099 Payroll — sort by date then name
   if (c1099.length > 0) {
+    c1099.sort(function(a,b){
+      var da = new Date(a.date||0), db = new Date(b.date||0);
+      if (da - db !== 0) return da - db;
+      return (a.name||'').toLowerCase().localeCompare((b.name||'').toLowerCase());
+    });
     rpt += sectionHead('1099 Contractors', '#6d28d9');
     c1099.forEach(function(e){
       rpt += dataRow(e.date, e.name, '1099 Contractor', e.fund, e.checkNo, e.memo, e.gross, true);
@@ -4489,9 +4499,12 @@ function renderDisbursementsReport(data, s1, s2, body) {
     rpt += totalRow('1099 Subtotal', pr99Total, true);
   }
 
-  // Bills
+  // Bills — sort by date
   var billsFiltered = bills.filter(function(b){ return (b.amount||0) > 0; });
   if (billsFiltered.length > 0) {
+    billsFiltered.sort(function(a,b){
+      return new Date(a.date||0) - new Date(b.date||0);
+    });
     rpt += sectionHead('Bills & Utilities', '#b45309');
     billsFiltered.forEach(function(b){
       rpt += dataRow(b.date, b.payee, b.type||'Bill', b.fund, b.checkNo, b.memo, b.amount, true);
