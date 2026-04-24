@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.04.22-17</title>
+<title>Mount Calvary M.B. Church Financial System v2026.04.22-18</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -172,7 +172,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.22-17</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.22-18</span>
     </div>
   </div>
 </div>
@@ -185,7 +185,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.04.22-17</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.04.22-18</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -269,7 +269,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.22-17</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.22-18</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -1302,6 +1302,7 @@ nav{flex:1;padding:10px 0;}
         <div class="sbox"><span>🔍</span><input placeholder="Search members..." oninput="filterMemberTable(this.value)"></div>
         <div style="display:flex;gap:8px">
           <button class="bp" onclick="loadMembersFromSheets()">↻ Refresh</button>
+          <button class="bp" onclick="printList('member-table','Members Directory')">🖨 Print</button>
           <button class="bp" onclick="openMemberForm()">+ Add Member</button>
         </div>
       </div>
@@ -1377,6 +1378,7 @@ nav{flex:1;padding:10px 0;}
         <div class="sbox"><span>🔍</span><input placeholder="Search donors..." oninput="filterDonorTable(this.value)"></div>
         <div style="display:flex;gap:8px">
           <button class="bp" onclick="loadDonorsScreen()">↻ Refresh</button>
+          <button class="bp" onclick="printList('donor-table','Donors Directory')">🖨 Print</button>
           <button class="bp" onclick="openDonorForm()">+ Add Donor</button>
         </div>
       </div>
@@ -1510,6 +1512,7 @@ nav{flex:1;padding:10px 0;}
         <div class="sbox"><span>🔍</span><input placeholder="Search employees..." oninput="filterEmpTable(this.value)"></div>
         <div style="display:flex;gap:8px">
           <button class="bp" onclick="loadEmployeesFromSheets()">↻ Refresh</button>
+          <button class="bp" onclick="printList('emp-table','Employee Directory')">🖨 Print</button>
           <button class="bp" onclick="openEmpForm()">+ Add Employee</button>
         </div>
       </div>
@@ -1603,6 +1606,7 @@ nav{flex:1;padding:10px 0;}
         <div class="sbox"><span>🔍</span><input placeholder="Search vendors..." oninput="filterVendorTable(this.value)"></div>
         <div style="display:flex;gap:8px">
           <button class="bp" onclick="loadVendorsScreen()">↻ Refresh</button>
+          <button class="bp" onclick="printList('vendor-table','Vendor Directory')">🖨 Print</button>
           <button class="bp" onclick="openVendorForm()">+ Add Vendor</button>
         </div>
       </div>
@@ -4293,7 +4297,7 @@ function saveBillsToSheets() {
   saveNext(0);
 }
 
-var SYSTEM_VERSION = "v2026.04.22-17";
+var SYSTEM_VERSION = "v2026.04.22-18";
 
 // ── WEEKLY FINANCIAL REPORT ──────────────────────────────────────
 // ── WEEKLY DISBURSEMENTS REPORT ──────────────────────────────────
@@ -6110,6 +6114,47 @@ function renderMemberRow(m) {
 
   td.appendChild(editBtn); td.appendChild(delBtn);
   tb.appendChild(tr);
+}
+
+// ── Print Management List ─────────────────────────────────────
+function printList(tableId, title) {
+  var tbl = document.getElementById(tableId);
+  if (!tbl) { alert('Table not loaded. Please click Refresh first.'); return; }
+  var rows = tbl.querySelectorAll('tr');
+  if (rows.length < 2) { alert('No data to print. Please click Refresh first.'); return; }
+
+  // Build a clean table — skip the Actions column (last th/td in each row)
+  var tableHtml = '<table border="1" cellspacing="0" cellpadding="6" style="width:100%;border-collapse:collapse;font-size:12px">';
+  rows.forEach(function(row, ri) {
+    var cells = row.querySelectorAll('th, td');
+    tableHtml += '<tr>';
+    cells.forEach(function(cell, ci) {
+      if (cell.textContent.trim().toLowerCase() === 'actions') return;
+      // skip last cell if it contains buttons
+      if (cell.querySelector('button')) return;
+      var tag = (ri === 0) ? 'th' : 'td';
+      var bg  = (ri === 0) ? 'background:#1e3a5f;color:#fff;' : (ri % 2 === 0 ? 'background:#f8f9fa;' : '');
+      tableHtml += '<' + tag + ' style="' + bg + 'padding:5px 8px;border:1px solid #ccc">' + cell.textContent.trim() + '</' + tag + '>';
+    });
+    tableHtml += '</tr>';
+  });
+  tableHtml += '</table>';
+
+  var today = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  var win = window.open('', '_blank');
+  win.document.write(
+    '<!DOCTYPE html><html><head><title>' + title + '</title>' +
+    '<style>body{font-family:Arial,sans-serif;margin:30px}h2{color:#1e3a5f;margin-bottom:4px}' +
+    '.sub{color:#666;font-size:12px;margin-bottom:18px}' +
+    '@media print{.no-print{display:none}}' +
+    '</style></head><body>' +
+    '<h2>Mount Calvary M.B. Church</h2>' +
+    '<div class="sub">' + title + ' &nbsp;|&nbsp; Printed: ' + today + '</div>' +
+    tableHtml +
+    '<br><button class="no-print" onclick="window.print()" style="padding:8px 20px;background:#1e3a5f;color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:13px">🖨 Print / Save as PDF</button>' +
+    '</body></html>'
+  );
+  win.document.close();
 }
 
 function filterMemberTable(q) {
