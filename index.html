@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.05.01-31</title>
+<title>Mount Calvary M.B. Church Financial System v2026.05.01-32</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -172,7 +172,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.01-31</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.01-32</span>
     </div>
   </div>
 </div>
@@ -185,7 +185,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.01-31</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.01-32</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -271,7 +271,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.01-31</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.01-32</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -4510,7 +4510,7 @@ function saveBillsToSheets() {
   saveNext(0);
 }
 
-var SYSTEM_VERSION = "v2026.05.01-31";
+var SYSTEM_VERSION = "v2026.05.01-32";
 
 // ── WEEKLY FINANCIAL REPORT ──────────────────────────────────────
 // ── WEEKLY DISBURSEMENTS REPORT ──────────────────────────────────
@@ -5214,36 +5214,55 @@ function generateTithesReport() {
   var end   = document.getElementById('tithes-rpt-end').value;
   if (!start || !end) { showToast('⚠️ Please select a date range.'); return; }
   closeTithesReportPicker();
+
   var s1 = new Date(start+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
   var s2 = new Date(end+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-  var panel = document.getElementById('rpt-output');
-  var title = document.getElementById('rpt-output-title');
-  var body  = document.getElementById('rpt-output-body');
-  title.textContent = '🙏 Tithes Report — ' + s1 + ' to ' + s2;
-  panel.style.display = 'none'; // report opens in window
-  showToast('⏳ Loading Tithes Report…');
+
+  // Open window immediately on user click to avoid popup blocker
+  var rptWin = window.open('', 'tithesReport', 'width=1000,height=750,scrollbars=yes,resizable=yes');
+  rptWin.document.write('<!DOCTYPE html><html><head><title>Tithes Report</title>' +
+    '<style>body{font-family:Arial,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;background:#f8fafc}' +
+    '.spin{width:52px;height:52px;border:5px solid #e2e8f0;border-top-color:#1e3a5f;border-radius:50%;animation:sp 0.9s linear infinite;margin:0 auto 20px}' +
+    '@keyframes sp{to{transform:rotate(360deg)}}</style></head><body>' +
+    '<div style="text-align:center"><div class="spin"></div>' +
+    '<div style="font-family:Georgia,serif;font-size:1.1rem;font-weight:700;color:#1e3a5f;margin-bottom:8px">Generating Tithes Report…</div>' +
+    '<div style="font-size:.82rem;color:#64748b">Pulling from all sources…</div></div></body></html>');
+  rptWin.document.close();
+
   var url = localStorage.getItem('mcmbc_sheet_url') || '';
   if (!url || url.indexOf('script.google.com') === -1) {
-    body.innerHTML = '<div style="background:#fef3c7;border-left:4px solid #ca8a04;padding:14px;border-radius:8px;color:#854d0e">⚠️ No Google Sheets URL saved.</div>'; return;
+    rptWin.document.body.innerHTML = '<div style="padding:40px;color:#b91c1c">⚠️ No Google Sheets URL saved.</div>'; return;
   }
+
   var cb = 'tithesRptCb_' + Date.now();
-  var t  = setTimeout(function(){ delete window[cb]; body.innerHTML='<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Timed out.</div>'; }, 30000);
-  setTimeout(function() {
-    window[cb] = function(data) {
-      clearTimeout(t); delete window[cb];
-      if (!data || data.status !== 'success') { body.innerHTML='<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Error: '+JSON.stringify(data)+'</div>'; return; }
-      try { renderTithesReport(data, s1, s2, body); }
-      catch(e) { body.innerHTML='<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c;font-size:.82rem"><strong>Render error:</strong><br>'+e.message+'</div>'; }
-    };
-    var s = document.createElement('script');
-    s.onerror = function(){ clearTimeout(t); delete window[cb]; body.innerHTML='<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Could not reach Google Sheets.</div>'; };
-    s.src = url + '?action=getTithesReport&callback=' + cb + '&startDate=' + encodeURIComponent(start) + '&endDate=' + encodeURIComponent(end);
-    document.head.appendChild(s);
-    setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); }, 32000);
-  }, 80);
+  var t  = setTimeout(function() {
+    delete window[cb];
+    if (!rptWin.closed) rptWin.document.body.innerHTML = '<div style="padding:40px;color:#b91c1c">⚠️ Timed out. Try again.</div>';
+  }, 30000);
+
+  window[cb] = function(data) {
+    clearTimeout(t); delete window[cb];
+    if (!data || data.status !== 'success') {
+      if (!rptWin.closed) rptWin.document.body.innerHTML = '<div style="padding:40px;color:#b91c1c">⚠️ Error: ' + JSON.stringify(data) + '</div>';
+      return;
+    }
+    try { renderTithesReport(data, s1, s2, rptWin); }
+    catch(e) {
+      if (!rptWin.closed) rptWin.document.body.innerHTML = '<div style="padding:40px;color:#b91c1c;font-family:monospace;font-size:.82rem"><strong>Render error:</strong><br>' + e.message + '</div>';
+    }
+  };
+
+  var s = document.createElement('script');
+  s.onerror = function() {
+    clearTimeout(t); delete window[cb];
+    if (!rptWin.closed) rptWin.document.body.innerHTML = '<div style="padding:40px;color:#b91c1c">⚠️ Could not reach Google Sheets.</div>';
+  };
+  s.src = url + '?action=getTithesReport&callback=' + cb + '&startDate=' + encodeURIComponent(start) + '&endDate=' + encodeURIComponent(end);
+  document.head.appendChild(s);
+  setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); }, 32000);
 }
 
-function renderTithesReport(data, s1, s2, body) {
+function renderTithesReport(data, s1, s2, rptWin) {
   var rows  = data.rows  || [];
   var totals = data.totals || {};
   var grand  = data.grandTotal || 0;
@@ -5330,7 +5349,32 @@ function renderTithesReport(data, s1, s2, body) {
   rpt += '</div>';
   rpt += '<div class="no-print" style="text-align:center;margin-top:24px"><button class="bsv" onclick="printReport()" style="padding:10px 28px">🖨️ Print Report</button></div>';
   rpt += '</div>';
-  openReportWindow('Tithes Report', rpt);
+  var today = new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  var fullHtml = '<!DOCTYPE html><html><head><title>Tithes Report</title>' +
+    '<style>body{font-family:Arial,sans-serif;padding:28px 32px;color:#1e293b;margin:0}' +
+    'table{width:100%;border-collapse:collapse;margin-bottom:16px}' +
+    'th{background:#0F2744;color:#fff;padding:7px 12px;text-align:left;font-size:.78rem}' +
+    'td{padding:5px 12px;font-size:.78rem;border-bottom:1px solid #e2e8f0}' +
+    '.btn{padding:8px 20px;border:none;border-radius:4px;cursor:pointer;font-size:13px;margin-right:8px}' +
+    '.btn-print{background:#1e3a5f;color:#fff}.btn-close{background:#6b7280;color:#fff}' +
+    '.no-print{display:block}' +
+    '@media print{.no-print{display:none!important}}' +
+    '@keyframes cfSpin{to{transform:rotate(360deg)}}' +
+    '</style></head><body>' +
+    '<div class="no-print" style="margin-bottom:20px;display:flex;gap:8px">' +
+    '<button class="btn btn-print" onclick="window.print()">🖨 Print / Save as PDF</button>' +
+    '<button class="btn btn-close" onclick="window.close()">✕ Close Window</button>' +
+    '</div>' +
+    rpt +
+    '<div class="no-print" style="margin-top:24px">' +
+    '<button class="btn btn-print" onclick="window.print()">🖨 Print / Save as PDF</button>' +
+    '</div></body></html>';
+  if (!rptWin.closed) {
+    rptWin.document.open();
+    rptWin.document.write(fullHtml);
+    rptWin.document.close();
+    rptWin.focus();
+  }
   showToast('✅ Tithes Report — ' + rows.length + ' record(s) from all sources');
 }
 
