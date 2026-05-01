@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.04.30-25</title>
+<title>Mount Calvary M.B. Church Financial System v2026.04.30-26</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -172,7 +172,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.30-25</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.30-26</span>
     </div>
   </div>
 </div>
@@ -185,7 +185,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.04.30-25</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.04.30-26</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -193,6 +193,7 @@ nav{flex:1;padding:10px 0;}
       <div class="ni" onclick="sv('reports',this)">📊 Financial Reports</div>
       <div class="ns sec-up">Income</div>
       <div class="ni sec-up" onclick="sv('tithes',this)">💵 Offerings</div>
+      <div class="ni sec-up" onclick="sv('cash-offerings',this);initCashOfferingForm()">💵 Cash Offerings</div>
       <div class="ni sec-up" onclick="sv('tithes-members',this);loadTithesMembers()">🙏 Tithes &amp; Offering by Members</div>
       <div class="ni sec-up" onclick="sv('giveify-donors',this);loadGDDonors()">📱 giveify by Donors</div>
       <div class="ni sec-up" onclick="sv('other-offerings',this)">🎁 Other Offerings &amp; Donations</div>
@@ -269,7 +270,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.30-25</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.30-26</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -607,6 +608,77 @@ nav{flex:1;padding:10px 0;}
             <input type="text" id="sheet-url" placeholder="https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec" style="flex:1;padding:7px 10px;border:1.5px solid #ca8a04;border-radius:7px;font-size:.8rem;font-family:'DM Sans',sans-serif;outline:none;">
             <button onclick="saveSheetUrl()" style="background:#ca8a04;color:#fff;border:none;padding:7px 14px;border-radius:7px;font-family:'DM Sans',sans-serif;font-size:.8rem;cursor:pointer;font-weight:600;">Save URL</button>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CASH OFFERINGS -->
+    <div id="view-cash-offerings" class="vw">
+      <div class="ph"><h1>Cash Offerings</h1><p>Record cash General Offering collections not captured in the standard Offerings form</p></div>
+      <div class="fcd">
+        <div class="fr">
+          <div class="fg3"><label>Cash Offering ID</label><input id="co-id" value="CO-001" readonly style="background:#f1f5f9;color:#64748b"></div>
+          <div class="fg3"><label>Date</label><input type="date" id="co-date"></div>
+        </div>
+        <div class="fr">
+          <div class="fg3" style="width:100%"><label>General Offering ($)</label><input type="number" id="co-gen" placeholder="0.00" min="0" step="0.01" oninput="calcCashOfferingTotal()"></div>
+        </div>
+
+        <!-- Total -->
+        <div class="fg3" style="background:#f0f9ff;border:1.5px solid #bfdbfe;border-radius:9px;padding:14px 16px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <label style="margin:0;font-size:.85rem;color:var(--navy);">TOTAL CASH OFFERINGS</label>
+            <span id="co-total" style="font-family:'Lora',serif;font-size:1.5rem;font-weight:700;color:var(--blue);">$0.00</span>
+          </div>
+        </div>
+
+        <!-- GL Entry Preview -->
+        <div style="margin-top:4px;background:#f8faff;border:1.5px solid var(--light);border-radius:9px;padding:16px;">
+          <div style="font-family:'Lora',serif;font-size:.88rem;font-weight:700;color:var(--navy);margin-bottom:12px;">GL Entry Preview</div>
+          <table style="width:100%;border-collapse:collapse;font-size:.82rem;">
+            <tr style="border-bottom:2px solid var(--light)">
+              <th style="text-align:left;padding:5px 8px;color:var(--gray);font-size:.72rem;text-transform:uppercase;letter-spacing:.5px;">Account</th>
+              <th style="text-align:right;padding:5px 8px;color:var(--gray);font-size:.72rem;text-transform:uppercase;letter-spacing:.5px;">Debit</th>
+              <th style="text-align:right;padding:5px 8px;color:var(--gray);font-size:.72rem;text-transform:uppercase;letter-spacing:.5px;">Credit</th>
+            </tr>
+            <tr style="background:#dbeafe20">
+              <td style="padding:6px 8px;font-weight:600;">1010 — General Checking Account</td>
+              <td style="text-align:right;padding:6px 8px;font-weight:700;color:var(--green);" id="co-gl-debit">$0.00</td>
+              <td style="text-align:right;padding:6px 8px;">—</td>
+            </tr>
+            <tr>
+              <td style="padding:5px 8px;padding-left:20px;color:#475569;">4010 — General Offering</td>
+              <td style="text-align:right;padding:5px 8px;">—</td>
+              <td style="text-align:right;padding:5px 8px;color:var(--red);" id="co-gl-cr">—</td>
+            </tr>
+            <tr style="border-top:2px solid var(--light);font-weight:700;">
+              <td style="padding:7px 8px;">Totals</td>
+              <td style="text-align:right;padding:7px 8px;color:var(--green);" id="co-gl-total-dr">$0.00</td>
+              <td style="text-align:right;padding:7px 8px;color:var(--red);" id="co-gl-total-cr">$0.00</td>
+            </tr>
+          </table>
+          <div style="margin-top:10px;font-size:.75rem;color:var(--green);font-weight:600;">✅ Debits = Credits — Entry is balanced</div>
+        </div>
+
+        <div class="fg3"><label>Received By</label><input id="co-received-by" readonly style="background:#f1f5f9;color:#64748b"></div>
+        <div class="fg3"><label>Notes (optional)</label><textarea id="co-notes" rows="3" placeholder="Any additional notes..."></textarea></div>
+        <button class="bsv" onclick="saveCashOffering()">Save Cash Offering</button>
+        <button class="bcc" onclick="sv('dashboard',null)">Cancel</button>
+      </div>
+
+      <!-- Saved Cash Offerings Log -->
+      <div id="saved-cash-offerings-wrap" style="display:none;margin-top:28px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+          <div style="font-family:'Lora',serif;font-size:1.1rem;font-weight:700;color:var(--navy);">📋 Saved Cash Offerings</div>
+          <button class="bp" onclick="saveCashOfferingsToSheet()" id="btn-co-save-sheet" style="background:var(--green);font-size:.82rem;">
+            💾 Save all to Google Sheet
+          </button>
+        </div>
+        <div id="co-sheet-status" style="display:none;margin-bottom:10px;padding:10px 14px;border-radius:8px;font-size:.82rem;"></div>
+        <div style="overflow-x:auto">
+          <table class="vt" id="saved-cash-offerings-table">
+            <tr><th>Cash Offering ID</th><th>Date</th><th>General Offering</th><th>Total</th><th>Received By</th><th>Notes</th><th>Saved?</th></tr>
+          </table>
         </div>
       </div>
     </div>
@@ -2454,6 +2526,109 @@ function saveTMToSheets() {
 }
 
 
+// ── CASH OFFERINGS ───────────────────────────────────────────────
+var cashOfferingLog = [];
+
+function initCashOfferingForm() {
+  // Set received by from logged-in user
+  var rb = document.getElementById('co-received-by');
+  if (rb && currentUser) rb.value = currentUser.fullName || currentUser.username || '';
+  // Set today's date if blank
+  var dt = document.getElementById('co-date');
+  if (dt && !dt.value) dt.value = new Date().toISOString().split('T')[0];
+  // Reset next ID
+  var nextNum = cashOfferingLog.length + 1;
+  document.getElementById('co-id').value = 'CO-' + String(nextNum).padStart(3,'0');
+}
+
+function calcCashOfferingTotal() {
+  var amt = parseFloat(document.getElementById('co-gen').value) || 0;
+  var fmt = function(n) { return '$' + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,','); };
+  document.getElementById('co-total').textContent   = fmt(amt);
+  document.getElementById('co-gl-debit').textContent = fmt(amt);
+  document.getElementById('co-gl-cr').textContent    = amt > 0 ? fmt(amt) : '—';
+  document.getElementById('co-gl-total-dr').textContent = fmt(amt);
+  document.getElementById('co-gl-total-cr').textContent  = fmt(amt);
+}
+
+function saveCashOffering() {
+  var id   = document.getElementById('co-id').value;
+  var date = document.getElementById('co-date').value;
+  var amt  = parseFloat(document.getElementById('co-gen').value) || 0;
+  var rec  = document.getElementById('co-received-by').value;
+  var notes = document.getElementById('co-notes').value;
+
+  if (!date) { showToast('⚠️ Please enter a date.'); return; }
+  if (amt <= 0) { showToast('⚠️ Please enter a General Offering amount.'); return; }
+
+  // Add to local log
+  cashOfferingLog.push({ id:id, date:date, generalOffering:amt, total:amt, receivedBy:rec, notes:notes, saved:false });
+
+  // Show the saved table
+  var wrap = document.getElementById('saved-cash-offerings-wrap');
+  wrap.style.display = 'block';
+  var tb = document.getElementById('saved-cash-offerings-table');
+  var fmt = function(n) { return '$' + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,','); };
+  var tr = tb.insertRow();
+  tr.innerHTML = '<td>' + id + '</td><td>' + date + '</td><td>' + fmt(amt) + '</td><td>' + fmt(amt) + '</td>'
+    + '<td>' + rec + '</td><td>' + (notes||'—') + '</td><td id="co-status-' + id + '" style="color:var(--gray)">⏳ Pending</td>';
+
+  // Advance ID
+  var nextNum = cashOfferingLog.length + 1;
+  document.getElementById('co-id').value = 'CO-' + String(nextNum).padStart(3,'0');
+
+  // Reset form fields
+  document.getElementById('co-gen').value   = '';
+  document.getElementById('co-notes').value = '';
+  calcCashOfferingTotal();
+  showToast('✅ Cash Offering ' + id + ' added — click "Save all to Google Sheet" to save.');
+}
+
+function saveCashOfferingsToSheet() {
+  var url = localStorage.getItem('mcmbc_sheet_url') || '';
+  if (!url || url.indexOf('script.google.com') === -1) { showToast('⚠️ No Google Sheets URL set.'); return; }
+
+  var unsaved = cashOfferingLog.filter(function(r){ return !r.saved; });
+  if (unsaved.length === 0) { showToast('ℹ️ All records already saved.'); return; }
+
+  var btn = document.getElementById('btn-co-save-sheet');
+  btn.disabled = true; btn.textContent = '⏳ Saving…';
+
+  var saved = 0;
+  function saveNext(i) {
+    if (i >= unsaved.length) {
+      btn.disabled = false; btn.textContent = '💾 Save all to Google Sheet';
+      showToast('✅ ' + saved + ' Cash Offering(s) saved to Google Sheets.');
+      return;
+    }
+    var r  = unsaved[i];
+    var cb = 'coCb_' + Date.now() + '_' + i;
+    var t  = setTimeout(function(){ delete window[cb]; showToast('⚠️ Timed out saving ' + r.id); saveNext(i+1); }, 20000);
+    window[cb] = function(data) {
+      clearTimeout(t); delete window[cb];
+      if (data && data.status === 'success') {
+        r.saved = true; saved++;
+        var cell = document.getElementById('co-status-' + r.id);
+        if (cell) { cell.textContent = '✅ Saved'; cell.style.color = 'var(--green)'; }
+      } else {
+        showToast('⚠️ Error saving ' + r.id);
+      }
+      saveNext(i+1);
+    };
+    var s = document.createElement('script');
+    s.src = url + '?action=saveCashOffering'
+      + '&cashOfferingId=' + encodeURIComponent(r.id)
+      + '&date='           + encodeURIComponent(r.date)
+      + '&generalOffering='+ encodeURIComponent(r.generalOffering)
+      + '&total='          + encodeURIComponent(r.total)
+      + '&receivedBy='     + encodeURIComponent(r.receivedBy)
+      + '&notes='          + encodeURIComponent(r.notes||'')
+      + '&callback='       + cb;
+    document.head.appendChild(s);
+  }
+  saveNext(0);
+}
+
 function calcOfferingTotal() {
   var fields = [
     {id:'amt-ss',      row:'gl-ss'},
@@ -2546,7 +2721,7 @@ function doLogin() {
     var sbVer  = document.getElementById('sb-version');
     if (sysVer && sbVer) sbVer.textContent = sysVer.textContent;
     var today = new Date().toISOString().split('T')[0];
-    ['of-date','to-date','tm-date','gd-date','od-date'].forEach(function(id){
+    ['of-date','to-date','tm-date','gd-date','od-date','co-date'].forEach(function(id){
       var el = document.getElementById(id); if (el) el.value = today;
     });
     buildChart();
@@ -4297,7 +4472,7 @@ function saveBillsToSheets() {
   saveNext(0);
 }
 
-var SYSTEM_VERSION = "v2026.04.30-25";
+var SYSTEM_VERSION = "v2026.04.30-26";
 
 // ── WEEKLY FINANCIAL REPORT ──────────────────────────────────────
 // ── WEEKLY DISBURSEMENTS REPORT ──────────────────────────────────
