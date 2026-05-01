@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.05.01-37</title>
+<title>Mount Calvary M.B. Church Financial System v2026.05.01-38</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -172,7 +172,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.01-37</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.01-38</span>
     </div>
   </div>
 </div>
@@ -185,7 +185,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.01-37</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.01-38</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -271,7 +271,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.01-37</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.01-38</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -2724,37 +2724,39 @@ function doLogin() {
   var u   = document.getElementById('lu').value.trim().toLowerCase();
   var pw  = document.getElementById('lpw').value;
   var err = document.getElementById('lerr');
+  err.style.display = 'none';
   if (!u || !pw) { err.textContent = 'Please enter username and password.'; err.style.display='block'; return; }
 
-  // If a URL was typed in the login screen field, save it now
+  // Read URL from visible field OR from localStorage
   var lpUrl = document.getElementById('lp-url');
-  if (lpUrl && lpUrl.value.trim().indexOf('script.google.com') !== -1) {
-    localStorage.setItem('mcmbc_sheet_url', lpUrl.value.trim());
+  var typedUrl = lpUrl ? lpUrl.value.trim() : '';
+  if (typedUrl.indexOf('script.google.com') !== -1) {
+    localStorage.setItem('mcmbc_sheet_url', typedUrl);
     var ofField = document.getElementById('sheet-url');
-    if (ofField) ofField.value = lpUrl.value.trim();
+    if (ofField) ofField.value = typedUrl;
   }
 
   var url = localStorage.getItem('mcmbc_sheet_url') || '';
 
   function attemptLogin(user) {
-    if (!user || user.active === 'No') {
-      err.textContent = 'Invalid username or password.';
-      err.style.display = 'block';
-      return;
+    if (!user) {
+      err.textContent = 'User "' + u + '" not found. Check username.';
+      err.style.display = 'block'; return;
+    }
+    if (user.active === 'No') {
+      err.textContent = 'This account has been deactivated.';
+      err.style.display = 'block'; return;
     }
     if (pw !== user.pw) {
-      err.textContent = 'Invalid username or password.';
-      err.style.display = 'block';
-      return;
+      err.textContent = 'Incorrect password.';
+      err.style.display = 'block'; return;
     }
     err.style.display = 'none';
-    // Merge into local USERS so session works
     USERS[u] = user;
     CU = user; CU.key = u;
     document.getElementById('unm').textContent = CU.name;
     document.getElementById('uro').textContent = CU.role;
     document.getElementById('uav').textContent = CU.init || u.substring(0,2).toUpperCase();
-    // Set received-by fields safely (null-check — some screens may have been removed)
     ['to-received-by','tm-received-by','gd-received-by','od-received-by'].forEach(function(id){
       var el = document.getElementById(id); if (el) el.value = CU.name;
     });
@@ -2764,7 +2766,6 @@ function doLogin() {
     document.querySelectorAll('.tonly').forEach(function(el) {
       el.style.display = CU.role === 'Treasurer' ? (el.classList.contains('ns') ? 'block' : 'flex') : 'none';
     });
-    // sec-up = Secretary and above (Secretary + Treasurer)
     var secUp = (CU.role === 'Treasurer' || CU.role === 'Secretary');
     document.querySelectorAll('.sec-up').forEach(function(el) {
       el.style.display = secUp ? (el.classList.contains('ns') ? 'block' : 'flex') : 'none';
@@ -2782,7 +2783,6 @@ function doLogin() {
     loadDashboardData();
   }
 
-  // Try Google Sheets first, fall back to local USERS
   if (url && url.indexOf('script.google.com') !== -1) {
     var loginBtn = document.querySelector('.blb');
     if (loginBtn) { loginBtn.textContent = '⏳ Signing in...'; loginBtn.disabled = true; }
@@ -2790,34 +2790,40 @@ function doLogin() {
     var t = setTimeout(function() {
       delete window[cb];
       if (loginBtn) { loginBtn.textContent = 'Sign In'; loginBtn.disabled = false; }
-      // Fall back to local USERS on timeout
+      // Timeout — fall back to local USERS
       var localUser = USERS[u];
-      if (localUser) attemptLogin(localUser);
-      else { err.textContent = 'Could not reach Google Sheets. Check connection.'; err.style.display='block'; }
+      if (localUser) {
+        attemptLogin(localUser);
+      } else {
+        err.textContent = 'Could not reach Google Sheets (timeout). Check your internet connection and that the script is deployed.';
+        err.style.display = 'block';
+      }
     }, 12000);
     window[cb] = function(data) {
       clearTimeout(t); delete window[cb];
       if (loginBtn) { loginBtn.textContent = 'Sign In'; loginBtn.disabled = false; }
-      if (data && data.status === 'success' && data.users) {
-        // Merge Sheets users into local USERS
-        data.users.forEach(function(su) { USERS[su.username] = {name:su.name, email:su.email, role:su.role, pw:su.pw, active:su.active, init:(su.username||'').substring(0,2).toUpperCase()}; });
+      if (data && data.status === 'success' && data.users && data.users.length > 0) {
+        data.users.forEach(function(su) {
+          USERS[su.username] = {name:su.name, email:su.email, role:su.role, pw:su.pw, active:su.active, init:(su.username||'').substring(0,2).toUpperCase()};
+        });
         saveUsersToStorage();
       }
-      // If Users sheet is empty — show first-time setup
       if (data && data.empty) {
-        if (loginBtn) { loginBtn.textContent = 'Sign In'; loginBtn.disabled = false; }
         document.getElementById('setup-panel').style.display = 'block';
         err.style.display = 'none';
         return;
       }
-      var sheetUser = data && data.users ? data.users.find(function(su){ return su.username === u; }) : null;
+      var sheetUser = (data && data.users) ? data.users.find(function(su){ return su.username === u; }) : null;
       if (sheetUser) {
-        attemptLogin({name:sheetUser.name, email:sheetUser.email, role:sheetUser.role, pw:sheetUser.pw, active:sheetUser.active, init:(u).substring(0,2).toUpperCase()});
+        attemptLogin({name:sheetUser.name, email:sheetUser.email, role:sheetUser.role, pw:sheetUser.pw, active:sheetUser.active, init:u.substring(0,2).toUpperCase()});
       } else {
-        // Fall back to local
         var localUser = USERS[u];
-        if (localUser) attemptLogin(localUser);
-        else { err.textContent = 'Invalid username or password.'; err.style.display='block'; }
+        if (localUser) {
+          attemptLogin(localUser);
+        } else {
+          err.textContent = 'User "' + u + '" not found in Google Sheets or local storage.';
+          err.style.display = 'block';
+        }
       }
     };
     var s = document.createElement('script');
@@ -2825,17 +2831,30 @@ function doLogin() {
       clearTimeout(t); delete window[cb];
       if (loginBtn) { loginBtn.textContent = 'Sign In'; loginBtn.disabled = false; }
       var localUser = USERS[u];
-      if (localUser) attemptLogin(localUser);
-      else { err.textContent = 'Could not reach Google Sheets and no local user found.'; err.style.display='block'; }
+      if (localUser) {
+        attemptLogin(localUser);
+      } else {
+        err.textContent = 'Cannot reach Google Sheets. Check your Apps Script URL and redeploy if needed.';
+        err.style.display = 'block';
+      }
     };
     s.src = url + '?action=getUsers&callback=' + cb;
     document.head.appendChild(s);
   } else {
-    // No Sheets URL — use local USERS only
+    // No Sheets URL — try local USERS only
     var localUser = USERS[u];
-    if (localUser) attemptLogin(localUser);
-    else { err.textContent = 'Invalid username or password.'; err.style.display='block'; }
+    if (localUser) {
+      attemptLogin(localUser);
+    } else {
+      err.textContent = 'No Apps Script URL found. Please paste your URL in the field above.';
+      // Show the URL field
+      var wrap = document.getElementById('lp-url-wrap');
+      if (wrap) wrap.style.display = 'block';
+      err.style.display = 'block';
+    }
   }
+}
+
 }
 
 function doFirstSetup() {
