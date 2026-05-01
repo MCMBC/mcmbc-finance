@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.04.30-27</title>
+<title>Mount Calvary M.B. Church Financial System v2026.05.01-28</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -172,7 +172,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.30-27</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.01-28</span>
     </div>
   </div>
 </div>
@@ -185,7 +185,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.04.30-27</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.01-28</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -271,7 +271,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.30-27</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.01-28</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -349,6 +349,12 @@ nav{flex:1;padding:10px 0;}
           <div style="font-size:2.4rem;margin-bottom:12px">❤️</div>
           <div style="font-family:'Lora',serif;font-size:1.05rem;font-weight:700;color:var(--blue);margin-bottom:6px">Benevolent Report</div>
           <div style="font-size:.78rem;color:#64748b">Date, amount and running total of benevolent fund</div>
+        </div>
+
+        <div class="rpt-card" onclick="showTithesReportPicker()" style="background:#fff;border:2px solid #e2e8f0;border-radius:14px;padding:28px 24px;cursor:pointer;transition:all .2s;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.05)" onmouseover="this.style.borderColor='var(--blue)';this.style.boxShadow='0 6px 24px rgba(15,39,68,.12)'" onmouseout="this.style.borderColor='#e2e8f0';this.style.boxShadow='0 2px 8px rgba(0,0,0,.05)'">
+          <div style="font-size:2.4rem;margin-bottom:12px">🙏</div>
+          <div style="font-family:'Lora',serif;font-size:1.05rem;font-weight:700;color:var(--blue);margin-bottom:6px">Tithes Report</div>
+          <div style="font-size:.78rem;color:#64748b">All tithes from all sources, ordered by date and source</div>
         </div>
 
       </div>
@@ -471,6 +477,32 @@ nav{flex:1;padding:10px 0;}
           <button class="bac" onclick="benvPresetMonth()">This Month</button>
           <button class="bac" onclick="benvPresetYear()">Year to Date</button>
           <button class="bac" onclick="benvPresetYear(new Date().getFullYear()-1)">Last Year</button>
+        </div>
+      </div>
+
+      <!-- Tithes Report Picker -->
+      <div id="rpt-tithes-picker" style="display:none;margin-top:24px;background:#f0fdf4;border:2px solid #bbf7d0;border-radius:12px;padding:22px 24px">
+        <h3 style="margin:0 0 16px;font-family:'Lora',serif;color:var(--blue);font-size:1rem">🙏 Tithes Report — Select Date Range</h3>
+        <div style="display:flex;gap:20px;align-items:flex-end;flex-wrap:wrap">
+          <div style="display:flex;flex-direction:column;gap:5px">
+            <label style="font-size:.78rem;font-weight:600;color:#475569;text-transform:uppercase;letter-spacing:.04em">Start Date</label>
+            <input type="date" id="tithes-rpt-start" style="padding:9px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit">
+          </div>
+          <div style="display:flex;flex-direction:column;gap:5px">
+            <label style="font-size:.78rem;font-weight:600;color:#475569;text-transform:uppercase;letter-spacing:.04em">End Date</label>
+            <input type="date" id="tithes-rpt-end" style="padding:9px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit">
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
+            <button class="bsv" onclick="generateTithesReport()" style="padding:9px 22px;font-size:.88rem">📊 Generate Report</button>
+            <button class="bcc" onclick="closeTithesReportPicker()" style="padding:9px 16px;font-size:.88rem">✕ Cancel</button>
+          </div>
+        </div>
+        <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
+          <span style="font-size:.75rem;color:#64748b;margin-top:4px">Quick:</span>
+          <button class="bac" onclick="tithesRptPreset(30)">Last 30 Days</button>
+          <button class="bac" onclick="tithesRptPresetMonth()">This Month</button>
+          <button class="bac" onclick="tithesRptPresetYear()">Year to Date</button>
+          <button class="bac" onclick="tithesRptPresetYear(new Date().getFullYear()-1)">Last Year</button>
         </div>
       </div>
 
@@ -4478,7 +4510,7 @@ function saveBillsToSheets() {
   saveNext(0);
 }
 
-var SYSTEM_VERSION = "v2026.04.30-27";
+var SYSTEM_VERSION = "v2026.05.01-28";
 
 // ── WEEKLY FINANCIAL REPORT ──────────────────────────────────────
 // ── WEEKLY DISBURSEMENTS REPORT ──────────────────────────────────
@@ -5128,6 +5160,157 @@ function renderBenevolentReport(data, s1, s2, body) {
   rpt += '</div>';
   body.innerHTML = rpt;
   showToast('✅ Benevolent Report — ' + rows.length + ' record(s)');
+}
+
+// ── TITHES REPORT ─────────────────────────────────────────────────
+function showTithesReportPicker() {
+  var t = new Date();
+  document.getElementById('tithes-rpt-start').value = new Date(t.getFullYear(), 0, 1).toISOString().split('T')[0];
+  document.getElementById('tithes-rpt-end').value   = t.toISOString().split('T')[0];
+  ['rpt-disb-picker','rpt-cashflow-picker','rpt-monthly-picker','rpt-weekly-picker','rpt-benv-picker','rpt-contrib-picker'].forEach(function(id){ var el=document.getElementById(id); if(el) el.style.display='none'; });
+  document.getElementById('rpt-tithes-picker').style.display = 'block';
+}
+function closeTithesReportPicker() { document.getElementById('rpt-tithes-picker').style.display = 'none'; }
+function tithesRptPreset(days) {
+  var e = new Date(), s = new Date(); s.setDate(s.getDate()-days);
+  document.getElementById('tithes-rpt-start').value = s.toISOString().split('T')[0];
+  document.getElementById('tithes-rpt-end').value   = e.toISOString().split('T')[0];
+}
+function tithesRptPresetMonth(yr) {
+  var t = new Date();
+  var y = yr || t.getFullYear(), m = t.getMonth();
+  document.getElementById('tithes-rpt-start').value = new Date(y, m, 1).toISOString().split('T')[0];
+  document.getElementById('tithes-rpt-end').value   = new Date(y, m+1, 0).toISOString().split('T')[0];
+}
+function tithesRptPresetYear(yr) {
+  var y = yr || new Date().getFullYear();
+  document.getElementById('tithes-rpt-start').value = new Date(y, 0, 1).toISOString().split('T')[0];
+  document.getElementById('tithes-rpt-end').value   = yr ? new Date(y, 11, 31).toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
+}
+
+function generateTithesReport() {
+  var start = document.getElementById('tithes-rpt-start').value;
+  var end   = document.getElementById('tithes-rpt-end').value;
+  if (!start || !end) { showToast('⚠️ Please select a date range.'); return; }
+  var s1 = new Date(start+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  var s2 = new Date(end+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  var panel = document.getElementById('rpt-result-panel');
+  var title = document.getElementById('rpt-result-title');
+  var body  = document.getElementById('rpt-result-body');
+  title.textContent = '🙏 Tithes Report — ' + s1 + ' to ' + s2;
+  panel.style.display = 'block';
+  body.innerHTML = '<div style="text-align:center;padding:48px 24px"><div style="display:inline-block;width:52px;height:52px;border:5px solid #e2e8f0;border-top-color:var(--blue);border-radius:50%;animation:cfSpin 0.9s linear infinite;margin-bottom:20px"></div><div style="font-family:\'Lora\',serif;font-size:1.1rem;font-weight:700;color:var(--blue);margin-bottom:8px">Generating Tithes Report…</div><div style="font-size:.82rem;color:#64748b">Pulling from all sources…</div></div>';
+  panel.scrollIntoView({behavior:'smooth', block:'start'});
+  var url = localStorage.getItem('mcmbc_sheet_url') || '';
+  if (!url || url.indexOf('script.google.com') === -1) {
+    body.innerHTML = '<div style="background:#fef3c7;border-left:4px solid #ca8a04;padding:14px;border-radius:8px;color:#854d0e">⚠️ No Google Sheets URL saved.</div>'; return;
+  }
+  var cb = 'tithesRptCb_' + Date.now();
+  var t  = setTimeout(function(){ delete window[cb]; body.innerHTML='<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Timed out.</div>'; }, 30000);
+  setTimeout(function() {
+    window[cb] = function(data) {
+      clearTimeout(t); delete window[cb];
+      if (!data || data.status !== 'success') { body.innerHTML='<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Error: '+JSON.stringify(data)+'</div>'; return; }
+      try { renderTithesReport(data, s1, s2, body); }
+      catch(e) { body.innerHTML='<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c;font-size:.82rem"><strong>Render error:</strong><br>'+e.message+'</div>'; }
+    };
+    var s = document.createElement('script');
+    s.onerror = function(){ clearTimeout(t); delete window[cb]; body.innerHTML='<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Could not reach Google Sheets.</div>'; };
+    s.src = url + '?action=getTithesReport&callback=' + cb + '&startDate=' + encodeURIComponent(start) + '&endDate=' + encodeURIComponent(end);
+    document.head.appendChild(s);
+    setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); }, 32000);
+  }, 80);
+}
+
+function renderTithesReport(data, s1, s2, body) {
+  var rows  = data.rows  || [];
+  var totals = data.totals || {};
+  var grand  = data.grandTotal || 0;
+  function fc(v) { return fmtCurrency(v||0); }
+  var thS  = 'padding:8px 14px;background:#0F2744;color:#fff;font-size:.8rem;text-align:left;white-space:nowrap';
+  var thRS = 'padding:8px 14px;background:#0F2744;color:#fff;font-size:.8rem;text-align:right;white-space:nowrap';
+  var tdS  = 'padding:6px 14px;font-size:.82rem;border-bottom:1px solid #e2e8f0';
+  var tdRS = 'padding:6px 14px;font-size:.82rem;border-bottom:1px solid #e2e8f0;text-align:right';
+
+  // Source color map
+  var srcColors = {
+    'TithesByMembers':  '#1d4ed8',
+    'GiveifyByDonors':  '#7c3aed',
+    'OtherOfferings':   '#b45309',
+    'Offerings':        '#15803d',
+    'CashOfferings':    '#0e7490'
+  };
+
+  var rpt = '<style>@keyframes cfSpin{to{transform:rotate(360deg)}}</style>';
+  rpt += '<div style="font-family:Arial,sans-serif;max-width:900px;margin:0 auto">';
+  rpt += '<div style="text-align:center;margin-bottom:20px">';
+  rpt += '<div style="font-weight:700;font-size:.95rem">Mount Calvary Missionary Baptist Church</div>';
+  rpt += '<div>10314 Canal Rd. &nbsp; Gulfport, Ms. 39503</div>';
+  rpt += '<div style="font-weight:700;margin-top:8px;font-size:1rem">Tithes Report — All Sources</div>';
+  rpt += '<div style="font-size:.78rem;color:#475569;margin-top:4px">' + s1 + ' — ' + s2 + '</div>';
+  rpt += '</div>';
+
+  // Summary cards by source
+  rpt += '<div style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:20px;justify-content:center">';
+  var srcLabels = {
+    'TithesByMembers': 'Tithes by Members',
+    'GiveifyByDonors': 'Giveify by Donors',
+    'OtherOfferings':  'Other Offerings',
+    'Offerings':       'Sunday Offerings',
+    'CashOfferings':   'Cash Offerings'
+  };
+  Object.keys(srcLabels).forEach(function(k) {
+    if (totals[k]) {
+      var col = srcColors[k] || '#334155';
+      rpt += '<div style="background:#f8fafc;border:1.5px solid #e2e8f0;border-top:4px solid '+col+';border-radius:10px;padding:12px 20px;text-align:center;min-width:140px">';
+      rpt += '<div style="font-size:.72rem;color:#64748b;margin-bottom:4px">'+srcLabels[k]+'</div>';
+      rpt += '<div style="font-size:1.1rem;font-weight:700;color:'+col+'">'+fc(totals[k])+'</div>';
+      rpt += '</div>';
+    }
+  });
+  rpt += '</div>';
+
+  // Detail table
+  rpt += '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse">';
+  rpt += '<thead><tr>';
+  rpt += '<th style="'+thS+'">Date</th>';
+  rpt += '<th style="'+thS+'">Source</th>';
+  rpt += '<th style="'+thS+'">Name / Description</th>';
+  rpt += '<th style="'+thRS+'">Amount</th>';
+  rpt += '<th style="'+thRS+'">Running Total</th>';
+  rpt += '</tr></thead><tbody>';
+
+  if (rows.length === 0) {
+    rpt += '<tr><td colspan="5" style="'+tdS+';color:#94a3b8;font-style:italic;text-align:center;padding:20px">No tithe records for this period.</td></tr>';
+  } else {
+    var running = 0;
+    rows.forEach(function(r, i) {
+      running += (r.amount || 0);
+      var shade = i % 2 === 0 ? '' : 'background:#f8fafc;';
+      var col = srcColors[r.source] || '#334155';
+      rpt += '<tr style="'+shade+'">';
+      rpt += '<td style="'+tdS+'">'+r.date+'</td>';
+      rpt += '<td style="'+tdS+'"><span style="font-size:.75rem;font-weight:600;color:'+col+';background:'+col+'15;padding:2px 8px;border-radius:20px">'+srcLabels[r.source]+'</span></td>';
+      rpt += '<td style="'+tdS+'">'+(r.name||'—')+'</td>';
+      rpt += '<td style="'+tdRS+'">'+fc(r.amount)+'</td>';
+      rpt += '<td style="'+tdRS+'">'+fc(running)+'</td>';
+      rpt += '</tr>';
+    });
+  }
+
+  rpt += '<tr style="background:#f8fafc">';
+  rpt += '<td colspan="3" style="'+tdS+';font-weight:700;border-top:2px solid #334155">Grand Total</td>';
+  rpt += '<td style="'+tdRS+';font-weight:700;border-top:2px solid #334155">'+fc(grand)+'</td>';
+  rpt += '<td style="'+tdRS+';font-weight:700;border-top:2px solid #334155">'+fc(grand)+'</td>';
+  rpt += '</tr>';
+  rpt += '</tbody></table></div>';
+  rpt += '<div style="text-align:right;margin-top:16px;font-size:.78rem;color:#64748b">';
+  rpt += 'Date Printed: ' + new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  rpt += '</div>';
+  rpt += '<div class="no-print" style="text-align:center;margin-top:24px"><button class="bsv" onclick="printReport()" style="padding:10px 28px">🖨️ Print Report</button></div>';
+  rpt += '</div>';
+  body.innerHTML = rpt;
+  showToast('✅ Tithes Report — ' + rows.length + ' record(s) from all sources');
 }
 
 function showContributionPicker() {
