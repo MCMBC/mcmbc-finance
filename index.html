@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.04.30-26</title>
+<title>Mount Calvary M.B. Church Financial System v2026.04.30-27</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -172,7 +172,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.30-26</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.30-27</span>
     </div>
   </div>
 </div>
@@ -185,7 +185,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.04.30-26</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.04.30-27</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -202,6 +202,7 @@ nav{flex:1;padding:10px 0;}
       <div class="ni sec-up" onclick="sv('pay-bills',this);initBillForm();loadFundDropdowns()">🧾 Pay Bills</div>
       <div class="ns sec-up">Adjustments (Updates)</div>
       <div class="ni sec-up" onclick="sv('adj-offerings',this);loadAdjScreen('offerings')">💵 Offerings</div>
+      <div class="ni sec-up" onclick="sv('adj-cash-offerings',this);loadAdjScreen('cashOfferings')">💵 Cash Offerings</div>
       <div class="ni sec-up" onclick="sv('adj-tithes',this);loadAdjScreen('tithes')">🙏 Tithes &amp; Offering by Members</div>
       <div class="ni sec-up" onclick="sv('adj-giveify',this);loadAdjScreen('giveify')">📱 giveify by Donors</div>
       <div class="ni sec-up" onclick="sv('adj-other',this);loadAdjScreen('other')">🎁 Other Offerings</div>
@@ -270,7 +271,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.30-26</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.30-27</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -1273,6 +1274,11 @@ nav{flex:1;padding:10px 0;}
     <div id="view-adj-offerings" class="vw">
       <div class="ph"><h1>💵 Offerings — Adjustments</h1><p>Review, edit, and delete Sunday offering records</p></div>
       <div id="adj-offerings-content"><div style="text-align:center;padding:40px;color:#64748b">Loading…</div></div>
+    </div>
+
+    <div id="view-adj-cash-offerings" class="vw">
+      <div class="ph"><h1>💵 Cash Offerings — Adjustments</h1><p>Review, edit, and delete cash offering records</p></div>
+      <div id="adj-cashOfferings-content"><div style="text-align:center;padding:40px;color:#64748b">Loading…</div></div>
     </div>
 
     <div id="view-adj-tithes" class="vw">
@@ -4472,7 +4478,7 @@ function saveBillsToSheets() {
   saveNext(0);
 }
 
-var SYSTEM_VERSION = "v2026.04.30-26";
+var SYSTEM_VERSION = "v2026.04.30-27";
 
 // ── WEEKLY FINANCIAL REPORT ──────────────────────────────────────
 // ── WEEKLY DISBURSEMENTS REPORT ──────────────────────────────────
@@ -7944,6 +7950,15 @@ var ADJ_CFG = {
     fields:['date','sundaySchool','benevolent','buildingFund','generalOffering','youth','youthEducation','other','total','receivedBy'],
     labels:['Date','Sunday School','Benevolent','Building Fund','General Offering','Youth','Youth Education','Other','Total','Received By'],
     types: ['date','number','number','number','number','number','number','number','number','text'],
+    idField:'id'
+  },
+  cashOfferings: {
+    action:'getCashOfferings', updateAction:'updateCashOffering', deleteAction:'deleteCashOffering',
+    title:'Cash Offerings', contentId:'adj-cashOfferings-content',
+    cols:['Date','General Offering','Total','Received By','Notes'],
+    fields:['date','generalOffering','total','receivedBy','notes'],
+    labels:['Date','General Offering','Total','Received By','Notes'],
+    types: ['date','number','number','text','text'],
     idField:'id'
   },
   tithes: {
