@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.05.01-28</title>
+<title>Mount Calvary M.B. Church Financial System v2026.05.01-29</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -172,7 +172,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.01-28</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.01-29</span>
     </div>
   </div>
 </div>
@@ -185,7 +185,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.01-28</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.01-29</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -271,7 +271,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.01-28</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.01-29</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -4510,7 +4510,7 @@ function saveBillsToSheets() {
   saveNext(0);
 }
 
-var SYSTEM_VERSION = "v2026.05.01-28";
+var SYSTEM_VERSION = "v2026.05.01-29";
 
 // ── WEEKLY FINANCIAL REPORT ──────────────────────────────────────
 // ── WEEKLY DISBURSEMENTS REPORT ──────────────────────────────────
@@ -5192,11 +5192,12 @@ function generateTithesReport() {
   var start = document.getElementById('tithes-rpt-start').value;
   var end   = document.getElementById('tithes-rpt-end').value;
   if (!start || !end) { showToast('⚠️ Please select a date range.'); return; }
+  closeTithesReportPicker();
   var s1 = new Date(start+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
   var s2 = new Date(end+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-  var panel = document.getElementById('rpt-result-panel');
-  var title = document.getElementById('rpt-result-title');
-  var body  = document.getElementById('rpt-result-body');
+  var panel = document.getElementById('rpt-output');
+  var title = document.getElementById('rpt-output-title');
+  var body  = document.getElementById('rpt-output-body');
   title.textContent = '🙏 Tithes Report — ' + s1 + ' to ' + s2;
   panel.style.display = 'block';
   body.innerHTML = '<div style="text-align:center;padding:48px 24px"><div style="display:inline-block;width:52px;height:52px;border:5px solid #e2e8f0;border-top-color:var(--blue);border-radius:50%;animation:cfSpin 0.9s linear infinite;margin-bottom:20px"></div><div style="font-family:\'Lora\',serif;font-size:1.1rem;font-weight:700;color:var(--blue);margin-bottom:8px">Generating Tithes Report…</div><div style="font-size:.82rem;color:#64748b">Pulling from all sources…</div></div>';
