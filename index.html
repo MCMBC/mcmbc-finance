@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.04.30-24</title>
+<title>Mount Calvary M.B. Church Financial System v2026.04.30-25</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -172,7 +172,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.30-24</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.30-25</span>
     </div>
   </div>
 </div>
@@ -185,7 +185,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.04.30-24</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.04.30-25</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -193,7 +193,7 @@ nav{flex:1;padding:10px 0;}
       <div class="ni" onclick="sv('reports',this)">📊 Financial Reports</div>
       <div class="ns sec-up">Income</div>
       <div class="ni sec-up" onclick="sv('tithes',this)">💵 Offerings</div>
-      <div class="ni sec-up" onclick="sv('tithes-members',this);loadTithesMembers()">🙏 Tithes by Members</div>
+      <div class="ni sec-up" onclick="sv('tithes-members',this);loadTithesMembers()">🙏 Tithes &amp; Offering by Members</div>
       <div class="ni sec-up" onclick="sv('giveify-donors',this);loadGDDonors()">📱 giveify by Donors</div>
       <div class="ni sec-up" onclick="sv('other-offerings',this)">🎁 Other Offerings &amp; Donations</div>
       <div class="ns sec-up">Expenses</div>
@@ -201,7 +201,7 @@ nav{flex:1;padding:10px 0;}
       <div class="ni sec-up" onclick="sv('pay-bills',this);initBillForm();loadFundDropdowns()">🧾 Pay Bills</div>
       <div class="ns sec-up">Adjustments (Updates)</div>
       <div class="ni sec-up" onclick="sv('adj-offerings',this);loadAdjScreen('offerings')">💵 Offerings</div>
-      <div class="ni sec-up" onclick="sv('adj-tithes',this);loadAdjScreen('tithes')">🙏 Tithes by Members</div>
+      <div class="ni sec-up" onclick="sv('adj-tithes',this);loadAdjScreen('tithes')">🙏 Tithes &amp; Offering by Members</div>
       <div class="ni sec-up" onclick="sv('adj-giveify',this);loadAdjScreen('giveify')">📱 giveify by Donors</div>
       <div class="ni sec-up" onclick="sv('adj-other',this);loadAdjScreen('other')">🎁 Other Offerings</div>
       <div class="ni sec-up" onclick="sv('adj-payroll',this);loadAdjScreen('payroll')">💼 Payroll</div>
@@ -269,7 +269,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.30-24</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.04.30-25</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -613,7 +613,7 @@ nav{flex:1;padding:10px 0;}
 
     <!-- TITHES BY MEMBERS -->
     <div id="view-tithes-members" class="vw">
-      <div class="ph"><h1>Tithes by Members</h1><p>Record weekly Sunday School, Benevolent, Building Fund, General, Youth and Youth Education Offerings by Member</p></div>
+      <div class="ph"><h1>Tithes &amp; Offering by Members</h1><p>Record weekly Sunday School, Benevolent, Building Fund, General, Youth and Youth Education Offerings by Member</p></div>
       <div class="fcd">
         <div class="fr">
           <div class="fg3"><label>Offering ID</label><input value="TM-001" readonly style="background:#f1f5f9;color:#64748b" id="tm-id"></div>
@@ -1204,7 +1204,7 @@ nav{flex:1;padding:10px 0;}
     </div>
 
     <div id="view-adj-tithes" class="vw">
-      <div class="ph"><h1>🙏 Tithes by Members — Adjustments</h1><p>Review, edit, and delete member tithe records</p></div>
+      <div class="ph"><h1>🙏 Tithes &amp; Offering by Members — Adjustments</h1><p>Review, edit, and delete member tithe records</p></div>
       <div id="adj-tithes-content"><div style="text-align:center;padding:40px;color:#64748b">Loading…</div></div>
     </div>
 
@@ -4297,7 +4297,7 @@ function saveBillsToSheets() {
   saveNext(0);
 }
 
-var SYSTEM_VERSION = "v2026.04.30-24";
+var SYSTEM_VERSION = "v2026.04.30-25";
 
 // ── WEEKLY FINANCIAL REPORT ──────────────────────────────────────
 // ── WEEKLY DISBURSEMENTS REPORT ──────────────────────────────────
@@ -6033,13 +6033,25 @@ function loadTithesMembers() {
 function populateTithesDropdown(members) {
   var sel = document.getElementById('tm-member');
   sel.innerHTML = '<option value="">Select member...</option>';
-  members.forEach(function(m) {
-    if (m.status === 'Inactive') return;  // only show active members
+
+  // Filter active members and sort by LastName then FirstName
+  var active = members.filter(function(m) { return m.status !== 'Inactive'; });
+  active.sort(function(a, b) {
+    var la = (a.lastName||'').toLowerCase(), lb = (b.lastName||'').toLowerCase();
+    if (la !== lb) return la < lb ? -1 : 1;
+    var fa = (a.firstName||'').toLowerCase(), fb = (b.firstName||'').toLowerCase();
+    return fa < fb ? -1 : fa > fb ? 1 : 0;
+  });
+
+  active.forEach(function(m) {
+    var fullName = ((m.firstName||'') + ' ' + (m.lastName||'')).trim();
+    var displayName = ((m.lastName||'') + ', ' + (m.firstName||'')).trim().replace(/^,\s*|,\s*$/, '');
     var opt = document.createElement('option');
-    opt.value = (m.firstName||'') + ' ' + (m.lastName||'');
-    opt.textContent = ((m.firstName||'') + ' ' + (m.lastName||'')).trim() + ' (' + m.id + ')';
+    opt.value = fullName;
+    opt.textContent = displayName + ' (' + m.id + ')';
     sel.appendChild(opt);
   });
+
   var anon = document.createElement('option');
   anon.value = 'Anonymous'; anon.textContent = '— Anonymous —';
   sel.appendChild(anon);
@@ -7761,7 +7773,7 @@ var ADJ_CFG = {
   },
   tithes: {
     action:'getTithesRecords', updateAction:'updateTithes', deleteAction:'deleteTithes',
-    title:'Tithes by Members', contentId:'adj-tithes-content',
+    title:'Tithes & Offering by Members', contentId:'adj-tithes-content',
     cols:['Date','Member','Tithes','Youth','Bldg Fund','Benevolent','Youth Edu','Offering','Special','Other','Total','Received By'],
     fields:['date','member','tithes','youth','building','benevolent','youthEdu','offering','special','other','total','receivedBy'],
     labels:['Date','Member Name','Tithes','Youth','Building Fund','Benevolent','Youth Education','Offering','Special Event','Other','Total','Received By'],
