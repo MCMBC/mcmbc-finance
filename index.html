@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.05.02-39</title>
+<title>Mount Calvary M.B. Church Financial System v2026.05.02-40</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -160,6 +160,7 @@ nav{flex:1;padding:10px 0;}
     </div>
     <button class="blb" onclick="doLogin()">Sign In</button>
     <div class="lerr" id="lerr">Invalid username or password. Please try again.</div>
+    <div id="login-debug" style="display:none;margin-top:10px;padding:10px;background:rgba(0,0,0,.4);border-radius:8px;font-size:.7rem;color:#94a3b8;font-family:monospace;word-break:break-all;max-height:120px;overflow-y:auto;"></div>
 
     <!-- First-time setup panel (shown when Users sheet is empty) -->
     <div id="setup-panel" style="display:none;margin-top:18px;background:#f0fdf4;border:1.5px solid #86efac;border-radius:10px;padding:16px;">
@@ -172,7 +173,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.02-39</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.02-40</span>
     </div>
   </div>
 </div>
@@ -185,7 +186,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.02-39</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.02-40</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -271,7 +272,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.02-39</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.02-40</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -2721,21 +2722,137 @@ function fmtCurrency(n) {
 
 var CU = null;
 
+function dbg(msg) {
+  var d = document.getElementById('login-debug');
+  if (!d) return;
+  d.style.display = 'block';
+  d.innerHTML += '<div>' + new Date().toLocaleTimeString() + ' — ' + msg + '</div>';
+  d.scrollTop = d.scrollHeight;
+}
+
 function doLogin() {
   var u   = document.getElementById('lu').value.trim().toLowerCase();
   var pw  = document.getElementById('lpw').value;
   var err = document.getElementById('lerr');
+  var dbgDiv = document.getElementById('login-debug');
+  if (dbgDiv) { dbgDiv.innerHTML = ''; dbgDiv.style.display = 'none'; }
   err.style.display = 'none';
+  dbg('user=' + u + ' pw_len=' + pw.length);
   if (!u || !pw) { err.textContent = 'Please enter username and password.'; err.style.display='block'; return; }
 
-  // Read URL from visible field OR from localStorage
   var lpUrl = document.getElementById('lp-url');
   var typedUrl = lpUrl ? lpUrl.value.trim() : '';
   if (typedUrl.indexOf('script.google.com') !== -1) {
     localStorage.setItem('mcmbc_sheet_url', typedUrl);
     var ofField = document.getElementById('sheet-url');
     if (ofField) ofField.value = typedUrl;
+    dbg('URL saved from field');
   }
+
+  var url = localStorage.getItem('mcmbc_sheet_url') || '';
+  dbg('url=' + (url ? url.substring(0,50) : 'NONE'));
+  dbg('USERS keys=' + Object.keys(USERS).join(','));
+
+  function attemptLogin(user) {
+    dbg('attemptLogin name=' + (user && user.name) + ' active=' + (user && user.active) + ' hasPw=' + !!(user && user.pw));
+    if (!user) { err.textContent = 'User "' + u + '" not found. Check username.'; err.style.display='block'; return; }
+    if (user.active === 'No') { err.textContent = 'This account has been deactivated.'; err.style.display='block'; return; }
+    if (pw !== user.pw) {
+      dbg('PW MISMATCH entered_len=' + pw.length + ' stored_len=' + (user.pw||'').length);
+      err.textContent = 'Incorrect password.'; err.style.display='block'; return;
+    }
+    dbg('LOGIN OK');
+    err.style.display = 'none';
+    USERS[u] = user; CU = user; CU.key = u;
+    document.getElementById('unm').textContent = CU.name;
+    document.getElementById('uro').textContent = CU.role;
+    document.getElementById('uav').textContent = CU.init || u.substring(0,2).toUpperCase();
+    ['to-received-by','tm-received-by','gd-received-by','od-received-by'].forEach(function(id){
+      var el = document.getElementById(id); if (el) el.value = CU.name;
+    });
+    var h = new Date().getHours();
+    var g = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
+    document.getElementById('dg').textContent = g + ', ' + CU.name + ' — here\'s your financial overview';
+    document.querySelectorAll('.tonly').forEach(function(el) {
+      el.style.display = CU.role === 'Treasurer' ? (el.classList.contains('ns') ? 'block' : 'flex') : 'none';
+    });
+    var secUp = (CU.role === 'Treasurer' || CU.role === 'Secretary');
+    document.querySelectorAll('.sec-up').forEach(function(el) {
+      el.style.display = secUp ? (el.classList.contains('ns') ? 'block' : 'flex') : 'none';
+    });
+    document.getElementById('lp').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    var sysVer = document.getElementById('sys-version');
+    var sbVer  = document.getElementById('sb-version');
+    if (sysVer && sbVer) sbVer.textContent = sysVer.textContent;
+    var today = new Date().toISOString().split('T')[0];
+    ['of-date','to-date','tm-date','gd-date','od-date','co-date'].forEach(function(id){
+      var el = document.getElementById(id); if (el) el.value = today;
+    });
+    buildChart();
+    loadDashboardData();
+  }
+
+  if (url && url.indexOf('script.google.com') !== -1) {
+    var loginBtn = document.querySelector('.blb');
+    if (loginBtn) { loginBtn.textContent = '⏳ Signing in...'; loginBtn.disabled = true; }
+    var cb = 'loginCb_' + Date.now();
+    var t = setTimeout(function() {
+      delete window[cb];
+      if (loginBtn) { loginBtn.textContent = 'Sign In'; loginBtn.disabled = false; }
+      dbg('TIMEOUT - trying local');
+      var localUser = USERS[u];
+      if (localUser) { attemptLogin(localUser); }
+      else { err.textContent = 'Timed out reaching Google Sheets. Check internet and script deployment.'; err.style.display='block'; }
+    }, 8000);
+    window[cb] = function(data) {
+      clearTimeout(t); delete window[cb];
+      if (loginBtn) { loginBtn.textContent = 'Sign In'; loginBtn.disabled = false; }
+      dbg('Sheets resp: status=' + (data&&data.status) + ' users=' + (data&&data.users?data.users.length:0) + ' empty=' + (data&&data.empty));
+      if (data && data.status === 'success' && data.users && data.users.length > 0) {
+        data.users.forEach(function(su) {
+          USERS[su.username] = {name:su.name, email:su.email, role:su.role, pw:su.pw, active:su.active, init:(su.username||'').substring(0,2).toUpperCase()};
+        });
+        saveUsersToStorage();
+        dbg('Merged users: ' + Object.keys(USERS).join(','));
+      }
+      if (data && data.empty) { document.getElementById('setup-panel').style.display='block'; return; }
+      var sheetUser = (data && data.users) ? data.users.find(function(su){ return su.username === u; }) : null;
+      dbg('sheetUser found=' + !!sheetUser);
+      if (sheetUser) {
+        attemptLogin({name:sheetUser.name, email:sheetUser.email, role:sheetUser.role, pw:sheetUser.pw, active:sheetUser.active, init:u.substring(0,2).toUpperCase()});
+      } else {
+        var localUser = USERS[u];
+        dbg('localUser found=' + !!localUser);
+        if (localUser) { attemptLogin(localUser); }
+        else { err.textContent = 'User "' + u + '" not found in Sheets or local storage.'; err.style.display='block'; }
+      }
+    };
+    var s = document.createElement('script');
+    s.onerror = function() {
+      clearTimeout(t); delete window[cb];
+      if (loginBtn) { loginBtn.textContent = 'Sign In'; loginBtn.disabled = false; }
+      dbg('SCRIPT ERROR - trying local');
+      var localUser = USERS[u];
+      if (localUser) { attemptLogin(localUser); }
+      else { err.textContent = 'Cannot reach Google Sheets. Check your Apps Script URL.'; err.style.display='block'; }
+    };
+    s.src = url + '?action=getUsers&callback=' + cb;
+    dbg('fetching: ' + s.src.substring(0,60));
+    document.head.appendChild(s);
+  } else {
+    dbg('No URL - local only');
+    var localUser = USERS[u];
+    if (localUser) { attemptLogin(localUser); }
+    else {
+      err.textContent = 'No Apps Script URL found. Please paste your URL above.';
+      var wrap = document.getElementById('lp-url-wrap');
+      if (wrap) wrap.style.display = 'block';
+      err.style.display = 'block';
+    }
+  }
+}
+
 
   var url = localStorage.getItem('mcmbc_sheet_url') || '';
 
