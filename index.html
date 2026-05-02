@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.05.01-38</title>
+<title>Mount Calvary M.B. Church Financial System v2026.05.02-39</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -149,7 +149,7 @@ nav{flex:1;padding:10px 0;}
     <hr class="ld">
     <div class="fg"><label><em>Username</em></label><input type="text" id="lu" placeholder="username" autocomplete="username"></div>
     <div class="fg"><label>Password</label><input type="password" id="lpw" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" autocomplete="current-password"></div>
-    <div id="lp-url-wrap" style="margin-top:10px;">
+    <div id="lp-url-wrap" style="margin-top:10px;display:none;">
       <label style="display:block;font-size:.75rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;">Apps Script URL <span style="font-weight:400;text-transform:none;letter-spacing:0;color:#64748b;">(required on first use)</span></label>
       <input type="text" id="lp-url" placeholder="https://script.google.com/macros/s/…/exec"
         style="width:100%;padding:9px 12px;border:1.5px solid rgba(255,255,255,.15);border-radius:9px;font-family:'DM Sans',sans-serif;font-size:.8rem;color:#1e293b;outline:none;background:#f8fafc;box-sizing:border-box;">
@@ -172,7 +172,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.01-38</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.02-39</span>
     </div>
   </div>
 </div>
@@ -185,7 +185,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.01-38</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.02-39</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -271,7 +271,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.01-38</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.02-39</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -2040,7 +2040,7 @@ var USERS = {
 }; // temporary bootstrap account — remove after first login and users are set up
 
 // ── Page initialisation ──────────────────────────────────────────
-(function initPage() {
+function initPage() {
   // Load previously saved users into USERS
   try {
     var saved = localStorage.getItem('mcmbc_users');
@@ -2054,21 +2054,22 @@ var USERS = {
   var savedUrl = localStorage.getItem('mcmbc_sheet_url') || '';
   var wrap = document.getElementById('lp-url-wrap');
   var lpUrl = document.getElementById('lp-url');
+  var changeWrap = document.getElementById('lp-change-url-wrap');
+
   if (savedUrl && savedUrl.indexOf('script.google.com') !== -1) {
-    // URL already saved — hide the field (user doesn't need to re-enter)
     if (wrap) wrap.style.display = 'none';
-    var changeWrap = document.getElementById('lp-change-url-wrap');
     if (changeWrap) changeWrap.style.display = 'block';
   } else {
-    // No saved URL — show the field so user can paste it
     if (wrap) wrap.style.display = 'block';
-    if (lpUrl) lpUrl.value = savedUrl;
+    if (changeWrap) changeWrap.style.display = 'none';
   }
 
   // Pre-fill sheet-url field in dashboard header if present
   var sheetUrlField = document.getElementById('sheet-url');
   if (sheetUrlField && savedUrl) sheetUrlField.value = savedUrl;
-})();
+}
+
+document.addEventListener('DOMContentLoaded', initPage);
 
 function saveUsersToStorage() {
   try { localStorage.setItem('mcmbc_users', JSON.stringify(USERS)); } catch(e) {}
@@ -2798,7 +2799,7 @@ function doLogin() {
         err.textContent = 'Could not reach Google Sheets (timeout). Check your internet connection and that the script is deployed.';
         err.style.display = 'block';
       }
-    }, 12000);
+    }, 8000);
     window[cb] = function(data) {
       clearTimeout(t); delete window[cb];
       if (loginBtn) { loginBtn.textContent = 'Sign In'; loginBtn.disabled = false; }
