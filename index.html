@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.05.02-47</title>
+<title>Mount Calvary M.B. Church Financial System v2026.05.02-48</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -173,7 +173,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.02-47</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.02-48</span>
     </div>
   </div>
 </div>
@@ -186,7 +186,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.02-47</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.02-48</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -272,7 +272,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.02-47</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.02-48</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -4592,27 +4592,27 @@ function generateDisbursementsReport() {
 
   var url = localStorage.getItem('mcmbc_sheet_url') || '';
   if (!url || url.indexOf('script.google.com') === -1) {
-    disbWin.document.body.innerHTML = '<div style="padding:40px;color:#b91c1c">\u26a0\ufe0f No Google Sheets URL saved.</div>';
+    disbWin.document.disbWin.document.body.innerHTML = '<div style="padding:40px;color:#b91c1c">\u26a0\ufe0f No Google Sheets URL saved.</div>';
     return;
   }
 
   var cb = 'disbCb_' + Date.now();
   var t  = setTimeout(function(){ delete window[cb];
-    if (!disbWin.closed) disbWin.document.body.innerHTML = '<div style="padding:40px;color:#b91c1c">\u26a0\ufe0f Timed out. Try again.</div>'; }, 28000);
+    if (!disbWin.closed) disbWin.document.disbWin.document.body.innerHTML = '<div style="padding:40px;color:#b91c1c">\u26a0\ufe0f Timed out. Try again.</div>'; }, 28000);
 
   setTimeout(function() {
     window[cb] = function(data) {
       clearTimeout(t); delete window[cb]; clearInterval(mInt);
       if (!data || data.status !== 'success') {
-        body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Error loading data.</div>';
+        disbWin.document.body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Error loading data.</div>';
         return;
       }
       try { var _orw=openReportWindow; openReportWindow=function(t,h){_writeRptWin(disbWin,h);}; renderDisbursementsReport(data, s1, s2, null); openReportWindow=_orw; }
-      catch(e) { body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c;font-size:.82rem"><strong>Render error:</strong><br>' + e.message + '</div>'; }
+      catch(e) { disbWin.document.body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c;font-size:.82rem"><strong>Render error:</strong><br>' + e.message + '</div>'; }
     };
     var s = document.createElement('script');
     s.onerror = function(){ clearTimeout(t); delete window[cb]; clearInterval(mInt);
-      body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Could not reach Google Sheets.</div>'; };
+      disbWin.document.body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Could not reach Google Sheets.</div>'; };
     s.src = url + '?action=getWeeklyDisbursements&callback=' + cb
       + '&startDate=' + encodeURIComponent(start)
       + '&endDate='   + encodeURIComponent(end);
@@ -4867,7 +4867,7 @@ function generateWeeklyFinancialReport() {
 
   var url = localStorage.getItem('mcmbc_sheet_url') || '';
   if (!url || url.indexOf('script.google.com') === -1) {
-    body.innerHTML = '<div style="background:#fef3c7;border-left:4px solid #ca8a04;padding:14px;border-radius:8px;color:#854d0e">⚠️ No Google Sheets URL saved.</div>';
+    rptWin.document.body.innerHTML = '<div style="background:#fef3c7;border-left:4px solid #ca8a04;padding:14px;border-radius:8px;color:#854d0e">⚠️ No Google Sheets URL saved.</div>';
     return;
   }
 
@@ -4883,21 +4883,21 @@ function generateWeeklyFinancialReport() {
 
   var cb = 'wfrCb_' + Date.now();
   var t  = setTimeout(function(){ delete window[cb]; clearInterval(mInt);
-    body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Timed out. Try again.</div>'; }, 28000);
+    rptWin.document.body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Timed out. Try again.</div>'; }, 28000);
 
   setTimeout(function() {
     window[cb] = function(data) {
       clearTimeout(t); delete window[cb]; clearInterval(mInt);
       if (!data || data.status !== 'success') {
-        body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Error: ' + JSON.stringify(data) + '</div>';
+        rptWin.document.body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Error: ' + JSON.stringify(data) + '</div>';
         return;
       }
       try { var _orw=openReportWindow; openReportWindow=function(t,h){_writeRptWin(rptWin,h);}; renderWeeklyFinancialReport(data, s1, s2, start, end, null); openReportWindow=_orw; }
-      catch(e) { body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c;font-size:.82rem"><strong>Render error:</strong><br>' + e.message + '</div>'; }
+      catch(e) { rptWin.document.body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c;font-size:.82rem"><strong>Render error:</strong><br>' + e.message + '</div>'; }
     };
     var s = document.createElement('script');
     s.onerror = function(){ clearTimeout(t); delete window[cb]; clearInterval(mInt);
-      body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Could not reach Google Sheets.</div>'; };
+      rptWin.document.body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Could not reach Google Sheets.</div>'; };
     s.src = url + '?action=getWeeklyFinancialData&callback=' + cb
       + '&startDate=' + encodeURIComponent(start)
       + '&endDate='   + encodeURIComponent(end);
@@ -5189,19 +5189,19 @@ function generateBenevolentReport() {
   title.textContent = '❤️ Benevolent Report — ' + s1 + ' to ' + s2;
   var url = localStorage.getItem('mcmbc_sheet_url') || '';
   if (!url || url.indexOf('script.google.com') === -1) {
-    body.innerHTML = '<div style="background:#fef3c7;border-left:4px solid #ca8a04;padding:14px;border-radius:8px;color:#854d0e">⚠️ No Google Sheets URL saved.</div>'; return;
+    rptWin.document.body.innerHTML = '<div style="background:#fef3c7;border-left:4px solid #ca8a04;padding:14px;border-radius:8px;color:#854d0e">⚠️ No Google Sheets URL saved.</div>'; return;
   }
   var cb = 'benvCb_' + Date.now();
-  var t  = setTimeout(function(){ delete window[cb]; body.innerHTML='<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Timed out.</div>'; }, 28000);
+  var t  = setTimeout(function(){ delete window[cb]; rptWin.document.body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Timed out.</div>'; }, 28000);
   setTimeout(function() {
     window[cb] = function(data) {
       clearTimeout(t); delete window[cb];
-      if (!data || data.status !== 'success') { body.innerHTML='<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Error: '+JSON.stringify(data)+'</div>'; return; }
+      if (!data || data.status !== 'success') { rptWin.document.body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Error: '+JSON.stringify(data)+'</div>'; return; }
       try { var _orw=openReportWindow; openReportWindow=function(t,h){_writeRptWin(rptWin,h);}; renderBenevolentReport(data, s1, s2, null); openReportWindow=_orw; }
-      catch(e) { body.innerHTML='<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c;font-size:.82rem"><strong>Render error:</strong><br>'+e.message+'</div>'; }
+      catch(e) { rptWin.document.body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c;font-size:.82rem"><strong>Render error:</strong><br>'+e.message+'</div>'; }
     };
     var s = document.createElement('script');
-    s.onerror = function(){ clearTimeout(t); delete window[cb]; body.innerHTML='<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Could not reach Google Sheets.</div>'; };
+    s.onerror = function(){ clearTimeout(t); delete window[cb]; rptWin.document.body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Could not reach Google Sheets.</div>'; };
     s.src = url + '?action=getBenevolentReport&callback=' + cb + '&startDate=' + encodeURIComponent(start) + '&endDate=' + encodeURIComponent(end);
     document.head.appendChild(s);
     setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); }, 30000);
@@ -5275,34 +5275,38 @@ function generateTithesReport() {
   var start = document.getElementById('tithes-rpt-start').value;
   var end   = document.getElementById('tithes-rpt-end').value;
   if (!start || !end) { showToast('⚠️ Please select a date range.'); return; }
+  closeTithesReportPicker();
   var s1 = new Date(start+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
   var s2 = new Date(end+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-  var panel = document.getElementById('rpt-result-panel');
-  var title = document.getElementById('rpt-result-title');
-  var body  = document.getElementById('rpt-result-body');
-  title.textContent = '🙏 Tithes Report — ' + s1 + ' to ' + s2;
-  panel.style.display = 'block';
-  body.innerHTML = '<div style="text-align:center;padding:48px 24px"><div style="display:inline-block;width:52px;height:52px;border:5px solid #e2e8f0;border-top-color:var(--blue);border-radius:50%;animation:cfSpin 0.9s linear infinite;margin-bottom:20px"></div><div style="font-family:\'Lora\',serif;font-size:1.1rem;font-weight:700;color:var(--blue);margin-bottom:8px">Generating Tithes Report…</div><div style="font-size:.82rem;color:#64748b">Pulling from all sources…</div></div>';
+  var rptWin = _openRptWin('Tithes Report - ' + s1 + ' to ' + s2);
+  if (!rptWin) return;
   var url = localStorage.getItem('mcmbc_sheet_url') || '';
   if (!url || url.indexOf('script.google.com') === -1) {
-    body.innerHTML = '<div style="background:#fef3c7;border-left:4px solid #ca8a04;padding:14px;border-radius:8px;color:#854d0e">⚠️ No Google Sheets URL saved.</div>'; return;
+    rptWin.document.body.innerHTML = '<div style="padding:40px;color:#b91c1c">⚠️ No Google Sheets URL saved.</div>'; return;
   }
   var cb = 'tithesRptCb_' + Date.now();
-  var t  = setTimeout(function(){ delete window[cb]; body.innerHTML='<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Timed out.</div>'; }, 30000);
-  setTimeout(function() {
-    window[cb] = function(data) {
-      clearTimeout(t); delete window[cb];
-      if (!data || data.status !== 'success') { body.innerHTML='<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Error: '+JSON.stringify(data)+'</div>'; return; }
-      try { renderTithesReport(data, s1, s2, body); }
-      catch(e) { body.innerHTML='<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c;font-size:.82rem"><strong>Render error:</strong><br>'+e.message+'</div>'; }
-    };
-    var s = document.createElement('script');
-    s.onerror = function(){ clearTimeout(t); delete window[cb]; body.innerHTML='<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Could not reach Google Sheets.</div>'; };
-    s.src = url + '?action=getTithesReport&callback=' + cb + '&startDate=' + encodeURIComponent(start) + '&endDate=' + encodeURIComponent(end);
-    document.head.appendChild(s);
-    setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); }, 32000);
-  }, 80);
+  var t  = setTimeout(function() {
+    delete window[cb];
+    if (!rptWin.closed) rptWin.document.body.innerHTML = '<div style="padding:40px;color:#b91c1c">⚠️ Timed out. Try again.</div>';
+  }, 30000);
+  window[cb] = function(data) {
+    clearTimeout(t); delete window[cb];
+    if (!data || data.status !== 'success') {
+      if (!rptWin.closed) rptWin.document.body.innerHTML = '<div style="padding:40px;color:#b91c1c">⚠️ Error: ' + JSON.stringify(data) + '</div>'; return;
+    }
+    try { var _orw=openReportWindow; openReportWindow=function(t,h){_writeRptWin(rptWin,h);}; renderTithesReport(data, s1, s2, null); openReportWindow=_orw; }
+    catch(e) { if (!rptWin.closed) rptWin.document.body.innerHTML = '<div style="padding:40px;color:#b91c1c;font-family:monospace">' + e.message + '</div>'; }
+  };
+  var s = document.createElement('script');
+  s.onerror = function() {
+    clearTimeout(t); delete window[cb];
+    if (!rptWin.closed) rptWin.document.body.innerHTML = '<div style="padding:40px;color:#b91c1c">⚠️ Could not reach Google Sheets.</div>';
+  };
+  s.src = url + '?action=getTithesReport&callback=' + cb + '&startDate=' + encodeURIComponent(start) + '&endDate=' + encodeURIComponent(end);
+  document.head.appendChild(s);
+  setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); }, 32000);
 }
+
 
 function renderTithesReport(data, s1, s2, body) {
   var rows  = data.rows  || [];
@@ -5460,43 +5464,36 @@ function generateContributionStatement() {
 
   var panel = document.getElementById('rpt-output');
   var title = document.getElementById('rpt-output-title');
-  var body  = document.getElementById('rpt-output-body');
   var s1 = new Date(start + 'T00:00:00').toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
   var s2 = new Date(end   + 'T00:00:00').toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
   title.textContent = '🙏 Annual Contribution Statement — ' + s1 + ' to ' + s2;
   panel.style.display = 'block';
-  body.innerHTML = '';
+  if(!rptWin||rptWin.closed){} // cleared
   panel.scrollIntoView({behavior:'smooth', block:'start'});
 
   var url = localStorage.getItem('mcmbc_sheet_url') || '';
   if (!url || url.indexOf('script.google.com') === -1) {
-    body.innerHTML = '<div style="background:#fef3c7;border-left:4px solid #ca8a04;padding:14px;border-radius:8px;color:#854d0e">⚠️ No Google Sheets URL saved.</div>';
+    rptWin.document.body.innerHTML = '<div style="background:#fef3c7;border-left:4px solid #ca8a04;padding:14px;border-radius:8px;color:#854d0e">⚠️ No Google Sheets URL saved.</div>';
     return;
   }
 
-  body.innerHTML = [
-    '<div style="text-align:center;padding:48px 24px">',
-    '<div style="display:inline-block;width:52px;height:52px;border:5px solid #e2e8f0;border-top-color:var(--blue);border-radius:50%;animation:cfSpin 0.9s linear infinite;margin-bottom:20px"></div>',
-    '<div style="font-family:\'Lora\',serif;font-size:1.1rem;font-weight:700;color:var(--blue);margin-bottom:8px">Generating Annual Contribution Statement...</div>',
-    '<div style="font-size:.82rem;color:#64748b">Loading contribution records...</div>',
-    '</div>'
-  ].join('');
+  // loading shown in popup window
 
   var cb = 'csCb_' + Date.now();
-  var t  = setTimeout(function(){ delete window[cb]; body.innerHTML='<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Timed out. Try again.</div>'; }, 30000);
+  var t  = setTimeout(function(){ delete window[cb]; rptWin.document.body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Timed out. Try again.</div>'; }, 30000);
 
   setTimeout(function() {
     window[cb] = function(data) {
       clearTimeout(t); delete window[cb];
       if (!data || data.status !== 'success') {
-        body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Error: ' + JSON.stringify(data) + '</div>';
+        rptWin.document.body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Error: ' + JSON.stringify(data) + '</div>';
         return;
       }
       try { var _orw=openReportWindow; openReportWindow=function(t,h){_writeRptWin(rptWin,h);}; renderContributionStatement(data, s1, s2, member, null); openReportWindow=_orw; }
-      catch(e) { body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c;font-size:.82rem"><strong>Render error:</strong><br>' + e.message + '</div>'; }
+      catch(e) { rptWin.document.body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c;font-size:.82rem"><strong>Render error:</strong><br>' + e.message + '</div>'; }
     };
     var s = document.createElement('script');
-    s.onerror = function(){ clearTimeout(t); delete window[cb]; body.innerHTML='<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Could not reach Google Sheets.</div>'; };
+    s.onerror = function(){ clearTimeout(t); delete window[cb]; rptWin.document.body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Could not reach Google Sheets.</div>'; };
     s.src = url + '?action=getContributionStatement&callback=' + cb
       + '&startDate='   + encodeURIComponent(start)
       + '&endDate='     + encodeURIComponent(end)
@@ -5624,12 +5621,12 @@ function generateMonthlyCFReport() {
 
   title.textContent = '📆 Monthly Cash Flow Report — ' + monthName;
   panel.style.display = 'block';
-  body.innerHTML = '';
+  if(!rptWin||rptWin.closed){} // cleared
   panel.scrollIntoView({behavior:'smooth', block:'start'});
 
   var url = localStorage.getItem('mcmbc_sheet_url') || '';
   if (!url || url.indexOf('script.google.com') === -1) {
-    body.innerHTML = '<div style="background:#fef3c7;border-left:4px solid #ca8a04;padding:14px 16px;border-radius:8px;color:#854d0e">⚠️ No Google Sheets URL saved — connect on the Dashboard first.</div>';
+    rptWin.document.body.innerHTML = '<div style="background:#fef3c7;border-left:4px solid #ca8a04;padding:14px 16px;border-radius:8px;color:#854d0e">⚠️ No Google Sheets URL saved — connect on the Dashboard first.</div>';
     return;
   }
 
@@ -5642,21 +5639,21 @@ function generateMonthlyCFReport() {
   var cb = 'mcfCb_' + Date.now();
   var t = setTimeout(function(){
     delete window[cb];
-    body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Timed out. Try again.</div>';
+    rptWin.document.body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Timed out. Try again.</div>';
   }, 30000);
 
   window[cb] = function(data) {
     clearTimeout(t); delete window[cb];
     if (!data || data.status !== 'success') {
-      body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Error: ' + JSON.stringify(data) + '</div>';
+      rptWin.document.body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Error: ' + JSON.stringify(data) + '</div>';
       return;
     }
     try { var _orw=openReportWindow; openReportWindow=function(t,h){_writeRptWin(rptWin,h);}; renderMonthlyCFReport(data, monthName, null); openReportWindow=_orw; }
-    catch(e) { body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c;font-size:.82rem"><strong>Render error:</strong><br>' + e.message + '</div>'; }
+    catch(e) { rptWin.document.body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c;font-size:.82rem"><strong>Render error:</strong><br>' + e.message + '</div>'; }
   };
 
   var s = document.createElement('script');
-  s.onerror = function(){ clearTimeout(t); delete window[cb]; body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Could not reach Google Sheets.</div>'; };
+  s.onerror = function(){ clearTimeout(t); delete window[cb]; rptWin.document.body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Could not reach Google Sheets.</div>'; };
   s.src = url + '?action=getMonthlyCashFlowData&callback=' + cb + '&month=' + encodeURIComponent(month);
   document.head.appendChild(s);
   setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); }, 32000);
@@ -5900,7 +5897,6 @@ function generateCashFlowReport() {
 
   var panel = document.getElementById('rpt-output');
   var title = document.getElementById('rpt-output-title');
-  var body  = document.getElementById('rpt-output-body');
 
   title.textContent = '💵 Weekly Cash Flow Report';
   var rptWin = _openRptWin('Weekly Cash Flow Report'); window._cfRptWin = rptWin;
@@ -5920,21 +5916,16 @@ function generateCashFlowReport() {
 // ── FINANCIAL REPORTS ─────────────────────────────────────────────
 function runReport(type, startDate, endDate) {
   var data = window._dashData || null;
-  var panel = document.getElementById('rpt-output');
-  var title = document.getElementById('rpt-output-title');
-  var body  = document.getElementById('rpt-output-body');
-
+      
   // For cashflow the spinner + panel are already set by generateCashFlowReport()
   if (type !== 'cashflow') {
-    panel.style.display = 'block';
-    body.innerHTML = '';
-    panel.scrollIntoView({behavior:'smooth', block:'start'});
-    var titles = {weekly:'📅 Weekly Financial Report', contributions:'🙏 Contributions Statement', benevolent:'❤️ Benevolent Report'};
+        (window._cfRptWin&&!window._cfRptWin.closed&&(window._cfRptWin.document.body.innerHTML=''));
+        var titles = {weekly:'📅 Weekly Financial Report', contributions:'🙏 Contributions Statement', benevolent:'❤️ Benevolent Report'};
     title.textContent = titles[type] || 'Report';
   }
 
   if (!data && type !== 'cashflow') {
-    body.innerHTML = '<div style="background:#fef3c7;border-left:4px solid #ca8a04;padding:14px 16px;border-radius:8px;color:#854d0e;font-size:.85rem">⚠️ No data loaded — click <strong>↻ Refresh</strong> on the dashboard first.</div>';
+    if(window._cfRptWin&&!window._cfRptWin.closed)window._cfRptWin.document.body.innerHTML='<div style="background:#fef3c7;border-left:4px solid #ca8a04;padding:14px 16px;border-radius:8px;color:#854d0e;font-size:.85rem">⚠️ No data loaded — click <strong>↻ Refresh</strong> on the dashboard first.</div>';
     return;
   }
 
@@ -5962,18 +5953,18 @@ function runReport(type, startDate, endDate) {
     var url = localStorage.getItem('mcmbc_sheet_url') || '';
     if (!url || url.indexOf('script.google.com') === -1) {
       clearInterval(loadingInterval);
-      body.innerHTML = '<div style="background:#fef3c7;border-left:4px solid #ca8a04;padding:14px 16px;border-radius:8px;color:#854d0e">⚠️ No Google Sheets URL saved — connect on the Dashboard first.</div>';
+      if(window._cfRptWin&&!window._cfRptWin.closed)window._cfRptWin.document.body.innerHTML='<div style="background:#fef3c7;border-left:4px solid #ca8a04;padding:14px 16px;border-radius:8px;color:#854d0e">⚠️ No Google Sheets URL saved — connect on the Dashboard first.</div>';
       return;
     }
     // Defer so browser paints spinner before network call
     setTimeout(function() {
       var cb = 'cfCb_' + Date.now();
-      var t = setTimeout(function(){ delete window[cb]; clearInterval(loadingInterval); body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Timed out loading data. Try again.</div>'; }, 25000);
+      var t = setTimeout(function(){ delete window[cb]; clearInterval(loadingInterval); if(window._cfRptWin&&!window._cfRptWin.closed)window._cfRptWin.document.body.innerHTML='<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Timed out loading data. Try again.</div>'; }, 25000);
       window[cb] = function(cfData) {
         clearTimeout(t); delete window[cb];
         clearInterval(loadingInterval);
         if (!cfData || cfData.status !== 'success') {
-          body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Error loading cash flow data: ' + JSON.stringify(cfData) + '</div>';
+          if(window._cfRptWin&&!window._cfRptWin.closed)window._cfRptWin.document.body.innerHTML='<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Error loading cash flow data: ' + JSON.stringify(cfData) + '</div>';
           return;
         }
         var d = cfData;
@@ -6121,7 +6112,7 @@ function runReport(type, startDate, endDate) {
         rpt += '</div>';
         _writeRptWin(window._cfRptWin || null, rpt); window._cfRptWin = null;
         } catch(renderErr) {
-          body.innerHTML = '<div style="background:#fee2e2;padding:16px;border-radius:8px;color:#b91c1c;font-family:monospace;font-size:.82rem">' +
+          if(window._cfRptWin&&!window._cfRptWin.closed)window._cfRptWin.document.body.innerHTML='<div style="background:#fee2e2;padding:16px;border-radius:8px;color:#b91c1c;font-family:monospace;font-size:.82rem">' +
             '<strong>⚠️ Report render error:</strong><br>' + renderErr.message +
             '<br><br><strong>Stack:</strong><br>' + (renderErr.stack||'').replace(/\n/g,'<br>') +
             '</div>';
@@ -6129,7 +6120,7 @@ function runReport(type, startDate, endDate) {
         }
       };
       var s = document.createElement('script');
-      s.onerror = function(){ clearTimeout(t); delete window[cb]; clearInterval(loadingInterval); body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Could not reach Google Sheets.</div>'; };
+      s.onerror = function(){ clearTimeout(t); delete window[cb]; clearInterval(loadingInterval); if(window._cfRptWin&&!window._cfRptWin.closed)window._cfRptWin.document.body.innerHTML='<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Could not reach Google Sheets.</div>'; };
       s.src = url + '?action=getCashFlowData&callback=' + cb
             + (startDate ? '&startDate=' + encodeURIComponent(startDate) : '')
             + (endDate   ? '&endDate='   + encodeURIComponent(endDate)   : '');
@@ -6190,9 +6181,9 @@ function runReport(type, startDate, endDate) {
     html += '<div style="background:#fef3c7;border-left:4px solid #ca8a04;padding:12px 16px;border-radius:8px;font-size:.82rem;color:#854d0e;margin-top:14px">💡 Individual disbursement records are tracked in the Expenses screen under the Benevolent Offering Fund.</div>';
   }
 
-  // cashflow renders itself inside the JSONP callback — don't overwrite its spinner
+  // cashflow renders itself into popup window — skip inline panel
   if (type !== 'cashflow') {
-    body.innerHTML = html;
+    if (window._cfRptWin && !window._cfRptWin.closed) window._cfRptWin.document.body.innerHTML = html;
   }
 }
 
