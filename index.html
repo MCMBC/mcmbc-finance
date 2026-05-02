@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.05.02-44</title>
+<title>Mount Calvary M.B. Church Financial System v2026.05.02-45</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -173,7 +173,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.02-44</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.02-45</span>
     </div>
   </div>
 </div>
@@ -186,7 +186,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.02-44</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.02-45</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -272,7 +272,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.02-44</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.02-45</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -4840,6 +4840,7 @@ function generateWeeklyFinancialReport() {
   if (!start || !end) { showToast('Please select both a start and end date.'); return; }
   if (start > end)    { showToast('Start date must be before end date.'); return; }
   closeWeeklyFinancialPicker();
+  var rptWin = _openRptWin('Weekly Financial Report - ' + s1 + ' to ' + s2);
 
   var panel = document.getElementById('rpt-output');
   var title = document.getElementById('rpt-output-title');
@@ -4881,7 +4882,7 @@ function generateWeeklyFinancialReport() {
         body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Error: ' + JSON.stringify(data) + '</div>';
         return;
       }
-      try { renderWeeklyFinancialReport(data, s1, s2, start, end, body); }
+      try { var fakeBody={innerHTML:''}; renderWeeklyFinancialReport(data, s1, s2, start, end, fakeBody); _writeRptWin(rptWin, fakeBody.innerHTML); }
       catch(e) { body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c;font-size:.82rem"><strong>Render error:</strong><br>' + e.message + '</div>'; }
     };
     var s = document.createElement('script');
@@ -5172,6 +5173,7 @@ function generateBenevolentReport() {
   if (!start || !end) { showToast('Please select both a start and end date.'); return; }
   if (start > end)    { showToast('Start date must be before end date.'); return; }
   closeBenevolentPicker();
+  var rptWin = _openRptWin('Benevolent Report - ' + s1 + ' to ' + s2);
   var panel = document.getElementById('rpt-output');
   var title = document.getElementById('rpt-output-title');
   var body  = document.getElementById('rpt-output-body');
@@ -5191,7 +5193,7 @@ function generateBenevolentReport() {
     window[cb] = function(data) {
       clearTimeout(t); delete window[cb];
       if (!data || data.status !== 'success') { body.innerHTML='<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Error: '+JSON.stringify(data)+'</div>'; return; }
-      try { renderBenevolentReport(data, s1, s2, body); }
+      try { var fakeBody={innerHTML:''}; renderBenevolentReport(data, s1, s2, fakeBody); _writeRptWin(rptWin, fakeBody.innerHTML); }
       catch(e) { body.innerHTML='<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c;font-size:.82rem"><strong>Render error:</strong><br>'+e.message+'</div>'; }
     };
     var s = document.createElement('script');
@@ -5451,6 +5453,7 @@ function generateContributionStatement() {
   if (!start || !end) { showToast('Please select both a start and end date.'); return; }
   if (start > end)    { showToast('Start date must be before end date.'); return; }
   closeContributionPicker();
+  var rptWin = _openRptWin('Annual Contribution Statement - ' + s1 + ' to ' + s2);
 
   var panel = document.getElementById('rpt-output');
   var title = document.getElementById('rpt-output-title');
@@ -5486,7 +5489,7 @@ function generateContributionStatement() {
         body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Error: ' + JSON.stringify(data) + '</div>';
         return;
       }
-      try { renderContributionStatement(data, s1, s2, member, body); }
+      try { var fakeBody={innerHTML:''}; renderContributionStatement(data, s1, s2, member, fakeBody); _writeRptWin(rptWin, fakeBody.innerHTML); }
       catch(e) { body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c;font-size:.82rem"><strong>Render error:</strong><br>' + e.message + '</div>'; }
     };
     var s = document.createElement('script');
@@ -5611,8 +5614,7 @@ function generateMonthlyCFReport() {
   var month = document.getElementById('mcf-month').value;
   if (!month) { showToast('Please select a month.'); return; }
   closeMonthPicker();
-
-  var panel = document.getElementById('rpt-output');
+  var rptWin = _openRptWin('Monthly Cash Flow - ' + (new Date(parseInt(month.split('-')[0]), parseInt(month.split('-')[1])-1, 1).toLocaleDateString('en-US',{month:'long',year:'numeric'})));
   var title = document.getElementById('rpt-output-title');
   var body  = document.getElementById('rpt-output-body');
   var parts = month.split('-');
@@ -5651,7 +5653,7 @@ function generateMonthlyCFReport() {
       body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Error: ' + JSON.stringify(data) + '</div>';
       return;
     }
-    try { renderMonthlyCFReport(data, monthName, body); }
+    try { var fakeBody={innerHTML:''}; renderMonthlyCFReport(data, monthName, fakeBody); _writeRptWin(rptWin, fakeBody.innerHTML); }
     catch(e) { body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c;font-size:.82rem"><strong>Render error:</strong><br>' + e.message + '</div>'; }
   };
 
@@ -5903,6 +5905,7 @@ function generateCashFlowReport() {
   var body  = document.getElementById('rpt-output-body');
 
   title.textContent = '💵 Weekly Cash Flow Report';
+  var rptWin = _openRptWin('Weekly Cash Flow Report');
   panel.style.display = 'block';
 
   // Show spinner immediately — same pattern as Monthly report
