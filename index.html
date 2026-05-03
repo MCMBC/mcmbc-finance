@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.05.02-52</title>
+<title>Mount Calvary M.B. Church Financial System v2026.05.02-53</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -173,7 +173,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.02-52</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.02-53</span>
     </div>
   </div>
 </div>
@@ -186,7 +186,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.02-52</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.02-53</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -272,7 +272,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.02-52</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.02-53</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -717,6 +717,32 @@ nav{flex:1;padding:10px 0;}
           <select id="tm-member">
             <option value="">⏳ Loading members...</option>
           </select>
+        </div>
+
+        <!-- Payment Method -->
+        <div class="fg3" style="width:100%">
+          <label>PAYMENT METHOD</label>
+          <div style="display:flex;align-items:center;gap:24px;padding:10px 0;">
+            <label style="display:flex;align-items:center;gap:7px;font-size:.88rem;font-weight:600;cursor:pointer;color:#334155">
+              <input type="radio" name="tm-payment" id="tm-pay-cash" value="Cash" checked
+                style="width:17px;height:17px;accent-color:var(--navy)"
+                onchange="document.getElementById('tm-check-row').style.display='none'">
+              💵 Cash
+            </label>
+            <label style="display:flex;align-items:center;gap:7px;font-size:.88rem;font-weight:600;cursor:pointer;color:#334155">
+              <input type="radio" name="tm-payment" id="tm-pay-check" value="Check"
+                style="width:17px;height:17px;accent-color:var(--navy)"
+                onchange="document.getElementById('tm-check-row').style.display='flex'">
+              🗒 Check
+            </label>
+          </div>
+          <div id="tm-check-row" style="display:none;align-items:flex-end;gap:12px;margin-top:2px">
+            <div style="flex:1">
+              <label style="font-size:.72rem;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.04em">Check Number</label>
+              <input type="text" id="tm-check-no" placeholder="e.g. 1234"
+                style="width:100%;padding:9px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit;box-sizing:border-box;margin-top:4px">
+            </div>
+          </div>
         </div>
         <div class="fr">
           <div class="fg3"><label>Tithes ($)</label><input type="number" id="tm-tithes" placeholder="0.00" min="0" step="0.01" oninput="calcTMTotal()"></div>
@@ -2470,6 +2496,8 @@ function saveTMRec() {
   var other    = parseFloat(document.getElementById('tm-other').value)    || 0;
   var total    = tithes + yth + bldg + benv + yedu + offering + special + other;
   var rcvd     = document.getElementById('tm-received-by').value || '—';
+  var payMethod = document.querySelector('input[name="tm-payment"]:checked') ? document.querySelector('input[name="tm-payment"]:checked').value : 'Cash';
+  var checkNo   = payMethod === 'Check' ? (document.getElementById('tm-check-no').value || '') : '';
 
   if (total <= 0) { showToast('Enter at least one amount before saving.'); return; }
 
@@ -2502,6 +2530,8 @@ function saveTMRec() {
 
   tmPendingRows.push({id:id, date:date, member:member, tithes:tithes, youth:yth,
     bldg:bldg, benv:benv, yedu:yedu, offering:offering, special:special,
+    other:other, total:total, rcvd:rcvd, payMethod:payMethod, checkNo:checkNo});
+    bldg:bldg, benv:benv, yedu:yedu, offering:offering, special:special,
     other:other, total:total, rcvd:rcvd, _saved:false});
 
   document.getElementById('tm-saved-wrap').style.display = 'block';
@@ -2512,6 +2542,10 @@ function saveTMRec() {
     document.getElementById(i).value = '';
   });
   document.getElementById('tm-member').value = '';
+  // Reset payment method to Cash and hide check number
+  document.getElementById('tm-pay-cash').checked = true;
+  document.getElementById('tm-check-no').value = '';
+  document.getElementById('tm-check-row').style.display = 'none';
   calcTMTotal();
   showToast('Entry added — click Save All to Google Sheet to sync.');
 }
@@ -2577,6 +2611,8 @@ function saveTMToSheets() {
       + '&specialEvent='   + encodeURIComponent(r.special)
       + '&other='          + encodeURIComponent(r.other)
       + '&total='          + encodeURIComponent(r.total)
+      + '&paymentMethod='  + encodeURIComponent(r.payMethod||'Cash')
+      + '&checkNo='        + encodeURIComponent(r.checkNo||'')
       + '&receivedBy='     + encodeURIComponent(r.rcvd);
     document.head.appendChild(s);
     setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); }, 27000);
