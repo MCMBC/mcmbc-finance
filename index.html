@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.05.03-57</title>
+<title>Mount Calvary M.B. Church Financial System v2026.05.03-58</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -173,7 +173,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.03-57</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.03-58</span>
     </div>
   </div>
 </div>
@@ -186,7 +186,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.03-57</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.03-58</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -272,7 +272,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.03-57</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.03-58</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -1344,7 +1344,16 @@ nav{flex:1;padding:10px 0;}
           onchange="applyTithesFilter()">
           <option value="">All Years</option>
         </select>
-        <button class="bac" onclick="clearTithesFilter()" style="font-size:.8rem">✕ Clear Filter</button>
+        <span style="font-size:.78rem;font-weight:700;color:#94a3b8">— or —</span>
+        <div style="display:flex;align-items:center;gap:6px">
+          <label style="font-size:.75rem;font-weight:600;color:#475569">From</label>
+          <input type="date" id="tithes-filter-from" style="padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;color:#1e293b" onchange="applyTithesFilter()">
+        </div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <label style="font-size:.75rem;font-weight:600;color:#475569">To</label>
+          <input type="date" id="tithes-filter-to" style="padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;color:#1e293b" onchange="applyTithesFilter()">
+        </div>
+        <button class="bac" onclick="clearTithesFilter()" style="font-size:.8rem">✕ Clear</button>
         <span id="tithes-filter-count" style="font-size:.78rem;color:#64748b;margin-left:4px"></span>
       </div>
 
@@ -8393,13 +8402,22 @@ function populateTithesYearDropdown() {
 }
 
 function applyTithesFilter() {
-  var month = document.getElementById('tithes-filter-month').value;
-  var year  = document.getElementById('tithes-filter-year').value;
-  var all   = ADJ_DATA['tithes'] || [];
+  var month  = document.getElementById('tithes-filter-month').value;
+  var year   = document.getElementById('tithes-filter-year').value;
+  var fromEl = document.getElementById('tithes-filter-from');
+  var toEl   = document.getElementById('tithes-filter-to');
+  var from   = fromEl ? fromEl.value : '';
+  var to     = toEl   ? toEl.value   : '';
+  var all    = ADJ_DATA['tithes'] || [];
+
+  // Date range overrides month/year if both are set
+  var useRange = (from || to);
+
+  var fromDate = from ? new Date(from + 'T00:00:00') : null;
+  var toDate   = to   ? new Date(to   + 'T23:59:59') : null;
 
   var filtered = all.filter(function(r) {
-    if (!r.date) return (!month && !year);
-    // Parse date — handles YYYY-MM-DD or MM/DD/YYYY
+    if (!r.date) return false;
     var d;
     var iso = String(r.date).match(/^(\d{4})-(\d{2})-(\d{2})$/);
     var mdy = String(r.date).match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
@@ -8407,14 +8425,19 @@ function applyTithesFilter() {
     else if (mdy) d = new Date(parseInt(mdy[3]), parseInt(mdy[1])-1, parseInt(mdy[2]));
     else           d = new Date(r.date);
     if (!d || isNaN(d.getTime())) return false;
-    if (month && (d.getMonth()+1) !== parseInt(month)) return false;
-    if (year  && d.getFullYear() !== parseInt(year))   return false;
+
+    if (useRange) {
+      if (fromDate && d < fromDate) return false;
+      if (toDate   && d > toDate)   return false;
+    } else {
+      if (month && (d.getMonth()+1) !== parseInt(month)) return false;
+      if (year  && d.getFullYear() !== parseInt(year))   return false;
+    }
     return true;
   });
 
-  // Render filtered subset
-  var cfg = ADJ_CFG['tithes'];
-  var el  = document.getElementById(cfg.contentId);
+  var cfg     = ADJ_CFG['tithes'];
+  var el      = document.getElementById(cfg.contentId);
   var countEl = document.getElementById('tithes-filter-count');
 
   if (filtered.length === 0) {
@@ -8425,7 +8448,6 @@ function applyTithesFilter() {
 
   if (countEl) countEl.textContent = filtered.length + ' of ' + all.length + ' record' + (all.length!==1?'s':'');
 
-  // Temporarily swap ADJ_DATA, render, then restore
   var saved = ADJ_DATA['tithes'];
   ADJ_DATA['tithes'] = filtered;
   renderAdjTable('tithes');
@@ -8435,8 +8457,12 @@ function applyTithesFilter() {
 function clearTithesFilter() {
   var m = document.getElementById('tithes-filter-month');
   var y = document.getElementById('tithes-filter-year');
+  var f = document.getElementById('tithes-filter-from');
+  var t = document.getElementById('tithes-filter-to');
   if (m) m.value = '';
   if (y) y.value = '';
+  if (f) f.value = '';
+  if (t) t.value = '';
   var countEl = document.getElementById('tithes-filter-count');
   if (countEl) countEl.textContent = '';
   renderAdjTable('tithes');
