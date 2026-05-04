@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.05.03-62</title>
+<title>Mount Calvary M.B. Church Financial System v2026.05.03-63</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -173,7 +173,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.03-62</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.03-63</span>
     </div>
   </div>
 </div>
@@ -186,7 +186,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.03-62</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.03-63</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -272,7 +272,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.03-62</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.03-63</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -8370,7 +8370,8 @@ function loadAdjScreen(type) {
         if (td !== 0) return td;
         return (a.member||'').toLowerCase() < (b.member||'').toLowerCase() ? -1 : 1;
       });
-      // Populate year dropdown based on actual data
+      // Save full unfiltered copy for filter operations
+      TITHES_FULL_DATA = ADJ_DATA[type].slice();
       populateTithesYearDropdown();
     }
     renderAdjTable(type);
@@ -8401,6 +8402,8 @@ function populateTithesYearDropdown() {
   });
 }
 
+var TITHES_FULL_DATA = []; // stores unfiltered full dataset
+
 function applyTithesFilter() {
   var month  = document.getElementById('tithes-filter-month').value;
   var year   = document.getElementById('tithes-filter-year').value;
@@ -8408,11 +8411,11 @@ function applyTithesFilter() {
   var toEl   = document.getElementById('tithes-filter-to');
   var from   = fromEl ? fromEl.value : '';
   var to     = toEl   ? toEl.value   : '';
-  var all    = ADJ_DATA['tithes'] || [];
 
-  // Date range overrides month/year if both are set
+  // Use the full dataset (not currently filtered one)
+  var all = TITHES_FULL_DATA.length > 0 ? TITHES_FULL_DATA : (ADJ_DATA['tithes'] || []);
+
   var useRange = (from || to);
-
   var fromDate = from ? new Date(from + 'T00:00:00') : null;
   var toDate   = to   ? new Date(to   + 'T23:59:59') : null;
 
@@ -8423,9 +8426,8 @@ function applyTithesFilter() {
     var mdy = String(r.date).match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
     if (iso)      d = new Date(parseInt(iso[1]), parseInt(iso[2])-1, parseInt(iso[3]));
     else if (mdy) d = new Date(parseInt(mdy[3]), parseInt(mdy[1])-1, parseInt(mdy[2]));
-    else           d = new Date(r.date);
+    else          d = new Date(r.date);
     if (!d || isNaN(d.getTime())) return false;
-
     if (useRange) {
       if (fromDate && d < fromDate) return false;
       if (toDate   && d > toDate)   return false;
@@ -8442,16 +8444,16 @@ function applyTithesFilter() {
 
   if (filtered.length === 0) {
     el.innerHTML = '<div style="text-align:center;padding:40px;color:#94a3b8;font-style:italic">No records match the selected filter.</div>';
-    if (countEl) countEl.textContent = '0 records';
+    if (countEl) countEl.textContent = '0 of ' + all.length + ' records';
+    ADJ_DATA['tithes'] = filtered; // set empty so edit doesn't show wrong record
     return;
   }
 
   if (countEl) countEl.textContent = filtered.length + ' of ' + all.length + ' record' + (all.length!==1?'s':'');
 
-  var saved = ADJ_DATA['tithes'];
+  // Set ADJ_DATA to the filtered subset so adjEdit uses the correct indices
   ADJ_DATA['tithes'] = filtered;
   renderAdjTable('tithes');
-  ADJ_DATA['tithes'] = saved;
 }
 
 function clearTithesFilter() {
@@ -8465,6 +8467,8 @@ function clearTithesFilter() {
   if (t) t.value = '';
   var countEl = document.getElementById('tithes-filter-count');
   if (countEl) countEl.textContent = '';
+  // Restore full dataset
+  if (TITHES_FULL_DATA.length > 0) ADJ_DATA['tithes'] = TITHES_FULL_DATA;
   renderAdjTable('tithes');
 }
 
@@ -8653,7 +8657,7 @@ function adjSave(type) {
     if (data && data.status === 'success') {
       adjCloseModal(type);
       showToast('\u2705 Record updated in Google Sheets.');
-      loadAdjScreen(type);
+      if (type === 'tithes') { TITHES_FULL_DATA = []; } loadAdjScreen(type);
     } else {
       showToast('\u26A0\uFE0F Error: ' + (data ? data.message : 'unknown'));
     }
@@ -8683,7 +8687,7 @@ function adjDelete(type, idx) {
     clearTimeout(t); delete window[cb];
     if (data && data.status === 'success') {
       showToast('🗑️ Record deleted from Google Sheets.');
-      loadAdjScreen(type);
+      if (type === 'tithes') { TITHES_FULL_DATA = []; } loadAdjScreen(type);
     } else {
       showToast('⚠️ Error: ' + (data ? data.message : 'unknown'));
     }
