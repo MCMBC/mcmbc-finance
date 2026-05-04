@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.05.03-58</title>
+<title>Mount Calvary M.B. Church Financial System v2026.05.03-59</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -173,7 +173,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.03-58</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.03-59</span>
     </div>
   </div>
 </div>
@@ -186,7 +186,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.03-58</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.03-59</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -272,7 +272,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.03-58</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.03-59</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -8287,10 +8287,10 @@ var ADJ_CFG = {
   tithes: {
     action:'getTithesRecords', updateAction:'updateTithes', deleteAction:'deleteTithes',
     title:'Tithes & Offering by Members', contentId:'adj-tithes-content',
-    cols:['Date','Member','Tithes','Youth','Bldg Fund','Benevolent','Youth Edu','Offering','Special','Other','Total','Received By'],
-    fields:['date','member','tithes','youth','building','benevolent','youthEdu','offering','special','other','total','receivedBy'],
-    labels:['Date','Member Name','Tithes','Youth','Building Fund','Benevolent','Youth Education','Offering','Special Event','Other','Total','Received By'],
-    types: ['date','text','number','number','number','number','number','number','number','number','number','text'],
+    cols:['Date','Member','Tithes','Youth','Bldg Fund','Benevolent','Youth Edu','Offering','Special','Other','Total','Payment','Check #','Received By'],
+    fields:['date','member','tithes','youth','building','benevolent','youthEdu','offering','special','other','total','payMethod','checkNo','receivedBy'],
+    labels:['Date','Member Name','Tithes','Youth','Building Fund','Benevolent','Youth Education','Offering','Special Event','Other','Total','Payment Method','Check No.','Received By'],
+    types: ['date','text','number','number','number','number','number','number','number','number','number','text','text','text'],
     idField:'id'
   },
   giveify: {
@@ -8554,13 +8554,39 @@ function adjEdit(type, idx) {
 
   var formEl = document.getElementById('adj-form-' + type);
   formEl.innerHTML = '';
+
   cfg.fields.forEach(function(f, fi) {
+    if (type === 'tithes' && f === 'payMethod') {
+      var isCash = (rec[f] || 'Cash').toLowerCase() !== 'check';
+      formEl.innerHTML +=
+        '<div style="display:flex;flex-direction:column;gap:6px;width:100%;margin-top:4px">' +
+        '<label style="font-size:.75rem;font-weight:600;color:#475569;text-transform:uppercase">Payment Method</label>' +
+        '<div style="display:flex;gap:20px;padding:4px 0">' +
+        '<label style="display:flex;align-items:center;gap:7px;font-size:.88rem;font-weight:600;cursor:pointer">' +
+        '<input type="radio" name="adj-tithes-pay" value="Cash"' + (isCash ? ' checked' : '') +
+        ' style="width:16px;height:16px" onchange="document.getElementById(\'adj-tithes-checkrow\').style.display=\'none\'"> \uD83D\uDCB5 Cash</label>' +
+        '<label style="display:flex;align-items:center;gap:7px;font-size:.88rem;font-weight:600;cursor:pointer">' +
+        '<input type="radio" name="adj-tithes-pay" value="Check"' + (!isCash ? ' checked' : '') +
+        ' style="width:16px;height:16px" onchange="document.getElementById(\'adj-tithes-checkrow\').style.display=\'flex\'"> \uD83D\uDDD2 Check</label>' +
+        '</div></div>';
+      return;
+    }
+    if (type === 'tithes' && f === 'checkNo') {
+      var isCash2 = (rec.payMethod || 'Cash').toLowerCase() !== 'check';
+      formEl.innerHTML +=
+        '<div id="adj-tithes-checkrow" style="display:' + (isCash2 ? 'none' : 'flex') + ';flex-direction:column;gap:4px;width:100%">' +
+        '<label style="font-size:.75rem;font-weight:600;color:#475569;text-transform:uppercase">Check Number</label>' +
+        '<input id="adj-field-tithes-checkNo" type="text" value="' + (rec[f] || '') + '" placeholder="e.g. 1234"' +
+        ' style="padding:8px 11px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit"></div>';
+      return;
+    }
     var isNum = cfg.types[fi] === 'number';
-    var w = (cfg.fields.length <= 6 || isNum) ? '45%' : '100%';
-    formEl.innerHTML += '<div style="display:flex;flex-direction:column;gap:4px;flex:1;min-width:' + w + '">'
-      + '<label style="font-size:.75rem;font-weight:600;color:#475569;text-transform:uppercase">' + cfg.labels[fi] + '</label>'
-      + '<input id="adj-field-' + type + '-' + f + '" type="' + cfg.types[fi] + '" value="' + (rec[f] !== undefined ? rec[f] : '') + '"'
-      + ' style="padding:8px 11px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit"></div>';
+    var w = isNum ? '45%' : '100%';
+    formEl.innerHTML +=
+      '<div style="display:flex;flex-direction:column;gap:4px;flex:1;min-width:' + w + '">' +
+      '<label style="font-size:.75rem;font-weight:600;color:#475569;text-transform:uppercase">' + cfg.labels[fi] + '</label>' +
+      '<input id="adj-field-' + type + '-' + f + '" type="' + cfg.types[fi] + '" value="' + (rec[f] !== undefined ? rec[f] : '') + '"' +
+      ' style="padding:8px 11px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit"></div>';
   });
 
   document.getElementById('adj-modal-' + type).style.display = 'flex';
@@ -8581,25 +8607,35 @@ function adjSave(type) {
   var params = 'action=' + cfg.updateAction + '&rowNum=' + encodeURIComponent(rowNum) + '&id=' + encodeURIComponent(id);
 
   cfg.fields.forEach(function(f) {
+    if (type === 'tithes' && f === 'payMethod') {
+      var checked = document.querySelector('input[name="adj-tithes-pay"]:checked');
+      params += '&payMethod=' + encodeURIComponent(checked ? checked.value : 'Cash');
+      return;
+    }
+    if (type === 'tithes' && f === 'checkNo') {
+      var el = document.getElementById('adj-field-tithes-checkNo');
+      params += '&checkNo=' + encodeURIComponent(el ? el.value : '');
+      return;
+    }
     var el = document.getElementById('adj-field-' + type + '-' + f);
     if (el) params += '&' + f + '=' + encodeURIComponent(el.value);
   });
 
   var btn = document.getElementById('adj-save-btn-' + type);
-  btn.disabled = true; btn.textContent = '⏳ Saving…';
+  btn.disabled = true; btn.textContent = '\u23F3 Saving\u2026';
 
   var cb = 'adjSaveCb_' + Date.now();
-  var t = setTimeout(function(){ delete window[cb]; btn.disabled=false; btn.textContent='💾 Save Changes'; showToast('⚠️ Timed out.'); }, 20000);
+  var t = setTimeout(function(){ delete window[cb]; btn.disabled=false; btn.textContent='\uD83D\uDCBE Save Changes'; showToast('\u26A0\uFE0F Timed out.'); }, 20000);
 
   window[cb] = function(data) {
     clearTimeout(t); delete window[cb];
-    btn.disabled=false; btn.textContent='💾 Save Changes';
+    btn.disabled=false; btn.textContent='\uD83D\uDCBE Save Changes';
     if (data && data.status === 'success') {
       adjCloseModal(type);
-      showToast('✅ Record updated in Google Sheets.');
+      showToast('\u2705 Record updated in Google Sheets.');
       loadAdjScreen(type);
     } else {
-      showToast('⚠️ Error: ' + (data ? data.message : 'unknown'));
+      showToast('\u26A0\uFE0F Error: ' + (data ? data.message : 'unknown'));
     }
   };
 
@@ -8607,6 +8643,7 @@ function adjSave(type) {
   s.src = url + '?' + params + '&callback=' + cb;
   document.head.appendChild(s);
 }
+
 
 function adjDelete(type, idx) {
   var cfg = ADJ_CFG[type];
