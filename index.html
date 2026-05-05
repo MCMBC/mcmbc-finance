@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.05.04-74</title>
+<title>Mount Calvary M.B. Church Financial System v2026.05.04-75</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -173,7 +173,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.04-74</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.04-75</span>
     </div>
   </div>
 </div>
@@ -186,7 +186,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.04-74</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.04-75</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -272,7 +272,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.04-74</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.04-75</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -5092,13 +5092,9 @@ function renderWeeklyFinancialReport(data, s1, s2, startDate, endDate, body) {
 
   rpt += '</div>'; // end left col
 
-  // ── RIGHT COLUMN: UTILITIES + TOTALS ─────────────────────────
-  var grandExpend = totalSalaries + totalUtils + miscTotal;
-  var gainLoss    = grandIncoming - grandExpend;
-  var glColor     = gainLoss >= 0 ? '#15803d' : '#b91c1c';
+  // ── RIGHT COLUMN: UTILITIES + BILLS + GRAND TOTAL ─────────────────────────
 
-  rpt += '<div>';
-
+  rpt += '<div style="margin-top:32px">';
   rpt += '<table style="width:100%;border-collapse:collapse;margin-bottom:20px">';
   rpt += sectionHead('DISBURSEMENTS/EXPENDITURES');
   rpt += '<tr><td colspan="3" style="padding:2px 4px 4px;font-size:.72rem;color:#1e40af;font-weight:700;font-style:italic">UTILITIES</td></tr>';
@@ -5113,18 +5109,38 @@ function renderWeeklyFinancialReport(data, s1, s2, startDate, endDate, body) {
   if (utils.length === 0) {
     ['ELECTRIC #','CENTER GAS #','CABLE/INTERNET #','I.R.S 941 Electronic #','PEST CONTROL #'].forEach(function(l){ rpt += row(l,'',0,false); });
   }
-  rpt += subtotalRow('TOTAL UTILITIES ETC', totalUtils);
+  rpt += subtotalRow('TOTAL UTILITIES', totalUtils);
+
+  // ── BILLS ──────────────────────────────────────────────────
+  var bills = data.billsDetail || [];
+  var nonUtilBills = bills.filter(function(b){ return !b.isUtil; });
+  var billsTotal = 0;
+  rpt += '<tr><td colspan="3" style="padding:8px 4px 4px;font-size:.72rem;color:#b45309;font-weight:700;font-style:italic;border-top:1px solid #e2e8f0">BILLS</td></tr>';
+  if (nonUtilBills.length === 0) {
+    rpt += '<tr><td colspan="3" style="color:#94a3b8;font-style:italic;padding:6px 4px;font-size:.8rem">No bills for this period</td></tr>';
+  } else {
+    nonUtilBills.forEach(function(b) {
+      var amt = parseFloat(b.amount||0);
+      billsTotal += amt;
+      rpt += row(b.payee || b.type, b.checkNo, amt, false);
+    });
+  }
+  rpt += subtotalRow('TOTAL BILLS', billsTotal);
   rpt += '</table>';
 
-  rpt += '<table style="width:100%;border-collapse:collapse;margin-top:32px">';
-  rpt += '<tr><td colspan="2" style="padding:6px 4px;font-size:.8rem;font-weight:700;border-top:2px solid #334155">GRAND TOT. EXPEND.</td>' +
-    '<td style="text-align:right;font-size:.8rem;font-weight:700;border-top:2px solid #334155;white-space:nowrap;padding-left:8px">' + fc(grandExpend) + '</td></tr>';
+  // Grand Total Expenditures
+  var grandExpend = totalSalaries + totalUtils + billsTotal + miscTotal;
+  rpt += '<table style="width:100%;border-collapse:collapse;margin-top:8px">';
+  rpt += '<tr style="background:#0f2744">' +
+    '<td colspan="2" style="padding:9px 8px;font-size:.9rem;font-weight:700;color:#fff">GRAND TOTAL EXPENDITURES</td>' +
+    '<td style="text-align:right;font-size:.9rem;font-weight:700;color:#fbbf24;white-space:nowrap;padding:9px 8px">' + fc(grandExpend) + '</td></tr>';
   rpt += '</table>';
-
   rpt += '</div>'; // end right col
   rpt += '</div>'; // end bottom grid
 
   // ── GAIN / LOSS — full width at bottom ───────────────────────
+  var gainLoss = grandIncoming - grandExpend;
+  var glColor  = gainLoss >= 0 ? '#15803d' : '#b91c1c';
   var glLabel  = gainLoss >= 0 ? 'GAIN' : 'LOSS';
   var glAmount = gainLoss >= 0 ? fc(gainLoss) : '-' + fc(Math.abs(gainLoss));
   var glBg     = gainLoss >= 0 ? '#f0fdf4' : '#fff1f2';
