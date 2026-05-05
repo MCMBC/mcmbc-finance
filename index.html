@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.05.05-79</title>
+<title>Mount Calvary M.B. Church Financial System v2026.05.05-80</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -173,7 +173,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.05-79</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.05-80</span>
     </div>
   </div>
 </div>
@@ -186,7 +186,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.05-79</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.05-80</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -272,7 +272,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.05-79</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.05-80</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -4967,6 +4967,7 @@ function generateWeeklyFinancialReport() {
 
 function renderWeeklyFinancialReport(data, s1, s2, startDate, endDate, body) {
   var inc     = data.income      || {};
+  var mb      = data.miscBreakdown || {special:{}, other:{}};
   var w2      = data.payrollW2   || [];
   var c1099   = data.payroll1099 || [];
   var utils   = data.utilBills   || [];
@@ -4979,6 +4980,14 @@ function renderWeeklyFinancialReport(data, s1, s2, startDate, endDate, body) {
       '<td style="padding:3px 0 3px ' + (indent?'20px':'4px') + ';font-size:.8rem;width:200px">' + label + (checkNo ? ' <span style="color:#94a3b8;font-size:.72rem">#' + checkNo + '</span>' : '') + '</td>' +
       '<td style="color:#94a3b8;font-size:.7rem;letter-spacing:1px">···················································</td>' +
       '<td style="text-align:right;font-size:.8rem;font-weight:600;white-space:nowrap;padding-left:8px">' + fc(amount) + '</td>' +
+      '</tr>';
+  }
+  // v80 diagnostic — light-italic indented sub-row for source-sheet breakdown
+  function diagRow(label, amount) {
+    return '<tr>' +
+      '<td style="padding:1px 0 1px 32px;font-size:.7rem;color:#94a3b8;font-style:italic">↳ ' + label + '</td>' +
+      '<td style="color:#cbd5e1;font-size:.65rem;letter-spacing:1px">···············</td>' +
+      '<td style="text-align:right;font-size:.7rem;color:#94a3b8;font-style:italic;padding-left:8px">' + fc(amount) + '</td>' +
       '</tr>';
   }
   function subtotalRow(label, amount) {
@@ -5048,7 +5057,13 @@ function renderWeeklyFinancialReport(data, s1, s2, startDate, endDate, body) {
   rpt += '<table style="width:100%;border-collapse:collapse;margin-bottom:16px">';
   rpt += sectionHead('MISC');
   rpt += row('Special Event', '', inc.special, false);
+  rpt += diagRow('TithesByMembers', mb.special.TithesByMembers||0);
+  rpt += diagRow('OtherOfferings',  mb.special.OtherOfferings||0);
   rpt += row('Other',         '', inc.other,   false);
+  rpt += diagRow('Offerings',         mb.other.Offerings||0);
+  rpt += diagRow('TithesByMembers',   mb.other.TithesByMembers||0);
+  rpt += diagRow('giveifyByDonors',   mb.other.giveifyByDonors||0);
+  rpt += diagRow('OtherOfferings',    mb.other.OtherOfferings||0);
   rpt += subtotalRow('Total', miscTotal);
   rpt += '</table>';
 
