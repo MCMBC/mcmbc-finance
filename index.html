@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.05.06-86</title>
+<title>Mount Calvary M.B. Church Financial System v2026.05.06-87</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -173,7 +173,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.06-86</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.06-87</span>
     </div>
   </div>
 </div>
@@ -186,7 +186,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.06-86</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.06-87</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -270,7 +270,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.06-86</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.06-87</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -1381,6 +1381,37 @@ nav{flex:1;padding:10px 0;}
 
     <div id="view-adj-payroll" class="vw">
       <div class="ph"><h1>💼 Payroll — Adjustments</h1><p>Review, edit, and delete payroll records</p></div>
+
+      <!-- Month/Year Filter (mirrors Tithes adjustments filter) -->
+      <div id="adj-payroll-filter" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px;padding:14px 18px;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;">
+        <span style="font-size:.78rem;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.04em">Filter by</span>
+        <select id="payroll-filter-month" style="padding:7px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit;color:#1e293b"
+          onchange="applyPayrollFilter()">
+          <option value="">All Months</option>
+          <option value="1">January</option><option value="2">February</option>
+          <option value="3">March</option><option value="4">April</option>
+          <option value="5">May</option><option value="6">June</option>
+          <option value="7">July</option><option value="8">August</option>
+          <option value="9">September</option><option value="10">October</option>
+          <option value="11">November</option><option value="12">December</option>
+        </select>
+        <select id="payroll-filter-year" style="padding:7px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit;color:#1e293b"
+          onchange="applyPayrollFilter()">
+          <option value="">All Years</option>
+        </select>
+        <span style="font-size:.78rem;font-weight:700;color:#94a3b8">— or —</span>
+        <div style="display:flex;align-items:center;gap:6px">
+          <label style="font-size:.75rem;font-weight:600;color:#475569">From</label>
+          <input type="date" id="payroll-filter-from" style="padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;color:#1e293b" onchange="applyPayrollFilter()">
+        </div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <label style="font-size:.75rem;font-weight:600;color:#475569">To</label>
+          <input type="date" id="payroll-filter-to" style="padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;color:#1e293b" onchange="applyPayrollFilter()">
+        </div>
+        <button class="bac" onclick="clearPayrollFilter()" style="font-size:.8rem">✕ Clear</button>
+        <span id="payroll-filter-count" style="font-size:.78rem;color:#64748b;margin-left:4px"></span>
+      </div>
+
       <div id="adj-payroll-content"><div style="text-align:center;padding:40px;color:#64748b">Loading…</div></div>
     </div>
 
@@ -8521,6 +8552,22 @@ function loadAdjScreen(type) {
         var db = b.datePaid ? new Date(b.datePaid) : new Date(0);
         return da - db;
       });
+      // Save full unfiltered copy for filter operations (v87)
+      PAYROLL_FULL_DATA = ADJ_DATA[type].slice();
+      populatePayrollYearDropdown();
+      // Re-apply filter if one is active, otherwise render all
+      var hasPayrollFilter = (
+        (document.getElementById('payroll-filter-month') && document.getElementById('payroll-filter-month').value) ||
+        (document.getElementById('payroll-filter-year')  && document.getElementById('payroll-filter-year').value)  ||
+        (document.getElementById('payroll-filter-from')  && document.getElementById('payroll-filter-from').value)  ||
+        (document.getElementById('payroll-filter-to')    && document.getElementById('payroll-filter-to').value)
+      );
+      if (hasPayrollFilter) {
+        applyPayrollFilter();
+      } else {
+        renderAdjTable(type);
+      }
+      return;
     }
     // Sort tithes by date ascending then member name ascending
     if (type === 'tithes') {
@@ -8755,6 +8802,93 @@ function clearTithesFilter() {
   // Restore full dataset
   if (TITHES_FULL_DATA.length > 0) ADJ_DATA['tithes'] = TITHES_FULL_DATA;
   renderAdjTable('tithes');
+}
+
+// ── Payroll Adjustment Month/Year Filter (v87 — mirrors Tithes filter) ──
+var PAYROLL_FULL_DATA = []; // stores unfiltered full payroll dataset
+
+function populatePayrollYearDropdown() {
+  var records = ADJ_DATA['payroll'] || [];
+  var years = {};
+  records.forEach(function(r) {
+    var d = r.datePaid ? String(r.datePaid).match(/^(\d{4})/) : null;
+    if (d) years[d[1]] = true;
+  });
+  var sel = document.getElementById('payroll-filter-year');
+  if (!sel) return;
+  var current = sel.value;
+  sel.innerHTML = '<option value="">All Years</option>';
+  Object.keys(years).sort().reverse().forEach(function(y) {
+    var opt = document.createElement('option');
+    opt.value = y; opt.textContent = y;
+    if (y === current) opt.selected = true;
+    sel.appendChild(opt);
+  });
+}
+
+function applyPayrollFilter() {
+  var month  = document.getElementById('payroll-filter-month').value;
+  var year   = document.getElementById('payroll-filter-year').value;
+  var fromEl = document.getElementById('payroll-filter-from');
+  var toEl   = document.getElementById('payroll-filter-to');
+  var from   = fromEl ? fromEl.value : '';
+  var to     = toEl   ? toEl.value   : '';
+
+  var all = PAYROLL_FULL_DATA.length > 0 ? PAYROLL_FULL_DATA : (ADJ_DATA['payroll'] || []);
+
+  var useRange = (from || to);
+  var fromDate = from ? new Date(from + 'T00:00:00') : null;
+  var toDate   = to   ? new Date(to   + 'T23:59:59') : null;
+
+  var filtered = all.filter(function(r) {
+    if (!r.datePaid) return false;
+    var d;
+    var iso = String(r.datePaid).match(/^(\d{4})-(\d{2})-(\d{2})/);
+    var mdy = String(r.datePaid).match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if (iso)      d = new Date(parseInt(iso[1]), parseInt(iso[2])-1, parseInt(iso[3]));
+    else if (mdy) d = new Date(parseInt(mdy[3]), parseInt(mdy[1])-1, parseInt(mdy[2]));
+    else          d = new Date(r.datePaid);
+    if (!d || isNaN(d.getTime())) return false;
+    if (useRange) {
+      if (fromDate && d < fromDate) return false;
+      if (toDate   && d > toDate)   return false;
+    } else {
+      if (month && (d.getMonth()+1) !== parseInt(month)) return false;
+      if (year  && d.getFullYear() !== parseInt(year))   return false;
+    }
+    return true;
+  });
+
+  var cfg     = ADJ_CFG['payroll'];
+  var el      = document.getElementById(cfg.contentId);
+  var countEl = document.getElementById('payroll-filter-count');
+
+  if (filtered.length === 0) {
+    el.innerHTML = '<div style="text-align:center;padding:40px;color:#94a3b8;font-style:italic">No records match the selected filter.</div>';
+    if (countEl) countEl.textContent = '0 of ' + all.length + ' records';
+    ADJ_DATA['payroll'] = filtered;
+    return;
+  }
+
+  if (countEl) countEl.textContent = filtered.length + ' of ' + all.length + ' record' + (all.length!==1?'s':'');
+
+  ADJ_DATA['payroll'] = filtered;
+  renderAdjTable('payroll');
+}
+
+function clearPayrollFilter() {
+  var m = document.getElementById('payroll-filter-month');
+  var y = document.getElementById('payroll-filter-year');
+  var f = document.getElementById('payroll-filter-from');
+  var t = document.getElementById('payroll-filter-to');
+  if (m) m.value = '';
+  if (y) y.value = '';
+  if (f) f.value = '';
+  if (t) t.value = '';
+  var countEl = document.getElementById('payroll-filter-count');
+  if (countEl) countEl.textContent = '';
+  if (PAYROLL_FULL_DATA.length > 0) ADJ_DATA['payroll'] = PAYROLL_FULL_DATA;
+  renderAdjTable('payroll');
 }
 
 function renderAdjTable(type) {
