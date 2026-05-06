@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.05.05-82</title>
+<title>Mount Calvary M.B. Church Financial System v2026.05.06-84</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -173,7 +173,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.05-82</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.06-84</span>
     </div>
   </div>
 </div>
@@ -186,7 +186,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.05-82</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.06-84</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -272,7 +272,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.05-82</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.06-84</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -2005,6 +2005,22 @@ nav{flex:1;padding:10px 0;}
           <div style="display:flex;gap:10px;justify-content:center">
             <button class="bsv" style="background:#b91c1c" onclick="confirmRestore()">🔄 Yes, Restore</button>
             <button class="bcc" onclick="cancelRestore()">Cancel</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Delete Confirm Modal -->
+      <div id="delete-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:999;align-items:center;justify-content:center">
+        <div style="background:#fff;border-radius:14px;padding:28px 32px;max-width:420px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.3)">
+          <div style="font-size:2.5rem;text-align:center;margin-bottom:12px">🗑</div>
+          <h3 style="font-family:'Lora',serif;color:var(--blue);margin:0 0 10px;text-align:center">Delete Backup?</h3>
+          <p id="delete-modal-text" style="color:#475569;font-size:.85rem;margin:0 0 8px;text-align:center"></p>
+          <div style="background:#fee2e2;border-left:4px solid #b91c1c;padding:10px 14px;border-radius:8px;font-size:.78rem;color:#991b1b;margin-bottom:20px">
+            🗑 The backup file will be moved to <strong>Google Drive Trash</strong> (recoverable for 30 days) and removed from this list. You can permanently delete it from Trash later if you want.
+          </div>
+          <div style="display:flex;gap:10px;justify-content:center">
+            <button class="bsv" style="background:#b91c1c" onclick="confirmDelete()">🗑 Yes, Delete</button>
+            <button class="bcc" onclick="cancelDelete()">Cancel</button>
           </div>
         </div>
       </div>
@@ -5447,8 +5463,12 @@ function renderTithesReport(data, s1, s2, rptWin) {
   body += '</div>';
 
   // Summary cards
+  // v84 — Tithes split into Total + Check + Cash. Optional 4th element in cat tuple is count key.
   var cats = [
-    ['Tithes','tithes','#1e40af'],['Youth','youth','#7c3aed'],['Bldg Fund','bldg','#b45309'],
+    ['Tithes Total','tithes','#1e40af'],
+    ['Tithes Chk','tithesChk','#2563eb','tithesChkCount'],
+    ['Tithes Cash','tithesCash','#3b82f6','tithesCashCount'],
+    ['Youth','youth','#7c3aed'],['Bldg Fund','bldg','#b45309'],
     ['Benevolent','benv','#be185d'],['Youth Edu','yedu','#0e7490'],['Offering','offer','#15803d'],
     ['Special','special','#dc2626'],['Other','other','#475569']
   ];
@@ -5458,6 +5478,10 @@ function renderTithesReport(data, s1, s2, rptWin) {
       body += '<div style="border:1.5px solid #e2e8f0;border-top:3px solid '+cat[2]+';border-radius:6px;padding:5px 12px;text-align:center">';
       body += '<div style="font-size:9px;color:#64748b">' + cat[0] + '</div>';
       body += '<div style="font-size:12px;font-weight:700;color:'+cat[2]+'">' + fct(totals[cat[1]]) + '</div>';
+      if (cat[3]) {
+        var n = totals[cat[3]] || 0;
+        body += '<div style="font-size:8px;color:#94a3b8;margin-top:1px">' + n + ' record' + (n===1?'':'s') + '</div>';
+      }
       body += '</div>';
     }
   });
@@ -7594,6 +7618,7 @@ var btDeleteTarget = null;
 
 // ── BACKUP & RECOVERY ─────────────────────────────────────────────
 var restoreTarget = null;
+var deleteTarget  = null;
 
 function loadBackupScreen() {
   var url = localStorage.getItem('mcmbc_sheet_url') || '';
@@ -7635,10 +7660,15 @@ function renderBackupRow(b) {
   ].join('');
   var td = tr.lastElementChild;
   var rBtn = document.createElement('button');
-  rBtn.className = 'bac'; rBtn.style.cssText = 'background:#fef3c7;color:#854d0e';
+  rBtn.className = 'bac'; rBtn.style.cssText = 'background:#fef3c7;color:#854d0e;margin-right:5px';
   rBtn.textContent = '🔄 Restore';
   rBtn.onclick = (function(backup, row){ return function(){ promptRestore(backup, row); }; })(b, tr);
   td.appendChild(rBtn);
+  var dBtn = document.createElement('button');
+  dBtn.className = 'bac'; dBtn.style.cssText = 'background:#fee2e2;color:#b91c1c';
+  dBtn.textContent = '🗑 Delete';
+  dBtn.onclick = (function(backup, row){ return function(){ promptDelete(backup, row); }; })(b, tr);
+  td.appendChild(dBtn);
   tb.appendChild(tr);
 }
 
@@ -7720,6 +7750,51 @@ function confirmRestore() {
         + '&fileId='      + encodeURIComponent(backup.fileId||backup.id)
         + '&performedBy=' + encodeURIComponent(CU ? CU.name : 'Unknown');
   document.head.appendChild(s);
+}
+
+function promptDelete(backup, rowEl) {
+  deleteTarget = { backup: backup, rowEl: rowEl };
+  document.getElementById('delete-modal-text').textContent =
+    'Delete backup "' + backup.fileName + '" from ' + backup.timestamp + '?';
+  document.getElementById('delete-modal').style.display = 'flex';
+}
+function cancelDelete() { deleteTarget=null; document.getElementById('delete-modal').style.display='none'; }
+
+function confirmDelete() {
+  if (!deleteTarget) return;
+  var backup = deleteTarget.backup;
+  var rowEl  = deleteTarget.rowEl;
+  document.getElementById('delete-modal').style.display = 'none';
+  deleteTarget = null;
+  var url = localStorage.getItem('mcmbc_sheet_url') || '';
+  if (!url || url.indexOf('script.google.com') === -1) { showToast('No Google Sheets URL saved.'); return; }
+  showToast('⏳ Deleting backup...');
+  var cb = 'delBackupCb_' + Date.now();
+  var t  = setTimeout(function(){ delete window[cb]; showToast('⚠️ Delete timed out.'); }, 30000);
+  window[cb] = function(data) {
+    clearTimeout(t); delete window[cb];
+    if (data && data.status === 'success') {
+      if (rowEl && rowEl.parentNode) rowEl.parentNode.removeChild(rowEl);
+      // If this was the last row, restore the empty placeholder
+      var tb = document.getElementById('backup-table');
+      if (tb && tb.querySelectorAll('tr').length <= 1) {
+        var r = tb.insertRow(); r.id = 'backup-empty-row';
+        r.innerHTML = '<td colspan="7" style="text-align:center;color:var(--gray);padding:22px;font-style:italic">No backups found. Create your first backup above.</td>';
+      }
+      showToast('✅ Backup moved to Drive Trash.');
+    } else {
+      showToast('⚠️ Delete failed: ' + (data && data.message ? data.message : 'Unknown error'));
+    }
+  };
+  var s = document.createElement('script');
+  s.onerror = function(){
+    clearTimeout(t); delete window[cb];
+    showToast('⚠️ Could not reach Google Sheets.');
+  };
+  s.src = url + '?action=deleteBackup&callback=' + cb
+        + '&fileId=' + encodeURIComponent(backup.fileId||backup.id);
+  document.head.appendChild(s);
+  setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); }, 32000);
 }
 
 function loadBillTypesScreen() {
