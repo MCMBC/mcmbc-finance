@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.05.05-80</title>
+<title>Mount Calvary M.B. Church Financial System v2026.05.05-81</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -173,7 +173,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.05-80</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.05-81</span>
     </div>
   </div>
 </div>
@@ -186,7 +186,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.05-80</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.05-81</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -272,7 +272,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.05-80</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.05-81</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -970,8 +970,12 @@ nav{flex:1;padding:10px 0;}
           <div class="fg3"><label>Offering ($)</label><input type="number" id="od-offering" placeholder="0.00" min="0" step="0.01" oninput="calcODTotal()"></div>
         </div>
         <div class="fr">
+          <div class="fg3"><label>Reimbursements ($)</label><input type="number" id="od-reimb" placeholder="0.00" min="0" step="0.01" oninput="calcODTotal()"></div>
           <div class="fg3"><label>Special Event ($)</label><input type="number" id="od-special" placeholder="0.00" min="0" step="0.01" oninput="calcODTotal()"></div>
+        </div>
+        <div class="fr">
           <div class="fg3"><label>Other ($)</label><input type="number" id="od-other" placeholder="0.00" min="0" step="0.01" oninput="calcODTotal()"></div>
+          <div class="fg3"></div>
         </div>
 
         <!-- Total -->
@@ -1002,6 +1006,7 @@ nav{flex:1;padding:10px 0;}
             <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">3020 — Benevolent Offering Fund</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="od-gl-benv">$0.00</td></tr>
             <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4050 — Youth Education Fund</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="od-gl-yedu">$0.00</td></tr>
             <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4070 — Offering / General</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="od-gl-offering">$0.00</td></tr>
+            <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4090 — Reimbursements</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="od-gl-reimb">$0.00</td></tr>
             <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4060 — Special Event / Programs</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="od-gl-special">$0.00</td></tr>
             <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4070 — Other / Miscellaneous</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="od-gl-other">$0.00</td></tr>
             <tr style="border-top:2px solid var(--light);font-weight:700;">
@@ -1027,7 +1032,7 @@ nav{flex:1;padding:10px 0;}
         </div>
         <div style="overflow-x:auto">
           <table class="vt" id="od-saved-table">
-            <tr><th>ID</th><th>Date</th><th>Tithes</th><th>Youth</th><th>Building Fund</th><th>Benevolent</th><th>Youth Education</th><th>Offering</th><th>Special Event</th><th>Other</th><th>Total</th><th>Received By</th><th>Saved?</th><th style="text-align:center">Actions</th></tr>
+            <tr><th>ID</th><th>Date</th><th>Tithes</th><th>Youth</th><th>Building Fund</th><th>Benevolent</th><th>Youth Education</th><th>Offering</th><th>Reimbursements</th><th>Special Event</th><th>Other</th><th>Total</th><th>Received By</th><th>Saved?</th><th style="text-align:center">Actions</th></tr>
           </table>
         </div>
       </div>
@@ -2145,9 +2150,10 @@ function calcODTotal() {
   var benv     = parseFloat(document.getElementById('od-benv').value) || 0;
   var yedu     = parseFloat(document.getElementById('od-yedu').value) || 0;
   var offering = parseFloat(document.getElementById('od-offering').value) || 0;
+  var reimb    = parseFloat(document.getElementById('od-reimb').value) || 0;
   var special  = parseFloat(document.getElementById('od-special').value) || 0;
   var other    = parseFloat(document.getElementById('od-other').value) || 0;
-  var tot = tithes + yth + bldg + benv + yedu + offering + special + other;
+  var tot = tithes + yth + bldg + benv + yedu + offering + reimb + special + other;
   document.getElementById('od-total').textContent         = fmtCurrency(tot);
   document.getElementById('od-gl-dr').textContent         = fmtCurrency(tot);
   document.getElementById('od-gl-tdr').innerHTML          = '<strong>' + fmtCurrency(tot) + '</strong>';
@@ -2158,6 +2164,7 @@ function calcODTotal() {
   document.getElementById('od-gl-benv').textContent       = fmtCurrency(benv);
   document.getElementById('od-gl-yedu').textContent       = fmtCurrency(yedu);
   document.getElementById('od-gl-offering').textContent   = fmtCurrency(offering);
+  document.getElementById('od-gl-reimb').textContent      = fmtCurrency(reimb);
   document.getElementById('od-gl-special').textContent    = fmtCurrency(special);
   document.getElementById('od-gl-other').textContent      = fmtCurrency(other);
 }
@@ -2173,9 +2180,10 @@ function saveODRec() {
   var benv     = parseFloat(document.getElementById('od-benv').value) || 0;
   var yedu     = parseFloat(document.getElementById('od-yedu').value) || 0;
   var offering = parseFloat(document.getElementById('od-offering').value) || 0;
+  var reimb    = parseFloat(document.getElementById('od-reimb').value) || 0;
   var special  = parseFloat(document.getElementById('od-special').value) || 0;
   var other    = parseFloat(document.getElementById('od-other').value) || 0;
-  var total    = tithes + yth + bldg + benv + yedu + offering + special + other;
+  var total    = tithes + yth + bldg + benv + yedu + offering + reimb + special + other;
   var rcvd     = document.getElementById('od-received-by').value || '—';
 
     var tb = document.getElementById('od-saved-table');
@@ -2190,6 +2198,7 @@ function saveODRec() {
     '<td class="ta">' + fmtCurrency(benv)      + '</td>' +
     '<td class="ta">' + fmtCurrency(yedu)      + '</td>' +
     '<td class="ta">' + fmtCurrency(offering)  + '</td>' +
+    '<td class="ta">' + fmtCurrency(reimb)     + '</td>' +
     '<td class="ta">' + fmtCurrency(special)   + '</td>' +
     '<td class="ta">' + fmtCurrency(other)     + '</td>' +
     '<td style="font-weight:700;color:var(--blue)">' + fmtCurrency(total) + '</td>' +
@@ -2204,12 +2213,12 @@ function saveODRec() {
   actTd.appendChild(eBtn); actTd.appendChild(dBtn);
   tb.appendChild(tr);
   odPendingRows.push({id:id, date:date, tithes:tithes, youth:yth, bldg:bldg, benv:benv,
-    yedu:yedu, offering:offering, special:special, other:other, total:total, rcvd:rcvd, _saved:false});
+    yedu:yedu, offering:offering, reimb:reimb, special:special, other:other, total:total, rcvd:rcvd, _saved:false});
 
   document.getElementById('od-saved-wrap').style.display = 'block';
   var nextNum = tb.querySelectorAll('tr').length;
   document.getElementById('od-id').value = 'OD-' + String(nextNum).padStart(3,'0');
-  ['od-tithes','od-youth','od-bldg','od-benv','od-yedu','od-offering','od-special','od-other'].forEach(function(i) {
+  ['od-tithes','od-youth','od-bldg','od-benv','od-yedu','od-offering','od-reimb','od-special','od-other'].forEach(function(i) {
     document.getElementById(i).value = '';
   });
   calcODTotal();
@@ -2273,6 +2282,7 @@ function saveODToSheets() {
       + '&benevolent='     + encodeURIComponent(r.benv)
       + '&youthEducation=' + encodeURIComponent(r.yedu)
       + '&offering='       + encodeURIComponent(r.offering)
+      + '&reimbursements=' + encodeURIComponent(r.reimb)
       + '&specialEvent='   + encodeURIComponent(r.special)
       + '&other='          + encodeURIComponent(r.other)
       + '&totalDeposit='   + encodeURIComponent(r.total)
@@ -5001,7 +5011,7 @@ function renderWeeklyFinancialReport(data, s1, s2, startDate, endDate, body) {
   var incSubtotal   = (inc.sundaySchool||0) + (inc.generalOffering||0) + (inc.tithes||0) +
                       (inc.building||0) + (inc.benevolent||0);
   var auxTotal      = (inc.youth||0) + (inc.youthEducation||0);
-  var miscTotal     = (inc.special||0) + (inc.other||0);
+  var miscTotal     = (inc.special||0) + (inc.reimbursements||0) + (inc.other||0);
   var grandIncoming = incSubtotal + auxTotal + miscTotal;
 
   var w2Total       = w2.reduce(function(s,e){ return s+(e.net||0); }, 0);
@@ -5059,6 +5069,8 @@ function renderWeeklyFinancialReport(data, s1, s2, startDate, endDate, body) {
   rpt += row('Special Event', '', inc.special, false);
   rpt += diagRow('TithesByMembers', mb.special.TithesByMembers||0);
   rpt += diagRow('OtherOfferings',  mb.special.OtherOfferings||0);
+  rpt += row('Reimbursements', '', inc.reimbursements, false);
+  rpt += diagRow('OtherOfferings',  (mb.reimbursements && mb.reimbursements.OtherOfferings)||0);
   rpt += row('Other',         '', inc.other,   false);
   rpt += diagRow('Offerings',         mb.other.Offerings||0);
   rpt += diagRow('TithesByMembers',   mb.other.TithesByMembers||0);
@@ -6529,23 +6541,25 @@ function odEditRow(id) {
     {key:'benv',     label:'Benevolent',     type:'number',value:r.benv,     min:0, step:'0.01'},
     {key:'yedu',     label:'Youth Education',type:'number',value:r.yedu,     min:0, step:'0.01'},
     {key:'offering', label:'Offering',       type:'number',value:r.offering, min:0, step:'0.01'},
+    {key:'reimb',    label:'Reimbursements', type:'number',value:r.reimb,    min:0, step:'0.01'},
     {key:'special',  label:'Special Event',  type:'number',value:r.special,  min:0, step:'0.01'},
     {key:'other',    label:'Other',          type:'number',value:r.other,    min:0, step:'0.01'},
     {key:'rcvd',     label:'Received By',    type:'text',  value:r.rcvd}
   ], onSave: function() {
     r.date=fvs('date'); r.tithes=fv('tithes'); r.youth=fv('youth'); r.bldg=fv('bldg');
     r.benv=fv('benv'); r.yedu=fv('yedu'); r.offering=fv('offering');
-    r.special=fv('special'); r.other=fv('other'); r.rcvd=fvs('rcvd');
-    r.total = r.tithes+r.youth+r.bldg+r.benv+r.yedu+r.offering+r.special+r.other;
+    r.reimb=fv('reimb'); r.special=fv('special'); r.other=fv('other'); r.rcvd=fvs('rcvd');
+    r.total = r.tithes+r.youth+r.bldg+r.benv+r.yedu+r.offering+r.reimb+r.special+r.other;
     if (rowEl) {
       var c = rowEl.cells;
       c[1].textContent=r.date;
       c[2].textContent=fmtCurrency(r.tithes);   c[3].textContent=fmtCurrency(r.youth);
       c[4].textContent=fmtCurrency(r.bldg);     c[5].textContent=fmtCurrency(r.benv);
       c[6].textContent=fmtCurrency(r.yedu);     c[7].textContent=fmtCurrency(r.offering);
-      c[8].textContent=fmtCurrency(r.special);  c[9].textContent=fmtCurrency(r.other);
-      c[10].innerHTML='<strong style="color:var(--blue)">'+fmtCurrency(r.total)+'</strong>';
-      c[11].textContent=r.rcvd;
+      c[8].textContent=fmtCurrency(r.reimb);    c[9].textContent=fmtCurrency(r.special);
+      c[10].textContent=fmtCurrency(r.other);
+      c[11].innerHTML='<strong style="color:var(--blue)">'+fmtCurrency(r.total)+'</strong>';
+      c[12].textContent=r.rcvd;
     }
     showToast('✅ Other Offering entry updated.');
   }});
@@ -8379,10 +8393,10 @@ var ADJ_CFG = {
   other: {
     action:'getOtherOfferings', updateAction:'updateOtherOffering', deleteAction:'deleteOtherOffering',
     title:'Other Offerings', contentId:'adj-other-content',
-    cols:['Date','Tithes','Youth','Bldg Fund','Benevolent','Youth Edu','Offering','Special','Other','Total','Received By'],
-    fields:['date','tithes','youth','building','benevolent','youthEdu','offering','special','other','total','receivedBy'],
-    labels:['Date','Tithes','Youth','Building Fund','Benevolent','Youth Education','Offering','Special Event','Other','Total','Received By'],
-    types: ['date','number','number','number','number','number','number','number','number','number','text'],
+    cols:['Date','Tithes','Youth','Bldg Fund','Benevolent','Youth Edu','Offering','Reimb.','Special','Other','Total','Received By'],
+    fields:['date','tithes','youth','building','benevolent','youthEdu','offering','reimbursements','special','other','total','receivedBy'],
+    labels:['Date','Tithes','Youth','Building Fund','Benevolent','Youth Education','Offering','Reimbursements','Special Event','Other','Total','Received By'],
+    types: ['date','number','number','number','number','number','number','number','number','number','number','text'],
     idField:'id'
   },
   payroll: {
