@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.05.07-91</title>
+<title>Mount Calvary M.B. Church Financial System v2026.05.07-92</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -173,7 +173,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.07-91</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.07-92</span>
     </div>
   </div>
 </div>
@@ -186,7 +186,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.07-91</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.07-92</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -196,7 +196,7 @@ nav{flex:1;padding:10px 0;}
       <div class="ni sec-up" onclick="sv('tithes',this)">💵 Offerings Collected</div>
       <div class="ni sec-up" onclick="sv('tithes-members',this);loadTithesMembers()">🙏 Tithes &amp; Offering by Members</div>
       <div class="ni sec-up" onclick="sv('giveify-donors',this);loadGDDonors()">📱 giveify by Donors</div>
-      <div class="ni sec-up" onclick="sv('other-offerings',this)">🎁 Other Offerings &amp; Donations</div>
+      <div class="ni sec-up" onclick="sv('other-offerings',this);initODForm()">🎁 Other Offerings &amp; Donations</div>
       <div class="ns sec-up">Expenses</div>
       <div class="ni sec-up" onclick="sv('payroll-view',this);initPayrollForm()">💼 Payroll</div>
       <div class="ni sec-up" onclick="sv('pay-bills',this);initBillForm();loadFundDropdowns()">🧾 Pay Bills</div>
@@ -270,7 +270,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.07-91</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.07-92</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -2347,6 +2347,44 @@ document.addEventListener('DOMContentLoaded', initPage);
 function saveUsersToStorage() {
   try { localStorage.setItem('mcmbc_users', JSON.stringify(USERS)); } catch(e) {}
 }
+// v92 — fetch existing OtherOfferings records on view-open and set the next OD-NNN.
+// Without this, the form always started at OD-001 (hardcoded HTML default), causing
+// duplicate IDs whenever the sheet already had entries from previous sessions.
+function initODForm() {
+  var idEl = document.getElementById('od-id');
+  if (!idEl) return;
+  var url = localStorage.getItem('mcmbc_sheet_url') || '';
+  if (!url || url.indexOf('script.google.com') === -1) {
+    // No connection — just leave the default in place.
+    return;
+  }
+  var cb = 'odInitCb_' + Date.now();
+  var t = setTimeout(function(){ delete window[cb]; }, 15000);
+  window[cb] = function(data) {
+    clearTimeout(t); delete window[cb];
+    var maxN = 0;
+    if (data && data.status === 'success' && Array.isArray(data.records)) {
+      data.records.forEach(function(r){
+        var m = String(r.id || '').match(/OD-(\d+)/i);
+        if (m) { var n = parseInt(m[1]); if (n > maxN) maxN = n; }
+      });
+    }
+    // Also account for any in-session pending rows already added before init ran
+    if (typeof odPendingRows !== 'undefined' && odPendingRows.length) {
+      odPendingRows.forEach(function(r){
+        var m = String(r.id || '').match(/OD-(\d+)/i);
+        if (m) { var n = parseInt(m[1]); if (n > maxN) maxN = n; }
+      });
+    }
+    idEl.value = 'OD-' + String(maxN + 1).padStart(3, '0');
+  };
+  var s = document.createElement('script');
+  s.onerror = function(){ clearTimeout(t); delete window[cb]; };
+  s.src = url + '?action=getOtherOfferings&callback=' + cb;
+  document.head.appendChild(s);
+  setTimeout(function(){ if (s.parentNode) s.parentNode.removeChild(s); }, 17000);
+}
+
 function calcODTotal() {
   var tithes   = parseFloat(document.getElementById('od-tithes').value) || 0;
   var yth      = parseFloat(document.getElementById('od-youth').value) || 0;
@@ -2444,8 +2482,11 @@ function saveODRec() {
     special:special, other:other, total:total, rcvd:rcvd, _saved:false});
 
   document.getElementById('od-saved-wrap').style.display = 'block';
-  var nextNum = tb.querySelectorAll('tr').length;
-  document.getElementById('od-id').value = 'OD-' + String(nextNum).padStart(3,'0');
+  // v92 — bump from current ID (parse + increment), not row count, so it works
+  // with IDs picked up from the sheet on view-open (e.g., starting at OD-008).
+  var curMatch = String(id).match(/OD-(\d+)/i);
+  var curN = curMatch ? parseInt(curMatch[1]) : 0;
+  document.getElementById('od-id').value = 'OD-' + String(curN + 1).padStart(3,'0');
   ['od-tithes','od-youth','od-bldg','od-benv','od-yedu','od-offering','od-reimb',
    'od-channiv','od-panniv','od-brother','od-ichoir','od-susher',
    'od-special','od-other'].forEach(function(i) {
