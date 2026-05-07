@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.05.07-94</title>
+<title>Mount Calvary M.B. Church Financial System v2026.05.07-95</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -173,7 +173,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.07-94</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.07-95</span>
     </div>
   </div>
 </div>
@@ -186,7 +186,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.07-94</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.07-95</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -270,7 +270,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.07-94</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.07-95</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -5068,6 +5068,95 @@ function renderDisbursementsReport(data, s1, s2, body) {
   var thStyle = 'padding:8px 6px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#fff;background:#0F2744;text-align:left';
   var thR     = thStyle + ';text-align:right';
 
+  // ── PAYROLL TABLES (separate from Bills/Expenses table) ────────
+  // v95 — W-2 and 1099 each get their own table with Gross / Fed Tax / Net columns
+
+  function payrollHead(label, color) {
+    var h = 'padding:8px 6px;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#fff;background:' + color + ';text-align:left';
+    var hR = h + ';text-align:right';
+    return '<thead><tr>' +
+      '<th style="' + h + ';width:90px">Date</th>' +
+      '<th style="' + h + '">' + label + '</th>' +
+      '<th style="' + h + '">Fund</th>' +
+      '<th style="' + h + '">Check No.</th>' +
+      '<th style="' + h + '">Memo</th>' +
+      '<th style="' + hR + ';width:90px">Gross</th>' +
+      '<th style="' + hR + ';width:90px">Fed Tax</th>' +
+      '<th style="' + hR + ';width:90px">Net</th>' +
+      '</tr></thead>';
+  }
+
+  function payrollRow(e) {
+    return '<tr style="border-bottom:1px solid #f1f5f9">' +
+      '<td style="padding:5px 6px;font-size:.78rem;white-space:nowrap;color:#64748b">' + (e.date ? fmtDateShort(e.date) : '—') + '</td>' +
+      '<td style="padding:5px 6px;font-size:.78rem;font-weight:600">' + (e.name||'—') + '</td>' +
+      '<td style="padding:5px 6px;font-size:.78rem;color:#475569">' + (e.fund||'—') + '</td>' +
+      '<td style="padding:5px 6px;font-size:.78rem;font-family:monospace;color:#64748b">' + (e.checkNo||'—') + '</td>' +
+      '<td style="padding:5px 6px;font-size:.75rem;color:#94a3b8;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + (e.memo||'') + '</td>' +
+      '<td style="padding:5px 6px;font-size:.8rem;font-weight:700;text-align:right;white-space:nowrap">' + fc(e.gross||0) + '</td>' +
+      '<td style="padding:5px 6px;font-size:.8rem;text-align:right;white-space:nowrap;color:#b91c1c">' + fc(e.fedTax||0) + '</td>' +
+      '<td style="padding:5px 6px;font-size:.8rem;font-weight:700;text-align:right;white-space:nowrap;color:#047857">' + fc(e.net||0) + '</td>' +
+      '</tr>';
+  }
+
+  function payrollSubtotalRow(label, gSum, fSum, nSum, color) {
+    var c = color || '#334155';
+    var brd = 'border-top:2px solid ' + c + ';';
+    return '<tr><td colspan="5" style="padding:6px 8px;font-size:.82rem;font-weight:700;' + brd + '">' + label + '</td>' +
+      '<td style="padding:6px 8px;font-size:.85rem;font-weight:700;text-align:right;white-space:nowrap;' + brd + '">' + fc(gSum) + '</td>' +
+      '<td style="padding:6px 8px;font-size:.85rem;font-weight:700;text-align:right;white-space:nowrap;color:#b91c1c;' + brd + '">' + fc(fSum) + '</td>' +
+      '<td style="padding:6px 8px;font-size:.85rem;font-weight:700;text-align:right;white-space:nowrap;color:#047857;' + brd + '">' + fc(nSum) + '</td></tr>';
+  }
+
+  // W-2 Payroll — sort by date then name
+  if (w2.length > 0) {
+    w2.sort(function(a,b){
+      var da = new Date(a.date||0), db = new Date(b.date||0);
+      if (da - db !== 0) return da - db;
+      return (a.name||'').toLowerCase().localeCompare((b.name||'').toLowerCase());
+    });
+    var w2FedSum = w2.reduce(function(s,e){ return s+(e.fedTax||0); }, 0);
+    var w2NetSum = w2.reduce(function(s,e){ return s+(e.net||0); }, 0);
+    rpt += '<table style="width:100%;border-collapse:collapse;margin-bottom:18px">';
+    rpt += '<caption style="text-align:left;padding:10px 6px 3px;font-size:.85rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#1e40af;border-bottom:2px solid #1e40af;caption-side:top">W-2 Payroll</caption>';
+    rpt += payrollHead('Employee', '#1e40af') + '<tbody>';
+    w2.forEach(function(e){ rpt += payrollRow(e); });
+    rpt += payrollSubtotalRow('W-2 Payroll Subtotal', w2Total, w2FedSum, w2NetSum, '#1e40af');
+    rpt += '</tbody></table>';
+  }
+
+  // 1099 Contractors — sort by date then name
+  if (c1099.length > 0) {
+    c1099.sort(function(a,b){
+      var da = new Date(a.date||0), db = new Date(b.date||0);
+      if (da - db !== 0) return da - db;
+      return (a.name||'').toLowerCase().localeCompare((b.name||'').toLowerCase());
+    });
+    var c99FedSum = c1099.reduce(function(s,e){ return s+(e.fedTax||0); }, 0);
+    var c99NetSum = c1099.reduce(function(s,e){ return s+(e.net||0); }, 0);
+    rpt += '<table style="width:100%;border-collapse:collapse;margin-bottom:18px">';
+    rpt += '<caption style="text-align:left;padding:10px 6px 3px;font-size:.85rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#6d28d9;border-bottom:2px solid #6d28d9;caption-side:top">1099 Contractors</caption>';
+    rpt += payrollHead('Contractor', '#6d28d9') + '<tbody>';
+    c1099.forEach(function(e){ rpt += payrollRow(e); });
+    rpt += payrollSubtotalRow('1099 Subtotal', pr99Total, c99FedSum, c99NetSum, '#6d28d9');
+    rpt += '</tbody></table>';
+  }
+
+  // Total Payroll combined row (W-2 + 1099) — own mini-table for clarity
+  if (w2.length > 0 || c1099.length > 0) {
+    var totGross = w2Total + pr99Total;
+    var totFed   = w2.reduce(function(s,e){ return s+(e.fedTax||0); },0) + c1099.reduce(function(s,e){ return s+(e.fedTax||0); },0);
+    var totNet   = w2.reduce(function(s,e){ return s+(e.net||0); },0)    + c1099.reduce(function(s,e){ return s+(e.net||0); },0);
+    rpt += '<table style="width:100%;border-collapse:collapse;margin-bottom:24px">';
+    rpt += '<tbody><tr>' +
+      '<td style="padding:8px 8px;font-size:.84rem;font-weight:700;background:#e0e7ff;border-top:2px solid #4338ca;border-bottom:2px solid #4338ca;color:#1e1b4b">Total Payroll (W-2 + 1099)</td>' +
+      '<td style="padding:8px 8px;font-size:.87rem;font-weight:700;text-align:right;background:#e0e7ff;border-top:2px solid #4338ca;border-bottom:2px solid #4338ca;color:#1e1b4b;white-space:nowrap;width:90px">' + fc(totGross) + '</td>' +
+      '<td style="padding:8px 8px;font-size:.87rem;font-weight:700;text-align:right;background:#e0e7ff;border-top:2px solid #4338ca;border-bottom:2px solid #4338ca;color:#b91c1c;white-space:nowrap;width:90px">' + fc(totFed) + '</td>' +
+      '<td style="padding:8px 8px;font-size:.87rem;font-weight:700;text-align:right;background:#e0e7ff;border-top:2px solid #4338ca;border-bottom:2px solid #4338ca;color:#047857;white-space:nowrap;width:90px">' + fc(totNet) + '</td>' +
+      '</tr></tbody></table>';
+  }
+
+  // ── BILLS / OTHER EXPENSES TABLE ────────────────────────────────
   rpt += '<table style="width:100%;border-collapse:collapse;margin-bottom:28px">';
   rpt += '<thead><tr>';
   rpt += '<th style="' + thStyle + ';width:90px">Date</th>';
@@ -5078,41 +5167,6 @@ function renderDisbursementsReport(data, s1, s2, body) {
   rpt += '<th style="' + thStyle + '">Memo</th>';
   rpt += '<th style="' + thR + ';width:90px">Amount</th>';
   rpt += '</tr></thead><tbody>';
-
-  // W-2 Payroll — sort by date then name
-  if (w2.length > 0) {
-    w2.sort(function(a,b){
-      var da = new Date(a.date||0), db = new Date(b.date||0);
-      if (da - db !== 0) return da - db;
-      return (a.name||'').toLowerCase().localeCompare((b.name||'').toLowerCase());
-    });
-    rpt += sectionHead('W-2 Payroll', '#1e40af');
-    w2.forEach(function(e){
-      rpt += dataRow(e.date, e.name, 'W-2 Employee', e.fund, e.checkNo, e.memo, e.gross, true);
-    });
-    rpt += totalRow('W-2 Payroll Subtotal', w2Total, true);
-  }
-
-  // 1099 Payroll — sort by date then name
-  if (c1099.length > 0) {
-    c1099.sort(function(a,b){
-      var da = new Date(a.date||0), db = new Date(b.date||0);
-      if (da - db !== 0) return da - db;
-      return (a.name||'').toLowerCase().localeCompare((b.name||'').toLowerCase());
-    });
-    rpt += sectionHead('1099 Contractors', '#6d28d9');
-    c1099.forEach(function(e){
-      rpt += dataRow(e.date, e.name, '1099 Contractor', e.fund, e.checkNo, e.memo, e.gross, true);
-    });
-    rpt += totalRow('1099 Subtotal', pr99Total, true);
-  }
-
-  // Total Payroll subtotal (W-2 + 1099) — shown whenever at least one payroll section exists
-  if (w2.length > 0 || c1099.length > 0) {
-    var payrollTotal = w2Total + pr99Total;
-    rpt += '<tr><td colspan="6" style="padding:7px 8px;font-size:.84rem;font-weight:700;background:#e0e7ff;border-top:2px solid #4338ca;border-bottom:2px solid #4338ca;color:#1e1b4b">Total Payroll (W-2 + 1099)</td>' +
-           '<td style="padding:7px 8px;font-size:.87rem;font-weight:700;text-align:right;background:#e0e7ff;border-top:2px solid #4338ca;border-bottom:2px solid #4338ca;color:#1e1b4b;white-space:nowrap">' + fc(payrollTotal) + '</td></tr>';
-  }
 
   // Bills — sort by date
   var billsFiltered = bills.filter(function(b){ return (b.amount||0) > 0; });
@@ -5139,6 +5193,8 @@ function renderDisbursementsReport(data, s1, s2, body) {
 
   if (w2.length === 0 && c1099.length === 0 && billsFiltered.length === 0 && expsFiltered.length === 0) {
     rpt += '<tr><td colspan="7" style="text-align:center;padding:40px;color:#94a3b8;font-style:italic">No disbursements found for this date range.</td></tr>';
+  } else if (billsFiltered.length === 0 && expsFiltered.length === 0) {
+    rpt += '<tr><td colspan="7" style="text-align:center;padding:18px;color:#94a3b8;font-style:italic;font-size:.78rem">No bills or other expenses for this date range.</td></tr>';
   }
 
   rpt += '</tbody></table>';
