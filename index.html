@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.05.07-88</title>
+<title>Mount Calvary M.B. Church Financial System v2026.05.07-89</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -173,7 +173,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.07-88</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.07-89</span>
     </div>
   </div>
 </div>
@@ -186,7 +186,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.07-88</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.07-89</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -270,7 +270,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.07-88</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.07-89</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -1318,7 +1318,13 @@ nav{flex:1;padding:10px 0;}
 
     <!-- ADJUSTMENTS SCREENS -->
     <div id="view-adj-offerings" class="vw">
-      <div class="ph"><h1>💵 Offerings — Adjustments</h1><p>Review, edit, and delete Sunday offering records</p></div>
+      <div class="ph" style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:10px">
+        <div>
+          <h1>💵 Offerings — Adjustments</h1>
+          <p>Review, edit, and delete Sunday offering records</p>
+        </div>
+        <button class="bp" onclick="printAdj('offerings')" style="margin-top:8px;white-space:nowrap">🖨 Print</button>
+      </div>
 
       <!-- Month/Year Filter (v88 — generic) -->
       <div id="adj-offerings-filter" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px;padding:14px 18px;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;">
@@ -1399,7 +1405,13 @@ nav{flex:1;padding:10px 0;}
     </div>
 
     <div id="view-adj-giveify" class="vw">
-      <div class="ph"><h1>📱 giveify by Donors — Adjustments</h1><p>Review, edit, and delete giveify donation records</p></div>
+      <div class="ph" style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:10px">
+        <div>
+          <h1>📱 giveify by Donors — Adjustments</h1>
+          <p>Review, edit, and delete giveify donation records</p>
+        </div>
+        <button class="bp" onclick="printAdj('giveify')" style="margin-top:8px;white-space:nowrap">🖨 Print</button>
+      </div>
 
       <!-- Month/Year Filter (v88 — generic) -->
       <div id="adj-giveify-filter" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px;padding:14px 18px;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;">
@@ -1433,7 +1445,13 @@ nav{flex:1;padding:10px 0;}
     </div>
 
     <div id="view-adj-other" class="vw">
-      <div class="ph"><h1>🎁 Other Offerings — Adjustments</h1><p>Review, edit, and delete other offering records</p></div>
+      <div class="ph" style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:10px">
+        <div>
+          <h1>🎁 Other Offerings — Adjustments</h1>
+          <p>Review, edit, and delete other offering records</p>
+        </div>
+        <button class="bp" onclick="printAdj('other')" style="margin-top:8px;white-space:nowrap">🖨 Print</button>
+      </div>
 
       <!-- Month/Year Filter (v88 — generic) -->
       <div id="adj-other-filter" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px;padding:14px 18px;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;">
@@ -1467,7 +1485,13 @@ nav{flex:1;padding:10px 0;}
     </div>
 
     <div id="view-adj-payroll" class="vw">
-      <div class="ph"><h1>💼 Payroll — Adjustments</h1><p>Review, edit, and delete payroll records</p></div>
+      <div class="ph" style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:10px">
+        <div>
+          <h1>💼 Payroll — Adjustments</h1>
+          <p>Review, edit, and delete payroll records</p>
+        </div>
+        <button class="bp" onclick="printAdj('payroll')" style="margin-top:8px;white-space:nowrap">🖨 Print</button>
+      </div>
 
       <!-- Month/Year Filter (mirrors Tithes adjustments filter) -->
       <div id="adj-payroll-filter" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px;padding:14px 18px;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;">
@@ -1503,7 +1527,13 @@ nav{flex:1;padding:10px 0;}
     </div>
 
     <div id="view-adj-bills" class="vw">
-      <div class="ph"><h1>🧾 Bills — Adjustments</h1><p>Review, edit, and delete bill payment records</p></div>
+      <div class="ph" style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:10px">
+        <div>
+          <h1>🧾 Bills — Adjustments</h1>
+          <p>Review, edit, and delete bill payment records</p>
+        </div>
+        <button class="bp" onclick="printAdj('bills')" style="margin-top:8px;white-space:nowrap">🖨 Print</button>
+      </div>
 
       <!-- Month/Year Filter (v88 — generic; uses checkDate field) -->
       <div id="adj-bills-filter" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px;padding:14px 18px;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;">
@@ -8705,94 +8735,101 @@ function loadAdjScreen(type) {
 }
 
 // ── Print Tithes Adjustments ──────────────────────────────────────
-function printTithesAdj() {
-  var records = ADJ_DATA['tithes'] || [];
+// ── Generic Adjustments Print (v89 — works for all hasFilter types) ──
+// Opens a popup with a printable HTML table of the currently-loaded ADJ_DATA[type],
+// honoring any active filter description. Numeric columns are right-aligned,
+// currency-formatted, and totaled in a footer row.
+function printAdj(type) {
+  var cfg = ADJ_CFG[type];
+  if (!cfg) { showToast('Unknown adjustment type: ' + type); return; }
+  var records = ADJ_DATA[type] || [];
   if (records.length === 0) {
     showToast('No records to print. Load or filter the list first.');
     return;
   }
 
-  // Detect if a filter is active
-  var mEl = document.getElementById('tithes-filter-month');
-  var yEl = document.getElementById('tithes-filter-year');
-  var fEl = document.getElementById('tithes-filter-from');
-  var tEl = document.getElementById('tithes-filter-to');
+  // Detect if a filter is active and build a human-readable suffix
   var filterDesc = '';
+  var mEl = document.getElementById(type + '-filter-month');
+  var yEl = document.getElementById(type + '-filter-year');
+  var fEl = document.getElementById(type + '-filter-from');
+  var tEl = document.getElementById(type + '-filter-to');
   if (fEl && fEl.value && tEl && tEl.value) {
     filterDesc = ' &mdash; ' + fEl.value + ' to ' + tEl.value;
-  } else if (mEl && mEl.value || yEl && yEl.value) {
+  } else if ((mEl && mEl.value) || (yEl && yEl.value)) {
     var mName = mEl && mEl.value ? mEl.options[mEl.selectedIndex].text : 'All Months';
     var yName = yEl && yEl.value ? yEl.value : 'All Years';
     filterDesc = ' &mdash; ' + mName + ' ' + yName;
   }
 
-  var today = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
-  var title = 'Tithes &amp; Offering by Members' + filterDesc;
+  var today = new Date().toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'});
+  function fc(v) {
+    var n = parseFloat(v) || 0;
+    return n > 0 ? '$' + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '&mdash;';
+  }
+  function fmtCell(val, type) {
+    if (val === undefined || val === null || val === '') return '';
+    if (type === 'number') return fc(val);
+    return String(val);
+  }
+  function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-  function fc(v) { return v > 0 ? '$' + parseFloat(v).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',') : '&mdash;'; }
-
-  var cols = ['Date','Member Name','Payment','Check #','Tithes','Youth','Bldg Fund','Benevolent','Youth Edu','Offering','Special','Other','Total'];
-  var thStyle = 'background:#1e3a5f;color:#fff;padding:5px 7px;border:1px solid #ccc;font-size:11px;text-align:left';
-  var thRStyle = 'background:#1e3a5f;color:#fff;padding:5px 7px;border:1px solid #ccc;font-size:11px;text-align:right';
+  var cols = cfg.cols, fields = cfg.fields, types = cfg.types;
+  var thStyleL = 'background:#1e3a5f;color:#fff;padding:5px 7px;border:1px solid #ccc;font-size:11px;text-align:left';
+  var thStyleR = 'background:#1e3a5f;color:#fff;padding:5px 7px;border:1px solid #ccc;font-size:11px;text-align:right';
 
   var tableHtml = '<table border="1" cellspacing="0" cellpadding="0" style="width:100%;border-collapse:collapse;font-size:11px">';
   tableHtml += '<thead><tr>';
-  tableHtml += '<th style="' + thStyle + '">Date</th>';
-  tableHtml += '<th style="' + thStyle + '">Member Name</th>';
-  tableHtml += '<th style="' + thStyle + '">Pay</th>';
-  tableHtml += '<th style="' + thStyle + '">Check #</th>';
-  ['Tithes','Youth','Bldg Fund','Benevolent','Youth Edu','Offering','Special','Other','Total'].forEach(function(h){
-    tableHtml += '<th style="' + thRStyle + '">' + h + '</th>';
-  });
+  for (var i = 0; i < cols.length; i++) {
+    var th = (types[i] === 'number') ? thStyleR : thStyleL;
+    tableHtml += '<th style="' + th + '">' + esc(cols[i]) + '</th>';
+  }
   tableHtml += '</tr></thead><tbody>';
 
-  // Totals accumulators
-  var tots = {tithes:0,youth:0,bldg:0,benv:0,yedu:0,offer:0,special:0,other:0,total:0};
+  // Totals accumulator: parallel array sized to fields, only meaningful where types[i] === 'number'
+  var totals = fields.map(function(){ return 0; });
 
-  records.forEach(function(r, i) {
-    var shade = i % 2 === 0 ? '' : 'background:#f5f5f5;';
-    var tdS = shade + 'padding:4px 7px;border:1px solid #ccc;font-size:11px;';
-    var tdRS = tdS + 'text-align:right;';
-    var isCheck = (r.payMethod||'').toLowerCase() === 'check';
-    tots.tithes  += (r.tithes||0);
-    tots.youth   += (r.youth||0);
-    tots.bldg    += (r.building||0);
-    tots.benv    += (r.benevolent||0);
-    tots.yedu    += (r.youthEdu||0);
-    tots.offer   += (r.offering||0);
-    tots.special += (r.special||0);
-    tots.other   += (r.other||0);
-    tots.total   += (r.total||0);
-
+  records.forEach(function(r, ri) {
+    var shade = ri % 2 === 0 ? '' : 'background:#f5f5f5;';
     tableHtml += '<tr>';
-    tableHtml += '<td style="' + tdS + '">' + (r.date||'') + '</td>';
-    tableHtml += '<td style="' + tdS + 'font-weight:600">' + (r.member||'') + '</td>';
-    tableHtml += '<td style="' + tdS + 'text-align:center">' + (isCheck ? 'Chk' : 'Cash') + '</td>';
-    tableHtml += '<td style="' + tdS + 'text-align:center">' + (isCheck && r.checkNo ? r.checkNo : '') + '</td>';
-    tableHtml += '<td style="' + tdRS + '">' + fc(r.tithes||0)    + '</td>';
-    tableHtml += '<td style="' + tdRS + '">' + fc(r.youth||0)     + '</td>';
-    tableHtml += '<td style="' + tdRS + '">' + fc(r.building||0)  + '</td>';
-    tableHtml += '<td style="' + tdRS + '">' + fc(r.benevolent||0)+ '</td>';
-    tableHtml += '<td style="' + tdRS + '">' + fc(r.youthEdu||0)  + '</td>';
-    tableHtml += '<td style="' + tdRS + '">' + fc(r.offering||0)  + '</td>';
-    tableHtml += '<td style="' + tdRS + '">' + fc(r.special||0)   + '</td>';
-    tableHtml += '<td style="' + tdRS + '">' + fc(r.other||0)     + '</td>';
-    tableHtml += '<td style="' + tdRS + 'font-weight:700">' + fc(r.total||0) + '</td>';
+    for (var i = 0; i < fields.length; i++) {
+      var t  = types[i];
+      var v  = r[fields[i]];
+      var tdBase = shade + 'padding:4px 7px;border:1px solid #ccc;font-size:11px;';
+      var align  = (t === 'number') ? 'text-align:right;' : '';
+      tableHtml += '<td style="' + tdBase + align + '">' + fmtCell(v, t) + '</td>';
+      if (t === 'number') totals[i] += (parseFloat(v) || 0);
+    }
     tableHtml += '</tr>';
   });
 
-  // Totals row
-  var tfS = 'background:#0f2744;color:#fbbf24;padding:5px 7px;border:1px solid #ccc;font-size:11px;font-weight:700;text-align:right';
-  tableHtml += '<tr>';
-  tableHtml += '<td colspan="4" style="background:#0f2744;color:#fbbf24;padding:5px 7px;border:1px solid #ccc;font-size:11px;font-weight:700">TOTALS (' + records.length + ' records)</td>';
-  [tots.tithes,tots.youth,tots.bldg,tots.benv,tots.yedu,tots.offer,tots.special,tots.other,tots.total].forEach(function(v){
-    tableHtml += '<td style="' + tfS + '">$' + v.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',') + '</td>';
-  });
-  tableHtml += '</tr></tbody></table>';
+  // Totals row — only for columns that are numeric; first column gets the "TOTALS (N records)" label.
+  var hasAnyNumber = types.some(function(t){ return t === 'number'; });
+  if (hasAnyNumber) {
+    var tfL = 'background:#0f2744;color:#fbbf24;padding:5px 7px;border:1px solid #ccc;font-size:11px;font-weight:700';
+    var tfR = tfL + ';text-align:right';
+    tableHtml += '<tr>';
+    var labelPlaced = false;
+    for (var j = 0; j < fields.length; j++) {
+      if (types[j] === 'number') {
+        tableHtml += '<td style="' + tfR + '">$' + totals[j].toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '</td>';
+      } else {
+        if (!labelPlaced) {
+          tableHtml += '<td style="' + tfL + '">TOTALS (' + records.length + ' records)</td>';
+          labelPlaced = true;
+        } else {
+          tableHtml += '<td style="' + tfL + '"></td>';
+        }
+      }
+    }
+    tableHtml += '</tr>';
+  }
+  tableHtml += '</tbody></table>';
 
-  var win = window.open('', '_blank', 'width=1050,height=750,scrollbars=yes');
+  var winWidth = Math.max(1050, Math.min(1600, cols.length * 95));
+  var win = window.open('', '_blank', 'width=' + winWidth + ',height=750,scrollbars=yes');
   win.document.write(
-    '<!DOCTYPE html><html><head><title>Tithes & Offering by Members</title>' +
+    '<!DOCTYPE html><html><head><title>' + esc(cfg.title) + ' &mdash; Adjustments</title>' +
     '<style>body{font-family:Arial,sans-serif;margin:24px}' +
     'h2{color:#1e3a5f;margin:0 0 2px}' +
     '.sub{color:#555;font-size:11px;margin-bottom:14px}' +
@@ -8805,7 +8842,7 @@ function printTithesAdj() {
     '<button class="btn bc" onclick="window.close()">\u2715 Close Window</button>' +
     '</div>' +
     '<h2>Mount Calvary M.B. Church</h2>' +
-    '<div class="sub">Tithes &amp; Offering by Members' + filterDesc + ' &nbsp;|&nbsp; Printed: ' + today + '</div>' +
+    '<div class="sub">' + esc(cfg.title) + filterDesc + ' &nbsp;|&nbsp; Printed: ' + today + '</div>' +
     tableHtml +
     '<div class="np" style="margin-top:14px">' +
     '<button class="btn bp" onclick="window.print()">\uD83D\uDDA8 Print / Save as PDF</button>' +
@@ -8814,6 +8851,9 @@ function printTithesAdj() {
   win.document.close();
   win.focus();
 }
+
+// Backward-compat wrapper — kept so the existing Tithes Print button keeps working.
+function printTithesAdj() { printAdj('tithes'); }
 
 // ── Generic Adjustments Filter (v88 — unified Tithes/Payroll/Offerings/giveify/Other/Bills) ──
 var ADJ_FULL_DATA = {}; // unfiltered datasets keyed by type
