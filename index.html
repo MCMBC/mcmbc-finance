@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.05.07-92</title>
+<title>Mount Calvary M.B. Church Financial System v2026.05.07-93</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -173,7 +173,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.07-92</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.07-93</span>
     </div>
   </div>
 </div>
@@ -186,7 +186,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.07-92</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.07-93</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -270,7 +270,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.07-92</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.07-93</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -799,7 +799,7 @@ nav{flex:1;padding:10px 0;}
         </div>
 
         <div class="fg3"><label>Received By</label><input id="tm-received-by" readonly style="background:#f1f5f9;color:#64748b"></div>
-        <div class="fg3"><label>Notes (optional)</label><textarea rows="3" placeholder="Any additional notes..."></textarea></div>
+        <div class="fg3"><label>Notes (optional)</label><textarea id="tm-notes" rows="3" placeholder="Any additional notes..."></textarea></div>
         <button class="bsv" onclick="saveTMRec()">Save Tithes</button>
         <button class="bcc" onclick="sv('dashboard',null)">Cancel</button>
       </div>
@@ -928,7 +928,7 @@ nav{flex:1;padding:10px 0;}
         </div>
 
         <div class="fg3"><label>Received By</label><input id="gd-received-by" readonly style="background:#f1f5f9;color:#64748b"></div>
-        <div class="fg3"><label>Notes (optional)</label><textarea rows="3" placeholder="Any additional notes..."></textarea></div>
+        <div class="fg3"><label>Notes (optional)</label><textarea id="gd-notes" rows="3" placeholder="Any additional notes..."></textarea></div>
         <button class="bsv" onclick="saveGDRec()">Save giveify</button>
         <button class="bcc" onclick="sv('dashboard',null)">Cancel</button>
       </div>
@@ -1030,7 +1030,7 @@ nav{flex:1;padding:10px 0;}
         </div>
 
         <div class="fg3"><label>Received By</label><input id="od-received-by" readonly style="background:#f1f5f9;color:#64748b"></div>
-        <div class="fg3"><label>Notes (optional)</label><textarea rows="3" placeholder="Any additional notes..."></textarea></div>
+        <div class="fg3"><label>Notes (optional)</label><textarea id="od-notes" rows="3" placeholder="Any additional notes..."></textarea></div>
         <button class="bsv" onclick="saveODRec()">Save Offering</button>
         <button class="bcc" onclick="sv('dashboard',null)">Cancel</button>
       </div>
@@ -2444,6 +2444,7 @@ function saveODRec() {
   var total    = tithes + yth + bldg + benv + yedu + offering + reimb +
                  chAnniv + psAnniv + brother + iChoir + sUsher + special + other;
   var rcvd     = document.getElementById('od-received-by').value || '—';
+  var notes    = (document.getElementById('od-notes') || {value:''}).value || '';
 
     var tb = document.getElementById('od-saved-table');
   var tr = document.createElement('tr');
@@ -2479,7 +2480,7 @@ function saveODRec() {
   odPendingRows.push({id:id, date:date, tithes:tithes, youth:yth, bldg:bldg, benv:benv,
     yedu:yedu, offering:offering, reimb:reimb,
     chAnniv:chAnniv, psAnniv:psAnniv, brother:brother, iChoir:iChoir, sUsher:sUsher,
-    special:special, other:other, total:total, rcvd:rcvd, _saved:false});
+    special:special, other:other, total:total, rcvd:rcvd, notes:notes, _saved:false});
 
   document.getElementById('od-saved-wrap').style.display = 'block';
   // v92 — bump from current ID (parse + increment), not row count, so it works
@@ -2492,6 +2493,7 @@ function saveODRec() {
    'od-special','od-other'].forEach(function(i) {
     document.getElementById(i).value = '';
   });
+  var odNotesEl = document.getElementById('od-notes'); if (odNotesEl) odNotesEl.value = '';
   calcODTotal();
   showToast('Entry added — click Save All to Google Sheet to sync.');
 }
@@ -2562,7 +2564,8 @@ function saveODToSheets() {
       + '&specialEvent='     + encodeURIComponent(r.special)
       + '&other='            + encodeURIComponent(r.other)
       + '&total='            + encodeURIComponent(r.total)
-      + '&receivedBy='     + encodeURIComponent(r.rcvd);
+      + '&receivedBy='     + encodeURIComponent(r.rcvd)
+      + '&notes='          + encodeURIComponent(r.notes||'');
     document.head.appendChild(s);
     setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); }, 27000);
   }
@@ -2609,6 +2612,7 @@ function saveGDRec() {
   var anniv    = parseFloat(document.getElementById('gd-anniv').value)    || 0;
   var total    = ss + bldg + benv + tithes + yth + offering + yedu + anniv;
   var rcvd     = document.getElementById('gd-received-by').value || '—';
+  var notes    = (document.getElementById('gd-notes') || {value:''}).value || '';
 
   if (total <= 0) { showToast('Enter at least one amount before saving.'); return; }
 
@@ -2641,7 +2645,7 @@ function saveGDRec() {
 
   gdPendingRows.push({id:id, date:date, donor:donor, ss:ss, bldg:bldg, benv:benv,
     tithes:tithes, youth:yth, offering:offering, yedu:yedu, anniv:anniv,
-    total:total, rcvd:rcvd, _saved:false});
+    total:total, rcvd:rcvd, notes:notes, _saved:false});
 
   document.getElementById('gd-saved-wrap').style.display = 'block';
   var nextNum = tb.querySelectorAll('tr').length;
@@ -2650,6 +2654,7 @@ function saveGDRec() {
     document.getElementById(i).value = '';
   });
   document.getElementById('gd-donor').value = '';
+  var gdNotesEl = document.getElementById('gd-notes'); if (gdNotesEl) gdNotesEl.value = '';
   calcGDTotal();
   showToast('Entry added — click Save All to Google Sheet to sync.');
 }
@@ -2715,7 +2720,8 @@ function saveGDToSheets() {
       + '&youthEducation='    + encodeURIComponent(r.yedu)
       + '&churchAnniversary=' + encodeURIComponent(r.anniv)
       + '&total='             + encodeURIComponent(r.total)
-      + '&receivedBy='        + encodeURIComponent(r.rcvd);
+      + '&receivedBy='        + encodeURIComponent(r.rcvd)
+      + '&notes='             + encodeURIComponent(r.notes||'');
     document.head.appendChild(s);
     setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); }, 27000);
   }
@@ -2821,6 +2827,7 @@ function saveTMRec() {
   var rcvd     = document.getElementById('tm-received-by').value || '—';
   var payMethod = document.querySelector('input[name="tm-payment"]:checked') ? document.querySelector('input[name="tm-payment"]:checked').value : 'Cash';
   var checkNo   = payMethod === 'Check' ? (document.getElementById('tm-check-no').value || '') : '';
+  var notes    = (document.getElementById('tm-notes') || {value:''}).value || '';
 
   if (total <= 0) { showToast('Enter at least one amount before saving.'); return; }
 
@@ -2853,7 +2860,7 @@ function saveTMRec() {
 
   tmPendingRows.push({id:id, date:date, member:member, tithes:tithes, youth:yth,
     bldg:bldg, benv:benv, yedu:yedu, offering:offering, special:special,
-    other:other, total:total, rcvd:rcvd, payMethod:payMethod, checkNo:checkNo});
+    other:other, total:total, rcvd:rcvd, payMethod:payMethod, checkNo:checkNo, notes:notes});
 
   document.getElementById('tm-saved-wrap').style.display = 'block';
 
@@ -2863,6 +2870,7 @@ function saveTMRec() {
     document.getElementById(i).value = '';
   });
   document.getElementById('tm-member').value = '';
+  var tmNotesEl = document.getElementById('tm-notes'); if (tmNotesEl) tmNotesEl.value = '';
   // Reset payment method to Cash and hide check number
   document.getElementById('tm-pay-cash').checked = true;
   document.getElementById('tm-check-no').value = '';
@@ -2934,7 +2942,8 @@ function saveTMToSheets() {
       + '&total='          + encodeURIComponent(r.total)
       + '&paymentMethod='  + encodeURIComponent(r.payMethod||'Cash')
       + '&checkNo='        + encodeURIComponent(r.checkNo||'')
-      + '&receivedBy='     + encodeURIComponent(r.rcvd);
+      + '&receivedBy='     + encodeURIComponent(r.rcvd)
+      + '&notes='          + encodeURIComponent(r.notes||'');
     document.head.appendChild(s);
     setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); }, 27000);
   }
@@ -3610,7 +3619,8 @@ function saveAllToSheet() {
       '&youthEducation=' + (d.yedu||0) +
       '&other=' + (d.other||0) +
       '&totalDeposit=' + d.total +
-      '&receivedBy=' + encodeURIComponent(d.rcvd);
+      '&receivedBy=' + encodeURIComponent(d.rcvd) +
+      '&notes=' + encodeURIComponent(d.notes||'');
 
     var timeout = setTimeout(function() {
       delete window[callbackName];
@@ -8704,10 +8714,10 @@ var ADJ_CFG = {
     action:'getOfferings', updateAction:'updateOffering', deleteAction:'deleteOffering',
     title:'Offerings', contentId:'adj-offerings-content',
     dateField:'date', hasFilter:true,
-    cols:['Date','Sun School','Benevolent','Bldg Fund','General','Youth','Youth Edu','Other','Total','Received By'],
-    fields:['date','sundaySchool','benevolent','buildingFund','generalOffering','youth','youthEducation','other','total','receivedBy'],
-    labels:['Date','Sunday School','Benevolent','Building Fund','General Offering','Youth','Youth Education','Other','Total','Received By'],
-    types: ['date','number','number','number','number','number','number','number','number','text'],
+    cols:['Date','Sun School','Benevolent','Bldg Fund','General','Youth','Youth Edu','Other','Total','Received By','Notes'],
+    fields:['date','sundaySchool','benevolent','buildingFund','generalOffering','youth','youthEducation','other','total','receivedBy','notes'],
+    labels:['Date','Sunday School','Benevolent','Building Fund','General Offering','Youth','Youth Education','Other','Total','Received By','Notes'],
+    types: ['date','number','number','number','number','number','number','number','number','text','text'],
     idField:'id'
   },
   cashOfferings: {
@@ -8723,30 +8733,30 @@ var ADJ_CFG = {
     action:'getTithesRecords', updateAction:'updateTithes', deleteAction:'deleteTithes',
     title:'Tithes & Offering by Members', contentId:'adj-tithes-content',
     dateField:'date', hasFilter:true,
-    cols:['Date','Member','Tithes','Youth','Bldg Fund','Benevolent','Youth Edu','Offering','Special','Other','Total','Payment','Check #','Received By'],
-    fields:['date','member','tithes','youth','building','benevolent','youthEdu','offering','special','other','total','payMethod','checkNo','receivedBy'],
-    labels:['Date','Member Name','Tithes','Youth','Building Fund','Benevolent','Youth Education','Offering','Special Event','Other','Total','Payment Method','Check No.','Received By'],
-    types: ['date','text','number','number','number','number','number','number','number','number','number','text','text','text'],
+    cols:['Date','Member','Tithes','Youth','Bldg Fund','Benevolent','Youth Edu','Offering','Special','Other','Total','Payment','Check #','Received By','Notes'],
+    fields:['date','member','tithes','youth','building','benevolent','youthEdu','offering','special','other','total','payMethod','checkNo','receivedBy','notes'],
+    labels:['Date','Member Name','Tithes','Youth','Building Fund','Benevolent','Youth Education','Offering','Special Event','Other','Total','Payment Method','Check No.','Received By','Notes'],
+    types: ['date','text','number','number','number','number','number','number','number','number','number','text','text','text','text'],
     idField:'id'
   },
   giveify: {
     action:'getGiveifyRecords', updateAction:'updateGiveify', deleteAction:'deleteGiveify',
     title:'giveify by Donors', contentId:'adj-giveify-content',
     dateField:'date', hasFilter:true,
-    cols:['Date','Donor','Sun School','Bldg Fund','Benevolent','Tithes','Youth','Offering','Youth Edu','Anniversary','Total','Received By'],
-    fields:['date','donor','sundaySchool','building','benevolent','tithes','youth','offering','youthEdu','anniversary','total','receivedBy'],
-    labels:['Date','Donor Name','Sunday School','Building Fund','Benevolent','Tithes','Youth','Offering','Youth Education','Church Anniversary','Total','Received By'],
-    types: ['date','text','number','number','number','number','number','number','number','number','number','text'],
+    cols:['Date','Donor','Sun School','Bldg Fund','Benevolent','Tithes','Youth','Offering','Youth Edu','Anniversary','Total','Received By','Notes'],
+    fields:['date','donor','sundaySchool','building','benevolent','tithes','youth','offering','youthEdu','anniversary','total','receivedBy','notes'],
+    labels:['Date','Donor Name','Sunday School','Building Fund','Benevolent','Tithes','Youth','Offering','Youth Education','Church Anniversary','Total','Received By','Notes'],
+    types: ['date','text','number','number','number','number','number','number','number','number','number','text','text'],
     idField:'id'
   },
   other: {
     action:'getOtherOfferings', updateAction:'updateOtherOffering', deleteAction:'deleteOtherOffering',
     title:'Other Offerings', contentId:'adj-other-content',
     dateField:'date', hasFilter:true,
-    cols:['Date','Tithes','Youth','Bldg Fund','Benevolent','Youth Edu','Offering','Reimb.','Ch. Anniv.','Pas. Anniv.','Brotherhood','Insp. Choir','Sr. Usher','Special','Other','Total','Received By'],
-    fields:['date','tithes','youth','building','benevolent','youthEdu','offering','reimbursements','churchAnniv','pastorAnniv','brotherhood','inspChoir','seniorUsher','special','other','total','receivedBy'],
-    labels:['Date','Tithes','Youth','Building Fund','Benevolent','Youth Education','Offering','Reimbursements','Church Anniversary','Pastor Anniversary','Brotherhood','Inspirational Choir','Senior Usher','Special Event','Other','Total','Received By'],
-    types: ['date','number','number','number','number','number','number','number','number','number','number','number','number','number','number','number','text'],
+    cols:['Date','Tithes','Youth','Bldg Fund','Benevolent','Youth Edu','Offering','Reimb.','Ch. Anniv.','Pas. Anniv.','Brotherhood','Insp. Choir','Sr. Usher','Special','Other','Total','Received By','Notes'],
+    fields:['date','tithes','youth','building','benevolent','youthEdu','offering','reimbursements','churchAnniv','pastorAnniv','brotherhood','inspChoir','seniorUsher','special','other','total','receivedBy','notes'],
+    labels:['Date','Tithes','Youth','Building Fund','Benevolent','Youth Education','Offering','Reimbursements','Church Anniversary','Pastor Anniversary','Brotherhood','Inspirational Choir','Senior Usher','Special Event','Other','Total','Received By','Notes'],
+    types: ['date','number','number','number','number','number','number','number','number','number','number','number','number','number','number','number','text','text'],
     idField:'id'
   },
   payroll: {
