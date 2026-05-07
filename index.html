@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.05.06-87</title>
+<title>Mount Calvary M.B. Church Financial System v2026.05.07-88</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -173,7 +173,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.06-87</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.07-88</span>
     </div>
   </div>
 </div>
@@ -186,7 +186,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.06-87</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.07-88</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -270,7 +270,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.06-87</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.07-88</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -1319,6 +1319,35 @@ nav{flex:1;padding:10px 0;}
     <!-- ADJUSTMENTS SCREENS -->
     <div id="view-adj-offerings" class="vw">
       <div class="ph"><h1>💵 Offerings — Adjustments</h1><p>Review, edit, and delete Sunday offering records</p></div>
+
+      <!-- Month/Year Filter (v88 — generic) -->
+      <div id="adj-offerings-filter" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px;padding:14px 18px;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;">
+        <span style="font-size:.78rem;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.04em">Filter by</span>
+        <select id="offerings-filter-month" style="padding:7px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit;color:#1e293b" onchange="applyAdjFilter('offerings')">
+          <option value="">All Months</option>
+          <option value="1">January</option><option value="2">February</option>
+          <option value="3">March</option><option value="4">April</option>
+          <option value="5">May</option><option value="6">June</option>
+          <option value="7">July</option><option value="8">August</option>
+          <option value="9">September</option><option value="10">October</option>
+          <option value="11">November</option><option value="12">December</option>
+        </select>
+        <select id="offerings-filter-year" style="padding:7px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit;color:#1e293b" onchange="applyAdjFilter('offerings')">
+          <option value="">All Years</option>
+        </select>
+        <span style="font-size:.78rem;font-weight:700;color:#94a3b8">— or —</span>
+        <div style="display:flex;align-items:center;gap:6px">
+          <label style="font-size:.75rem;font-weight:600;color:#475569">From</label>
+          <input type="date" id="offerings-filter-from" style="padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;color:#1e293b" onchange="applyAdjFilter('offerings')">
+        </div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <label style="font-size:.75rem;font-weight:600;color:#475569">To</label>
+          <input type="date" id="offerings-filter-to" style="padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;color:#1e293b" onchange="applyAdjFilter('offerings')">
+        </div>
+        <button class="bac" onclick="clearAdjFilter('offerings')" style="font-size:.8rem">✕ Clear</button>
+        <span id="offerings-filter-count" style="font-size:.78rem;color:#64748b;margin-left:4px"></span>
+      </div>
+
       <div id="adj-offerings-content"><div style="text-align:center;padding:40px;color:#64748b">Loading…</div></div>
     </div>
 
@@ -1340,7 +1369,7 @@ nav{flex:1;padding:10px 0;}
       <div id="adj-tithes-filter" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px;padding:14px 18px;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;">
         <span style="font-size:.78rem;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.04em">Filter by</span>
         <select id="tithes-filter-month" style="padding:7px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit;color:#1e293b"
-          onchange="applyTithesFilter()">
+          onchange="applyAdjFilter(&#39;tithes&#39;)">
           <option value="">All Months</option>
           <option value="1">January</option><option value="2">February</option>
           <option value="3">March</option><option value="4">April</option>
@@ -1350,19 +1379,19 @@ nav{flex:1;padding:10px 0;}
           <option value="11">November</option><option value="12">December</option>
         </select>
         <select id="tithes-filter-year" style="padding:7px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit;color:#1e293b"
-          onchange="applyTithesFilter()">
+          onchange="applyAdjFilter(&#39;tithes&#39;)">
           <option value="">All Years</option>
         </select>
         <span style="font-size:.78rem;font-weight:700;color:#94a3b8">— or —</span>
         <div style="display:flex;align-items:center;gap:6px">
           <label style="font-size:.75rem;font-weight:600;color:#475569">From</label>
-          <input type="date" id="tithes-filter-from" style="padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;color:#1e293b" onchange="applyTithesFilter()">
+          <input type="date" id="tithes-filter-from" style="padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;color:#1e293b" onchange="applyAdjFilter(&#39;tithes&#39;)">
         </div>
         <div style="display:flex;align-items:center;gap:6px">
           <label style="font-size:.75rem;font-weight:600;color:#475569">To</label>
-          <input type="date" id="tithes-filter-to" style="padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;color:#1e293b" onchange="applyTithesFilter()">
+          <input type="date" id="tithes-filter-to" style="padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;color:#1e293b" onchange="applyAdjFilter(&#39;tithes&#39;)">
         </div>
-        <button class="bac" onclick="clearTithesFilter()" style="font-size:.8rem">✕ Clear</button>
+        <button class="bac" onclick="clearAdjFilter(&#39;tithes&#39;)" style="font-size:.8rem">✕ Clear</button>
         <span id="tithes-filter-count" style="font-size:.78rem;color:#64748b;margin-left:4px"></span>
       </div>
 
@@ -1371,11 +1400,69 @@ nav{flex:1;padding:10px 0;}
 
     <div id="view-adj-giveify" class="vw">
       <div class="ph"><h1>📱 giveify by Donors — Adjustments</h1><p>Review, edit, and delete giveify donation records</p></div>
+
+      <!-- Month/Year Filter (v88 — generic) -->
+      <div id="adj-giveify-filter" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px;padding:14px 18px;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;">
+        <span style="font-size:.78rem;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.04em">Filter by</span>
+        <select id="giveify-filter-month" style="padding:7px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit;color:#1e293b" onchange="applyAdjFilter('giveify')">
+          <option value="">All Months</option>
+          <option value="1">January</option><option value="2">February</option>
+          <option value="3">March</option><option value="4">April</option>
+          <option value="5">May</option><option value="6">June</option>
+          <option value="7">July</option><option value="8">August</option>
+          <option value="9">September</option><option value="10">October</option>
+          <option value="11">November</option><option value="12">December</option>
+        </select>
+        <select id="giveify-filter-year" style="padding:7px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit;color:#1e293b" onchange="applyAdjFilter('giveify')">
+          <option value="">All Years</option>
+        </select>
+        <span style="font-size:.78rem;font-weight:700;color:#94a3b8">— or —</span>
+        <div style="display:flex;align-items:center;gap:6px">
+          <label style="font-size:.75rem;font-weight:600;color:#475569">From</label>
+          <input type="date" id="giveify-filter-from" style="padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;color:#1e293b" onchange="applyAdjFilter('giveify')">
+        </div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <label style="font-size:.75rem;font-weight:600;color:#475569">To</label>
+          <input type="date" id="giveify-filter-to" style="padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;color:#1e293b" onchange="applyAdjFilter('giveify')">
+        </div>
+        <button class="bac" onclick="clearAdjFilter('giveify')" style="font-size:.8rem">✕ Clear</button>
+        <span id="giveify-filter-count" style="font-size:.78rem;color:#64748b;margin-left:4px"></span>
+      </div>
+
       <div id="adj-giveify-content"><div style="text-align:center;padding:40px;color:#64748b">Loading…</div></div>
     </div>
 
     <div id="view-adj-other" class="vw">
       <div class="ph"><h1>🎁 Other Offerings — Adjustments</h1><p>Review, edit, and delete other offering records</p></div>
+
+      <!-- Month/Year Filter (v88 — generic) -->
+      <div id="adj-other-filter" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px;padding:14px 18px;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;">
+        <span style="font-size:.78rem;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.04em">Filter by</span>
+        <select id="other-filter-month" style="padding:7px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit;color:#1e293b" onchange="applyAdjFilter('other')">
+          <option value="">All Months</option>
+          <option value="1">January</option><option value="2">February</option>
+          <option value="3">March</option><option value="4">April</option>
+          <option value="5">May</option><option value="6">June</option>
+          <option value="7">July</option><option value="8">August</option>
+          <option value="9">September</option><option value="10">October</option>
+          <option value="11">November</option><option value="12">December</option>
+        </select>
+        <select id="other-filter-year" style="padding:7px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit;color:#1e293b" onchange="applyAdjFilter('other')">
+          <option value="">All Years</option>
+        </select>
+        <span style="font-size:.78rem;font-weight:700;color:#94a3b8">— or —</span>
+        <div style="display:flex;align-items:center;gap:6px">
+          <label style="font-size:.75rem;font-weight:600;color:#475569">From</label>
+          <input type="date" id="other-filter-from" style="padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;color:#1e293b" onchange="applyAdjFilter('other')">
+        </div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <label style="font-size:.75rem;font-weight:600;color:#475569">To</label>
+          <input type="date" id="other-filter-to" style="padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;color:#1e293b" onchange="applyAdjFilter('other')">
+        </div>
+        <button class="bac" onclick="clearAdjFilter('other')" style="font-size:.8rem">✕ Clear</button>
+        <span id="other-filter-count" style="font-size:.78rem;color:#64748b;margin-left:4px"></span>
+      </div>
+
       <div id="adj-other-content"><div style="text-align:center;padding:40px;color:#64748b">Loading…</div></div>
     </div>
 
@@ -1386,7 +1473,7 @@ nav{flex:1;padding:10px 0;}
       <div id="adj-payroll-filter" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px;padding:14px 18px;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;">
         <span style="font-size:.78rem;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.04em">Filter by</span>
         <select id="payroll-filter-month" style="padding:7px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit;color:#1e293b"
-          onchange="applyPayrollFilter()">
+          onchange="applyAdjFilter(&#39;payroll&#39;)">
           <option value="">All Months</option>
           <option value="1">January</option><option value="2">February</option>
           <option value="3">March</option><option value="4">April</option>
@@ -1396,19 +1483,19 @@ nav{flex:1;padding:10px 0;}
           <option value="11">November</option><option value="12">December</option>
         </select>
         <select id="payroll-filter-year" style="padding:7px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit;color:#1e293b"
-          onchange="applyPayrollFilter()">
+          onchange="applyAdjFilter(&#39;payroll&#39;)">
           <option value="">All Years</option>
         </select>
         <span style="font-size:.78rem;font-weight:700;color:#94a3b8">— or —</span>
         <div style="display:flex;align-items:center;gap:6px">
           <label style="font-size:.75rem;font-weight:600;color:#475569">From</label>
-          <input type="date" id="payroll-filter-from" style="padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;color:#1e293b" onchange="applyPayrollFilter()">
+          <input type="date" id="payroll-filter-from" style="padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;color:#1e293b" onchange="applyAdjFilter(&#39;payroll&#39;)">
         </div>
         <div style="display:flex;align-items:center;gap:6px">
           <label style="font-size:.75rem;font-weight:600;color:#475569">To</label>
-          <input type="date" id="payroll-filter-to" style="padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;color:#1e293b" onchange="applyPayrollFilter()">
+          <input type="date" id="payroll-filter-to" style="padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;color:#1e293b" onchange="applyAdjFilter(&#39;payroll&#39;)">
         </div>
-        <button class="bac" onclick="clearPayrollFilter()" style="font-size:.8rem">✕ Clear</button>
+        <button class="bac" onclick="clearAdjFilter(&#39;payroll&#39;)" style="font-size:.8rem">✕ Clear</button>
         <span id="payroll-filter-count" style="font-size:.78rem;color:#64748b;margin-left:4px"></span>
       </div>
 
@@ -1417,6 +1504,35 @@ nav{flex:1;padding:10px 0;}
 
     <div id="view-adj-bills" class="vw">
       <div class="ph"><h1>🧾 Bills — Adjustments</h1><p>Review, edit, and delete bill payment records</p></div>
+
+      <!-- Month/Year Filter (v88 — generic; uses checkDate field) -->
+      <div id="adj-bills-filter" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px;padding:14px 18px;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;">
+        <span style="font-size:.78rem;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.04em">Filter by</span>
+        <select id="bills-filter-month" style="padding:7px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit;color:#1e293b" onchange="applyAdjFilter('bills')">
+          <option value="">All Months</option>
+          <option value="1">January</option><option value="2">February</option>
+          <option value="3">March</option><option value="4">April</option>
+          <option value="5">May</option><option value="6">June</option>
+          <option value="7">July</option><option value="8">August</option>
+          <option value="9">September</option><option value="10">October</option>
+          <option value="11">November</option><option value="12">December</option>
+        </select>
+        <select id="bills-filter-year" style="padding:7px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit;color:#1e293b" onchange="applyAdjFilter('bills')">
+          <option value="">All Years</option>
+        </select>
+        <span style="font-size:.78rem;font-weight:700;color:#94a3b8">— or —</span>
+        <div style="display:flex;align-items:center;gap:6px">
+          <label style="font-size:.75rem;font-weight:600;color:#475569">From</label>
+          <input type="date" id="bills-filter-from" style="padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;color:#1e293b" onchange="applyAdjFilter('bills')">
+        </div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <label style="font-size:.75rem;font-weight:600;color:#475569">To</label>
+          <input type="date" id="bills-filter-to" style="padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;color:#1e293b" onchange="applyAdjFilter('bills')">
+        </div>
+        <button class="bac" onclick="clearAdjFilter('bills')" style="font-size:.8rem">✕ Clear</button>
+        <span id="bills-filter-count" style="font-size:.78rem;color:#64748b;margin-left:4px"></span>
+      </div>
+
       <div id="adj-bills-content"><div style="text-align:center;padding:40px;color:#64748b">Loading…</div></div>
     </div>
 
@@ -8461,6 +8577,7 @@ var ADJ_CFG = {
   offerings: {
     action:'getOfferings', updateAction:'updateOffering', deleteAction:'deleteOffering',
     title:'Offerings', contentId:'adj-offerings-content',
+    dateField:'date', hasFilter:true,
     cols:['Date','Sun School','Benevolent','Bldg Fund','General','Youth','Youth Edu','Other','Total','Received By'],
     fields:['date','sundaySchool','benevolent','buildingFund','generalOffering','youth','youthEducation','other','total','receivedBy'],
     labels:['Date','Sunday School','Benevolent','Building Fund','General Offering','Youth','Youth Education','Other','Total','Received By'],
@@ -8479,6 +8596,7 @@ var ADJ_CFG = {
   tithes: {
     action:'getTithesRecords', updateAction:'updateTithes', deleteAction:'deleteTithes',
     title:'Tithes & Offering by Members', contentId:'adj-tithes-content',
+    dateField:'date', hasFilter:true,
     cols:['Date','Member','Tithes','Youth','Bldg Fund','Benevolent','Youth Edu','Offering','Special','Other','Total','Payment','Check #','Received By'],
     fields:['date','member','tithes','youth','building','benevolent','youthEdu','offering','special','other','total','payMethod','checkNo','receivedBy'],
     labels:['Date','Member Name','Tithes','Youth','Building Fund','Benevolent','Youth Education','Offering','Special Event','Other','Total','Payment Method','Check No.','Received By'],
@@ -8488,6 +8606,7 @@ var ADJ_CFG = {
   giveify: {
     action:'getGiveifyRecords', updateAction:'updateGiveify', deleteAction:'deleteGiveify',
     title:'giveify by Donors', contentId:'adj-giveify-content',
+    dateField:'date', hasFilter:true,
     cols:['Date','Donor','Sun School','Bldg Fund','Benevolent','Tithes','Youth','Offering','Youth Edu','Anniversary','Total','Received By'],
     fields:['date','donor','sundaySchool','building','benevolent','tithes','youth','offering','youthEdu','anniversary','total','receivedBy'],
     labels:['Date','Donor Name','Sunday School','Building Fund','Benevolent','Tithes','Youth','Offering','Youth Education','Church Anniversary','Total','Received By'],
@@ -8497,6 +8616,7 @@ var ADJ_CFG = {
   other: {
     action:'getOtherOfferings', updateAction:'updateOtherOffering', deleteAction:'deleteOtherOffering',
     title:'Other Offerings', contentId:'adj-other-content',
+    dateField:'date', hasFilter:true,
     cols:['Date','Tithes','Youth','Bldg Fund','Benevolent','Youth Edu','Offering','Reimb.','Special','Other','Total','Received By'],
     fields:['date','tithes','youth','building','benevolent','youthEdu','offering','reimbursements','special','other','total','receivedBy'],
     labels:['Date','Tithes','Youth','Building Fund','Benevolent','Youth Education','Offering','Reimbursements','Special Event','Other','Total','Received By'],
@@ -8506,6 +8626,7 @@ var ADJ_CFG = {
   payroll: {
     action:'getPayrollRecords', updateAction:'updatePayroll', deleteAction:'deletePayroll',
     title:'Payroll', contentId:'adj-payroll-content',
+    dateField:'datePaid', hasFilter:true,
     cols:['Date Paid','Employee ID','Employee','Pay Type','Pay Period','Fund','Gross','Fed Tax','State Tax','FICA','Medicare','Other Ded','Net Pay','Check No','Memo','Saved By'],
     fields:['datePaid','empId','empName','payType','payPeriod','fund','gross','fedTax','stateTax','fica','medicare','otherDed','net','checkNo','memo','savedBy'],
     labels:['Date Paid','Employee ID','Employee Name','Pay Type','Pay Period','Fund','Gross Wages','Fed Tax W/H','State Tax W/H','FICA','Medicare','Other Deductions','Net Pay','Check No.','Memo','Saved By'],
@@ -8515,6 +8636,7 @@ var ADJ_CFG = {
   bills: {
     action:'getBillRecords', updateAction:'updateBill', deleteAction:'deleteBill',
     title:'Bills', contentId:'adj-bills-content',
+    dateField:'checkDate', hasFilter:true,
     cols:['Check Date','Check No','Payee','Amount','Fund','Acct No','Memo','Type of Bill'],
     fields:['checkDate','checkNo','payee','amount','fund','accountNo','memo','typeOfBill'],
     labels:['Check Date','Check Number','Payee','Check Amount','Fund','Account Number','Memo','Type of Bill'],
@@ -8552,22 +8674,6 @@ function loadAdjScreen(type) {
         var db = b.datePaid ? new Date(b.datePaid) : new Date(0);
         return da - db;
       });
-      // Save full unfiltered copy for filter operations (v87)
-      PAYROLL_FULL_DATA = ADJ_DATA[type].slice();
-      populatePayrollYearDropdown();
-      // Re-apply filter if one is active, otherwise render all
-      var hasPayrollFilter = (
-        (document.getElementById('payroll-filter-month') && document.getElementById('payroll-filter-month').value) ||
-        (document.getElementById('payroll-filter-year')  && document.getElementById('payroll-filter-year').value)  ||
-        (document.getElementById('payroll-filter-from')  && document.getElementById('payroll-filter-from').value)  ||
-        (document.getElementById('payroll-filter-to')    && document.getElementById('payroll-filter-to').value)
-      );
-      if (hasPayrollFilter) {
-        applyPayrollFilter();
-      } else {
-        renderAdjTable(type);
-      }
-      return;
     }
     // Sort tithes by date ascending then member name ascending
     if (type === 'tithes') {
@@ -8578,18 +8684,13 @@ function loadAdjScreen(type) {
         if (td !== 0) return td;
         return (a.member||'').toLowerCase() < (b.member||'').toLowerCase() ? -1 : 1;
       });
-      // Save full unfiltered copy for filter operations
-      TITHES_FULL_DATA = ADJ_DATA[type].slice();
-      populateTithesYearDropdown();
-      // Re-apply filter if one is active, otherwise render all
-      var hasFilter = (
-        (document.getElementById('tithes-filter-month') && document.getElementById('tithes-filter-month').value) ||
-        (document.getElementById('tithes-filter-year')  && document.getElementById('tithes-filter-year').value)  ||
-        (document.getElementById('tithes-filter-from')  && document.getElementById('tithes-filter-from').value)  ||
-        (document.getElementById('tithes-filter-to')    && document.getElementById('tithes-filter-to').value)
-      );
-      if (hasFilter) {
-        applyTithesFilter();
+    }
+    // v88 — generic filter handling for any type marked hasFilter in ADJ_CFG
+    if (cfg.hasFilter) {
+      ADJ_FULL_DATA[type] = ADJ_DATA[type].slice();
+      populateAdjYearDropdown(type);
+      if (hasActiveAdjFilter(type)) {
+        applyAdjFilter(type);
       } else {
         renderAdjTable(type);
       }
@@ -8714,15 +8815,31 @@ function printTithesAdj() {
   win.focus();
 }
 
-// ── Tithes Adjustment Month/Year Filter ──────────────────────────
-function populateTithesYearDropdown() {
-  var records = ADJ_DATA['tithes'] || [];
+// ── Generic Adjustments Filter (v88 — unified Tithes/Payroll/Offerings/giveify/Other/Bills) ──
+var ADJ_FULL_DATA = {}; // unfiltered datasets keyed by type
+
+function getAdjDateField(type) {
+  return (ADJ_CFG[type] && ADJ_CFG[type].dateField) || 'date';
+}
+
+function hasActiveAdjFilter(type) {
+  return ['month','year','from','to'].some(function(suf){
+    var el = document.getElementById(type + '-filter-' + suf);
+    return el && el.value;
+  });
+}
+
+function populateAdjYearDropdown(type) {
+  var dateField = getAdjDateField(type);
+  var records = ADJ_DATA[type] || [];
   var years = {};
   records.forEach(function(r) {
-    var d = r.date ? String(r.date).match(/^(\d{4})/) : null;
-    if (d) years[d[1]] = true;
+    var v = r[dateField];
+    if (!v) return;
+    var m = String(v).match(/^(\d{4})/);
+    if (m) years[m[1]] = true;
   });
-  var sel = document.getElementById('tithes-filter-year');
+  var sel = document.getElementById(type + '-filter-year');
   if (!sel) return;
   var current = sel.value;
   sel.innerHTML = '<option value="">All Years</option>';
@@ -8734,31 +8851,28 @@ function populateTithesYearDropdown() {
   });
 }
 
-var TITHES_FULL_DATA = []; // stores unfiltered full dataset
+function applyAdjFilter(type) {
+  var dateField = getAdjDateField(type);
+  var month = (document.getElementById(type + '-filter-month') || {}).value || '';
+  var year  = (document.getElementById(type + '-filter-year')  || {}).value || '';
+  var from  = (document.getElementById(type + '-filter-from')  || {}).value || '';
+  var to    = (document.getElementById(type + '-filter-to')    || {}).value || '';
 
-function applyTithesFilter() {
-  var month  = document.getElementById('tithes-filter-month').value;
-  var year   = document.getElementById('tithes-filter-year').value;
-  var fromEl = document.getElementById('tithes-filter-from');
-  var toEl   = document.getElementById('tithes-filter-to');
-  var from   = fromEl ? fromEl.value : '';
-  var to     = toEl   ? toEl.value   : '';
-
-  // Use the full dataset (not currently filtered one)
-  var all = TITHES_FULL_DATA.length > 0 ? TITHES_FULL_DATA : (ADJ_DATA['tithes'] || []);
+  var all = (ADJ_FULL_DATA[type] && ADJ_FULL_DATA[type].length) ? ADJ_FULL_DATA[type] : (ADJ_DATA[type] || []);
 
   var useRange = (from || to);
   var fromDate = from ? new Date(from + 'T00:00:00') : null;
   var toDate   = to   ? new Date(to   + 'T23:59:59') : null;
 
   var filtered = all.filter(function(r) {
-    if (!r.date) return false;
+    var v = r[dateField];
+    if (!v) return false;
     var d;
-    var iso = String(r.date).match(/^(\d{4})-(\d{2})-(\d{2})$/);
-    var mdy = String(r.date).match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    var iso = String(v).match(/^(\d{4})-(\d{2})-(\d{2})/);
+    var mdy = String(v).match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
     if (iso)      d = new Date(parseInt(iso[1]), parseInt(iso[2])-1, parseInt(iso[3]));
     else if (mdy) d = new Date(parseInt(mdy[3]), parseInt(mdy[1])-1, parseInt(mdy[2]));
-    else          d = new Date(r.date);
+    else          d = new Date(v);
     if (!d || isNaN(d.getTime())) return false;
     if (useRange) {
       if (fromDate && d < fromDate) return false;
@@ -8770,126 +8884,41 @@ function applyTithesFilter() {
     return true;
   });
 
-  var cfg     = ADJ_CFG['tithes'];
+  var cfg     = ADJ_CFG[type];
   var el      = document.getElementById(cfg.contentId);
-  var countEl = document.getElementById('tithes-filter-count');
+  var countEl = document.getElementById(type + '-filter-count');
 
   if (filtered.length === 0) {
     el.innerHTML = '<div style="text-align:center;padding:40px;color:#94a3b8;font-style:italic">No records match the selected filter.</div>';
     if (countEl) countEl.textContent = '0 of ' + all.length + ' records';
-    ADJ_DATA['tithes'] = filtered; // set empty so edit doesn't show wrong record
+    ADJ_DATA[type] = filtered;
     return;
   }
 
   if (countEl) countEl.textContent = filtered.length + ' of ' + all.length + ' record' + (all.length!==1?'s':'');
-
-  // Set ADJ_DATA to the filtered subset so adjEdit uses the correct indices
-  ADJ_DATA['tithes'] = filtered;
-  renderAdjTable('tithes');
+  ADJ_DATA[type] = filtered;
+  renderAdjTable(type);
 }
 
-function clearTithesFilter() {
-  var m = document.getElementById('tithes-filter-month');
-  var y = document.getElementById('tithes-filter-year');
-  var f = document.getElementById('tithes-filter-from');
-  var t = document.getElementById('tithes-filter-to');
-  if (m) m.value = '';
-  if (y) y.value = '';
-  if (f) f.value = '';
-  if (t) t.value = '';
-  var countEl = document.getElementById('tithes-filter-count');
+function clearAdjFilter(type) {
+  ['month','year','from','to'].forEach(function(suf){
+    var el = document.getElementById(type + '-filter-' + suf);
+    if (el) el.value = '';
+  });
+  var countEl = document.getElementById(type + '-filter-count');
   if (countEl) countEl.textContent = '';
-  // Restore full dataset
-  if (TITHES_FULL_DATA.length > 0) ADJ_DATA['tithes'] = TITHES_FULL_DATA;
-  renderAdjTable('tithes');
+  if (ADJ_FULL_DATA[type] && ADJ_FULL_DATA[type].length > 0) ADJ_DATA[type] = ADJ_FULL_DATA[type];
+  renderAdjTable(type);
 }
 
-// ── Payroll Adjustment Month/Year Filter (v87 — mirrors Tithes filter) ──
-var PAYROLL_FULL_DATA = []; // stores unfiltered full payroll dataset
-
-function populatePayrollYearDropdown() {
-  var records = ADJ_DATA['payroll'] || [];
-  var years = {};
-  records.forEach(function(r) {
-    var d = r.datePaid ? String(r.datePaid).match(/^(\d{4})/) : null;
-    if (d) years[d[1]] = true;
-  });
-  var sel = document.getElementById('payroll-filter-year');
-  if (!sel) return;
-  var current = sel.value;
-  sel.innerHTML = '<option value="">All Years</option>';
-  Object.keys(years).sort().reverse().forEach(function(y) {
-    var opt = document.createElement('option');
-    opt.value = y; opt.textContent = y;
-    if (y === current) opt.selected = true;
-    sel.appendChild(opt);
-  });
-}
-
-function applyPayrollFilter() {
-  var month  = document.getElementById('payroll-filter-month').value;
-  var year   = document.getElementById('payroll-filter-year').value;
-  var fromEl = document.getElementById('payroll-filter-from');
-  var toEl   = document.getElementById('payroll-filter-to');
-  var from   = fromEl ? fromEl.value : '';
-  var to     = toEl   ? toEl.value   : '';
-
-  var all = PAYROLL_FULL_DATA.length > 0 ? PAYROLL_FULL_DATA : (ADJ_DATA['payroll'] || []);
-
-  var useRange = (from || to);
-  var fromDate = from ? new Date(from + 'T00:00:00') : null;
-  var toDate   = to   ? new Date(to   + 'T23:59:59') : null;
-
-  var filtered = all.filter(function(r) {
-    if (!r.datePaid) return false;
-    var d;
-    var iso = String(r.datePaid).match(/^(\d{4})-(\d{2})-(\d{2})/);
-    var mdy = String(r.datePaid).match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-    if (iso)      d = new Date(parseInt(iso[1]), parseInt(iso[2])-1, parseInt(iso[3]));
-    else if (mdy) d = new Date(parseInt(mdy[3]), parseInt(mdy[1])-1, parseInt(mdy[2]));
-    else          d = new Date(r.datePaid);
-    if (!d || isNaN(d.getTime())) return false;
-    if (useRange) {
-      if (fromDate && d < fromDate) return false;
-      if (toDate   && d > toDate)   return false;
-    } else {
-      if (month && (d.getMonth()+1) !== parseInt(month)) return false;
-      if (year  && d.getFullYear() !== parseInt(year))   return false;
-    }
-    return true;
-  });
-
-  var cfg     = ADJ_CFG['payroll'];
-  var el      = document.getElementById(cfg.contentId);
-  var countEl = document.getElementById('payroll-filter-count');
-
-  if (filtered.length === 0) {
-    el.innerHTML = '<div style="text-align:center;padding:40px;color:#94a3b8;font-style:italic">No records match the selected filter.</div>';
-    if (countEl) countEl.textContent = '0 of ' + all.length + ' records';
-    ADJ_DATA['payroll'] = filtered;
-    return;
-  }
-
-  if (countEl) countEl.textContent = filtered.length + ' of ' + all.length + ' record' + (all.length!==1?'s':'');
-
-  ADJ_DATA['payroll'] = filtered;
-  renderAdjTable('payroll');
-}
-
-function clearPayrollFilter() {
-  var m = document.getElementById('payroll-filter-month');
-  var y = document.getElementById('payroll-filter-year');
-  var f = document.getElementById('payroll-filter-from');
-  var t = document.getElementById('payroll-filter-to');
-  if (m) m.value = '';
-  if (y) y.value = '';
-  if (f) f.value = '';
-  if (t) t.value = '';
-  var countEl = document.getElementById('payroll-filter-count');
-  if (countEl) countEl.textContent = '';
-  if (PAYROLL_FULL_DATA.length > 0) ADJ_DATA['payroll'] = PAYROLL_FULL_DATA;
-  renderAdjTable('payroll');
-}
+// Backward-compat shims for printTithesAdj and any code that still calls the
+// per-type filter functions by name. New code should call applyAdjFilter(type).
+function applyTithesFilter()         { applyAdjFilter('tithes'); }
+function clearTithesFilter()         { clearAdjFilter('tithes'); }
+function populateTithesYearDropdown(){ populateAdjYearDropdown('tithes'); }
+function applyPayrollFilter()        { applyAdjFilter('payroll'); }
+function clearPayrollFilter()        { clearAdjFilter('payroll'); }
+function populatePayrollYearDropdown(){ populateAdjYearDropdown('payroll'); }
 
 function renderAdjTable(type) {
   var cfg = ADJ_CFG[type];
