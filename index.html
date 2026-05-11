@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.05.11-101</title>
+<title>Mount Calvary M.B. Church Financial System v2026.05.11-103</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -173,7 +173,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.11-101</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.11-103</span>
     </div>
   </div>
 </div>
@@ -186,7 +186,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.11-101</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.11-103</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -309,7 +309,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.11-101</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.11-103</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -794,6 +794,18 @@ nav{flex:1;padding:10px 0;}
           <div class="fg3"><label>Offering ($)</label><input type="number" id="tm-offering" placeholder="0.00" min="0" step="0.01" oninput="calcTMTotal()"></div>
         </div>
         <div class="fr">
+          <div class="fg3"><label>Church Anniversary ($)</label><input type="number" id="tm-channiv" placeholder="0.00" min="0" step="0.01" oninput="calcTMTotal()"></div>
+          <div class="fg3"><label>Pastor Anniversary ($)</label><input type="number" id="tm-panniv" placeholder="0.00" min="0" step="0.01" oninput="calcTMTotal()"></div>
+        </div>
+        <div class="fr">
+          <div class="fg3"><label>Brotherhood ($)</label><input type="number" id="tm-brother" placeholder="0.00" min="0" step="0.01" oninput="calcTMTotal()"></div>
+          <div class="fg3"><label>Insp. Choir ($)</label><input type="number" id="tm-ichoir" placeholder="0.00" min="0" step="0.01" oninput="calcTMTotal()"></div>
+        </div>
+        <div class="fr">
+          <div class="fg3"><label>Senior Usher ($)</label><input type="number" id="tm-susher" placeholder="0.00" min="0" step="0.01" oninput="calcTMTotal()"></div>
+          <div class="fg3"></div>
+        </div>
+        <div class="fr">
           <div class="fg3"><label>Special Event ($)</label><input type="number" id="tm-special" placeholder="0.00" min="0" step="0.01" oninput="calcTMTotal()"></div>
           <div class="fg3"><label>Other ($)</label><input type="number" id="tm-other" placeholder="0.00" min="0" step="0.01" oninput="calcTMTotal()"></div>
         </div>
@@ -826,6 +838,11 @@ nav{flex:1;padding:10px 0;}
             <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">3020 — Benevolent Offering Fund</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="tm-gl-benv">$0.00</td></tr>
             <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4050 — Youth Education Fund</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="tm-gl-yedu">$0.00</td></tr>
             <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4070 — Offering / General</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="tm-gl-offering">$0.00</td></tr>
+            <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4091 — Church Anniversary</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="tm-gl-channiv">$0.00</td></tr>
+            <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4092 — Pastor Anniversary</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="tm-gl-panniv">$0.00</td></tr>
+            <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4093 — Brotherhood</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="tm-gl-brother">$0.00</td></tr>
+            <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4094 — Inspirational Choir</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="tm-gl-ichoir">$0.00</td></tr>
+            <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4095 — Senior Usher</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="tm-gl-susher">$0.00</td></tr>
             <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4060 — Special Event / Programs</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="tm-gl-special">$0.00</td></tr>
             <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4070 — Other / Miscellaneous</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="tm-gl-other">$0.00</td></tr>
             <tr style="border-top:2px solid var(--light);font-weight:700;">
@@ -851,7 +868,7 @@ nav{flex:1;padding:10px 0;}
         </div>
         <div style="overflow-x:auto">
           <table class="vt" id="tm-saved-table">
-            <tr><th>ID</th><th>Date</th><th>Member</th><th>Tithes</th><th>Youth</th><th>Building Fund</th><th>Benevolent</th><th>Youth Education</th><th>Offering</th><th>Special Event</th><th>Other</th><th>Total</th><th>Received By</th><th>Saved?</th><th style="text-align:center">Actions</th></tr>
+            <tr><th>ID</th><th>Date</th><th>Member</th><th>Tithes</th><th>Youth</th><th>Building Fund</th><th>Benevolent</th><th>Youth Education</th><th>Offering</th><th>Ch. Anniv.</th><th>Pas. Anniv.</th><th>Brotherhood</th><th>Insp. Choir</th><th>Sr. Usher</th><th>Special Event</th><th>Other</th><th>Total</th><th>Received By</th><th>Saved?</th><th style="text-align:center">Actions</th></tr>
           </table>
         </div>
       </div>
@@ -2807,9 +2824,14 @@ function calcTMTotal() {
   var benv     = parseFloat(document.getElementById('tm-benv').value) || 0;
   var yedu     = parseFloat(document.getElementById('tm-yedu').value) || 0;
   var offering = parseFloat(document.getElementById('tm-offering').value) || 0;
+  var chAnniv  = parseFloat(document.getElementById('tm-channiv').value) || 0;
+  var psAnniv  = parseFloat(document.getElementById('tm-panniv').value) || 0;
+  var brother  = parseFloat(document.getElementById('tm-brother').value) || 0;
+  var iChoir   = parseFloat(document.getElementById('tm-ichoir').value) || 0;
+  var sUsher   = parseFloat(document.getElementById('tm-susher').value) || 0;
   var special  = parseFloat(document.getElementById('tm-special').value) || 0;
   var other    = parseFloat(document.getElementById('tm-other').value) || 0;
-  var tot = tithes + yth + bldg + benv + yedu + offering + special + other;
+  var tot = tithes + yth + bldg + benv + yedu + offering + chAnniv + psAnniv + brother + iChoir + sUsher + special + other;
   document.getElementById('tm-total').textContent          = fmtCurrency(tot);
   document.getElementById('tm-gl-dr').textContent          = fmtCurrency(tot);
   document.getElementById('tm-gl-tdr').innerHTML           = '<strong>' + fmtCurrency(tot) + '</strong>';
@@ -2820,6 +2842,11 @@ function calcTMTotal() {
   document.getElementById('tm-gl-benv').textContent        = fmtCurrency(benv);
   document.getElementById('tm-gl-yedu').textContent        = fmtCurrency(yedu);
   document.getElementById('tm-gl-offering').textContent    = fmtCurrency(offering);
+  document.getElementById('tm-gl-channiv').textContent     = fmtCurrency(chAnniv);
+  document.getElementById('tm-gl-panniv').textContent      = fmtCurrency(psAnniv);
+  document.getElementById('tm-gl-brother').textContent     = fmtCurrency(brother);
+  document.getElementById('tm-gl-ichoir').textContent      = fmtCurrency(iChoir);
+  document.getElementById('tm-gl-susher').textContent      = fmtCurrency(sUsher);
   document.getElementById('tm-gl-special').textContent     = fmtCurrency(special);
   document.getElementById('tm-gl-other').textContent       = fmtCurrency(other);
 }
@@ -2892,9 +2919,14 @@ function saveTMRec() {
   var benv     = parseFloat(document.getElementById('tm-benv').value)     || 0;
   var yedu     = parseFloat(document.getElementById('tm-yedu').value)     || 0;
   var offering = parseFloat(document.getElementById('tm-offering').value) || 0;
+  var chAnniv  = parseFloat(document.getElementById('tm-channiv').value)  || 0;
+  var psAnniv  = parseFloat(document.getElementById('tm-panniv').value)   || 0;
+  var brother  = parseFloat(document.getElementById('tm-brother').value)  || 0;
+  var iChoir   = parseFloat(document.getElementById('tm-ichoir').value)   || 0;
+  var sUsher   = parseFloat(document.getElementById('tm-susher').value)   || 0;
   var special  = parseFloat(document.getElementById('tm-special').value)  || 0;
   var other    = parseFloat(document.getElementById('tm-other').value)    || 0;
-  var total    = tithes + yth + bldg + benv + yedu + offering + special + other;
+  var total    = tithes + yth + bldg + benv + yedu + offering + chAnniv + psAnniv + brother + iChoir + sUsher + special + other;
   var rcvd     = document.getElementById('tm-received-by').value || '—';
   var payMethod = document.querySelector('input[name="tm-payment"]:checked') ? document.querySelector('input[name="tm-payment"]:checked').value : 'Cash';
   var checkNo   = payMethod === 'Check' ? (document.getElementById('tm-check-no').value || '') : '';
@@ -2915,6 +2947,11 @@ function saveTMRec() {
     '<td class="ta">' + fmtCurrency(benv)      + '</td>' +
     '<td class="ta">' + fmtCurrency(yedu)      + '</td>' +
     '<td class="ta">' + fmtCurrency(offering)  + '</td>' +
+    '<td class="ta">' + fmtCurrency(chAnniv)   + '</td>' +
+    '<td class="ta">' + fmtCurrency(psAnniv)   + '</td>' +
+    '<td class="ta">' + fmtCurrency(brother)   + '</td>' +
+    '<td class="ta">' + fmtCurrency(iChoir)    + '</td>' +
+    '<td class="ta">' + fmtCurrency(sUsher)    + '</td>' +
     '<td class="ta">' + fmtCurrency(special)   + '</td>' +
     '<td class="ta">' + fmtCurrency(other)     + '</td>' +
     '<td style="font-weight:700;color:var(--blue)">' + fmtCurrency(total) + '</td>' +
@@ -2930,14 +2967,17 @@ function saveTMRec() {
   tb.appendChild(tr);
 
   tmPendingRows.push({id:id, date:date, member:member, tithes:tithes, youth:yth,
-    bldg:bldg, benv:benv, yedu:yedu, offering:offering, special:special,
-    other:other, total:total, rcvd:rcvd, payMethod:payMethod, checkNo:checkNo, notes:notes});
+    bldg:bldg, benv:benv, yedu:yedu, offering:offering,
+    chAnniv:chAnniv, psAnniv:psAnniv, brother:brother, iChoir:iChoir, sUsher:sUsher,
+    special:special, other:other, total:total, rcvd:rcvd, payMethod:payMethod, checkNo:checkNo, notes:notes});
 
   document.getElementById('tm-saved-wrap').style.display = 'block';
 
   var nextNum = tb.querySelectorAll('tr').length;
   document.getElementById('tm-id').value = 'TM-' + String(nextNum).padStart(3,'0');
-  ['tm-tithes','tm-youth','tm-bldg','tm-benv','tm-yedu','tm-offering','tm-special','tm-other'].forEach(function(i) {
+  ['tm-tithes','tm-youth','tm-bldg','tm-benv','tm-yedu','tm-offering',
+   'tm-channiv','tm-panniv','tm-brother','tm-ichoir','tm-susher',
+   'tm-special','tm-other'].forEach(function(i) {
     document.getElementById(i).value = '';
   });
   document.getElementById('tm-member').value = '';
@@ -3008,6 +3048,11 @@ function saveTMToSheets() {
       + '&benevolent='     + encodeURIComponent(r.benv)
       + '&youthEducation=' + encodeURIComponent(r.yedu)
       + '&offering='       + encodeURIComponent(r.offering)
+      + '&churchAnniversary=' + encodeURIComponent(r.chAnniv||0)
+      + '&pastorAnniversary=' + encodeURIComponent(r.psAnniv||0)
+      + '&brotherhood='    + encodeURIComponent(r.brother||0)
+      + '&inspChoir='      + encodeURIComponent(r.iChoir||0)
+      + '&seniorUsher='    + encodeURIComponent(r.sUsher||0)
       + '&specialEvent='   + encodeURIComponent(r.special)
       + '&other='          + encodeURIComponent(r.other)
       + '&total='          + encodeURIComponent(r.total)
@@ -8866,10 +8911,10 @@ var ADJ_CFG = {
     action:'getTithesRecords', updateAction:'updateTithes', deleteAction:'deleteTithes',
     title:'Tithes & Offering by Members', contentId:'adj-tithes-content',
     dateField:'date', hasFilter:true,
-    cols:['Date','Member','Tithes','Youth','Bldg Fund','Benevolent','Youth Edu','Offering','Special','Other','Total','Payment','Check #','Received By','Notes'],
-    fields:['date','member','tithes','youth','building','benevolent','youthEdu','offering','special','other','total','payMethod','checkNo','receivedBy','notes'],
-    labels:['Date','Member Name','Tithes','Youth','Building Fund','Benevolent','Youth Education','Offering','Special Event','Other','Total','Payment Method','Check No.','Received By','Notes'],
-    types: ['date','text','number','number','number','number','number','number','number','number','number','text','text','text','text'],
+    cols:['Date','Member','Tithes','Youth','Bldg Fund','Benevolent','Youth Edu','Offering','Ch. Anniv.','Pas. Anniv.','Brotherhood','Insp. Choir','Sr. Usher','Special','Other','Total','Payment','Check #','Received By','Notes'],
+    fields:['date','member','tithes','youth','building','benevolent','youthEdu','offering','churchAnniv','pastorAnniv','brotherhood','inspChoir','seniorUsher','special','other','total','payMethod','checkNo','receivedBy','notes'],
+    labels:['Date','Member Name','Tithes','Youth','Building Fund','Benevolent','Youth Education','Offering','Church Anniversary','Pastor Anniversary','Brotherhood','Inspirational Choir','Senior Usher','Special Event','Other','Total','Payment Method','Check No.','Received By','Notes'],
+    types: ['date','text','number','number','number','number','number','number','number','number','number','number','number','number','number','number','text','text','text','text'],
     idField:'id'
   },
   giveify: {
@@ -9521,6 +9566,17 @@ function doChangePw() {
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Enter' && document.getElementById('lp').style.display !== 'none') doLogin();
 });
+
+// v102 — prevent scroll-wheel from silently changing focused number inputs
+// (e.g., typing 100.00 then scrolling down to find the Save button would
+//  decrement the value by 0.01 per tick — typed 100.00 → showed 99.98).
+// Blurring the input on wheel still lets the page scroll normally.
+document.addEventListener('wheel', function(e) {
+  var ae = document.activeElement;
+  if (ae && ae.tagName === 'INPUT' && ae.type === 'number') {
+    ae.blur();
+  }
+}, { passive: true });
 
 // ── v99 — Quick Add Member from Tithes form ───────────────────────
 function onTmMemberChange() {
