@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.05.11-106</title>
+<title>Mount Calvary M.B. Church Financial System v2026.05.11-107</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -174,7 +174,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.11-106</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.11-107</span>
     </div>
   </div>
 </div>
@@ -187,7 +187,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.11-106</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.11-107</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -310,7 +310,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.11-106</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.11-107</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -1418,6 +1418,7 @@ nav{flex:1;padding:10px 0;}
           <input type="date" id="offerings-filter-to" style="padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;color:#1e293b" onchange="applyAdjFilter('offerings')">
         </div>
         <button class="bac" onclick="clearAdjFilter('offerings')" style="font-size:.8rem">✕ Clear</button>
+        <button class="bac" onclick="loadAdjScreen('offerings')" style="font-size:.8rem">↻ Refresh</button>
         <span id="offerings-filter-count" style="font-size:.78rem;color:#64748b;margin-left:4px"></span>
       </div>
 
@@ -1465,6 +1466,7 @@ nav{flex:1;padding:10px 0;}
           <input type="date" id="tithes-filter-to" style="padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;color:#1e293b" onchange="applyAdjFilter(&#39;tithes&#39;)">
         </div>
         <button class="bac" onclick="clearAdjFilter(&#39;tithes&#39;)" style="font-size:.8rem">✕ Clear</button>
+        <button class="bac" onclick="loadAdjScreen(&#39;tithes&#39;)" style="font-size:.8rem">↻ Refresh</button>
         <span id="tithes-filter-count" style="font-size:.78rem;color:#64748b;margin-left:4px"></span>
       </div>
 
@@ -1505,6 +1507,7 @@ nav{flex:1;padding:10px 0;}
           <input type="date" id="giveify-filter-to" style="padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;color:#1e293b" onchange="applyAdjFilter('giveify')">
         </div>
         <button class="bac" onclick="clearAdjFilter('giveify')" style="font-size:.8rem">✕ Clear</button>
+        <button class="bac" onclick="loadAdjScreen('giveify')" style="font-size:.8rem">↻ Refresh</button>
         <span id="giveify-filter-count" style="font-size:.78rem;color:#64748b;margin-left:4px"></span>
       </div>
 
@@ -1545,6 +1548,7 @@ nav{flex:1;padding:10px 0;}
           <input type="date" id="other-filter-to" style="padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;color:#1e293b" onchange="applyAdjFilter('other')">
         </div>
         <button class="bac" onclick="clearAdjFilter('other')" style="font-size:.8rem">✕ Clear</button>
+        <button class="bac" onclick="loadAdjScreen('other')" style="font-size:.8rem">↻ Refresh</button>
         <span id="other-filter-count" style="font-size:.78rem;color:#64748b;margin-left:4px"></span>
       </div>
 
@@ -1587,6 +1591,7 @@ nav{flex:1;padding:10px 0;}
           <input type="date" id="payroll-filter-to" style="padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;color:#1e293b" onchange="applyAdjFilter(&#39;payroll&#39;)">
         </div>
         <button class="bac" onclick="clearAdjFilter(&#39;payroll&#39;)" style="font-size:.8rem">✕ Clear</button>
+        <button class="bac" onclick="loadAdjScreen(&#39;payroll&#39;)" style="font-size:.8rem">↻ Refresh</button>
         <span id="payroll-filter-count" style="font-size:.78rem;color:#64748b;margin-left:4px"></span>
       </div>
 
@@ -1627,6 +1632,7 @@ nav{flex:1;padding:10px 0;}
           <input type="date" id="bills-filter-to" style="padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;color:#1e293b" onchange="applyAdjFilter('bills')">
         </div>
         <button class="bac" onclick="clearAdjFilter('bills')" style="font-size:.8rem">✕ Clear</button>
+        <button class="bac" onclick="loadAdjScreen('bills')" style="font-size:.8rem">↻ Refresh</button>
         <span id="bills-filter-count" style="font-size:.78rem;color:#64748b;margin-left:4px"></span>
       </div>
 
@@ -8976,6 +8982,11 @@ function loadAdjScreen(type) {
   var el = document.getElementById(cfg.contentId);
   el.innerHTML = '<div style="text-align:center;padding:40px;color:#64748b">⏳ Loading from Google Sheets…</div>';
 
+  // v107 — clear stale count from a previous load so the filter bar
+  //        doesn't show "2 of 9 records" while the new data is loading.
+  var countEl0 = document.getElementById(type + '-filter-count');
+  if (countEl0) countEl0.textContent = '';
+
   var url = localStorage.getItem('mcmbc_sheet_url') || '';
   if (!url || url.indexOf('script.google.com') === -1) {
     el.innerHTML = '<div style="background:#fef3c7;border-left:4px solid #ca8a04;padding:14px 16px;border-radius:8px;color:#854d0e">⚠️ No Google Sheets URL saved — connect on the Dashboard first.</div>';
@@ -8983,7 +8994,7 @@ function loadAdjScreen(type) {
   }
 
   var cb = 'adjCb_' + type + '_' + Date.now();
-  var t = setTimeout(function(){ delete window[cb]; el.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Timed out. Try again.</div>'; }, 20000);
+  var t = setTimeout(function(){ delete window[cb]; el.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Timed out. Try again with the ↻ Refresh button.</div>'; }, 20000);
 
   window[cb] = function(data) {
     clearTimeout(t); delete window[cb];
@@ -9025,6 +9036,11 @@ function loadAdjScreen(type) {
   };
 
   var s = document.createElement('script');
+  // v107 — surface JSONP load failures immediately instead of hanging the loading placeholder until the 20s timeout.
+  s.onerror = function() {
+    clearTimeout(t); delete window[cb];
+    el.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Could not reach Google Sheets — check the URL on the Dashboard and try the ↻ Refresh button above.</div>';
+  };
   s.src = url + '?action=' + cfg.action + '&callback=' + cb;
   document.head.appendChild(s);
 }
