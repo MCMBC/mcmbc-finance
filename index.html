@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.05.11-108</title>
+<title>Mount Calvary M.B. Church Financial System v2026.05.11-109</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -174,7 +174,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.11-108</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.11-109</span>
     </div>
   </div>
 </div>
@@ -187,7 +187,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.11-108</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.11-109</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -310,7 +310,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.11-108</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.11-109</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -1396,7 +1396,7 @@ nav{flex:1;padding:10px 0;}
       <!-- Month/Year Filter (v88 — generic) -->
       <div id="adj-offerings-filter" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px;padding:14px 18px;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;">
         <span style="font-size:.78rem;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.04em">Filter by</span>
-        <select id="offerings-filter-month" style="padding:7px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit;color:#1e293b" onchange="applyAdjFilter('offerings')">
+        <select id="offerings-filter-month" style="padding:7px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit;color:#1e293b" onchange="adjMyApply('offerings')">
           <option value="">All Months</option>
           <option value="1">January</option><option value="2">February</option>
           <option value="3">March</option><option value="4">April</option>
@@ -1405,17 +1405,17 @@ nav{flex:1;padding:10px 0;}
           <option value="9">September</option><option value="10">October</option>
           <option value="11">November</option><option value="12">December</option>
         </select>
-        <select id="offerings-filter-year" style="padding:7px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit;color:#1e293b" onchange="applyAdjFilter('offerings')">
+        <select id="offerings-filter-year" style="padding:7px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit;color:#1e293b" onchange="adjMyApply('offerings')">
           <option value="">All Years</option>
         </select>
         <span style="font-size:.78rem;font-weight:700;color:#94a3b8">— or —</span>
         <div style="display:flex;align-items:center;gap:6px">
           <label style="font-size:.75rem;font-weight:600;color:#475569">From</label>
-          <input type="date" id="offerings-filter-from" style="padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;color:#1e293b" onchange="applyAdjFilter('offerings')">
+          <input type="date" id="offerings-filter-from" style="padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;color:#1e293b" onchange="adjFtApply('offerings')">
         </div>
         <div style="display:flex;align-items:center;gap:6px">
           <label style="font-size:.75rem;font-weight:600;color:#475569">To</label>
-          <input type="date" id="offerings-filter-to" style="padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;color:#1e293b" onchange="applyAdjFilter('offerings')">
+          <input type="date" id="offerings-filter-to" style="padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;color:#1e293b" onchange="adjFtApply('offerings')">
         </div>
         <button class="bac" onclick="clearAdjFilter('offerings')" style="font-size:.8rem">✕ Clear</button>
         <button class="bac" onclick="loadAdjScreen('offerings')" style="font-size:.8rem">↻ Refresh</button>
@@ -1443,7 +1443,7 @@ nav{flex:1;padding:10px 0;}
       <div id="adj-tithes-filter" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px;padding:14px 18px;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;">
         <span style="font-size:.78rem;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.04em">Filter by</span>
         <select id="tithes-filter-month" style="padding:7px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit;color:#1e293b"
-          onchange="applyAdjFilter(&#39;tithes&#39;)">
+          onchange="adjMyApply(&#39;tithes&#39;)">
           <option value="">All Months</option>
           <option value="1">January</option><option value="2">February</option>
           <option value="3">March</option><option value="4">April</option>
@@ -1453,17 +1453,17 @@ nav{flex:1;padding:10px 0;}
           <option value="11">November</option><option value="12">December</option>
         </select>
         <select id="tithes-filter-year" style="padding:7px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit;color:#1e293b"
-          onchange="applyAdjFilter(&#39;tithes&#39;)">
+          onchange="adjMyApply(&#39;tithes&#39;)">
           <option value="">All Years</option>
         </select>
         <span style="font-size:.78rem;font-weight:700;color:#94a3b8">— or —</span>
         <div style="display:flex;align-items:center;gap:6px">
           <label style="font-size:.75rem;font-weight:600;color:#475569">From</label>
-          <input type="date" id="tithes-filter-from" style="padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;color:#1e293b" onchange="applyAdjFilter(&#39;tithes&#39;)">
+          <input type="date" id="tithes-filter-from" style="padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;color:#1e293b" onchange="adjFtApply(&#39;tithes&#39;)">
         </div>
         <div style="display:flex;align-items:center;gap:6px">
           <label style="font-size:.75rem;font-weight:600;color:#475569">To</label>
-          <input type="date" id="tithes-filter-to" style="padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;color:#1e293b" onchange="applyAdjFilter(&#39;tithes&#39;)">
+          <input type="date" id="tithes-filter-to" style="padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;color:#1e293b" onchange="adjFtApply(&#39;tithes&#39;)">
         </div>
         <button class="bac" onclick="clearAdjFilter(&#39;tithes&#39;)" style="font-size:.8rem">✕ Clear</button>
         <button class="bac" onclick="loadAdjScreen(&#39;tithes&#39;)" style="font-size:.8rem">↻ Refresh</button>
@@ -1485,7 +1485,7 @@ nav{flex:1;padding:10px 0;}
       <!-- Month/Year Filter (v88 — generic) -->
       <div id="adj-giveify-filter" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px;padding:14px 18px;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;">
         <span style="font-size:.78rem;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.04em">Filter by</span>
-        <select id="giveify-filter-month" style="padding:7px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit;color:#1e293b" onchange="applyAdjFilter('giveify')">
+        <select id="giveify-filter-month" style="padding:7px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit;color:#1e293b" onchange="adjMyApply('giveify')">
           <option value="">All Months</option>
           <option value="1">January</option><option value="2">February</option>
           <option value="3">March</option><option value="4">April</option>
@@ -1494,17 +1494,17 @@ nav{flex:1;padding:10px 0;}
           <option value="9">September</option><option value="10">October</option>
           <option value="11">November</option><option value="12">December</option>
         </select>
-        <select id="giveify-filter-year" style="padding:7px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit;color:#1e293b" onchange="applyAdjFilter('giveify')">
+        <select id="giveify-filter-year" style="padding:7px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit;color:#1e293b" onchange="adjMyApply('giveify')">
           <option value="">All Years</option>
         </select>
         <span style="font-size:.78rem;font-weight:700;color:#94a3b8">— or —</span>
         <div style="display:flex;align-items:center;gap:6px">
           <label style="font-size:.75rem;font-weight:600;color:#475569">From</label>
-          <input type="date" id="giveify-filter-from" style="padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;color:#1e293b" onchange="applyAdjFilter('giveify')">
+          <input type="date" id="giveify-filter-from" style="padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;color:#1e293b" onchange="adjFtApply('giveify')">
         </div>
         <div style="display:flex;align-items:center;gap:6px">
           <label style="font-size:.75rem;font-weight:600;color:#475569">To</label>
-          <input type="date" id="giveify-filter-to" style="padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;color:#1e293b" onchange="applyAdjFilter('giveify')">
+          <input type="date" id="giveify-filter-to" style="padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;color:#1e293b" onchange="adjFtApply('giveify')">
         </div>
         <button class="bac" onclick="clearAdjFilter('giveify')" style="font-size:.8rem">✕ Clear</button>
         <button class="bac" onclick="loadAdjScreen('giveify')" style="font-size:.8rem">↻ Refresh</button>
@@ -1526,7 +1526,7 @@ nav{flex:1;padding:10px 0;}
       <!-- Month/Year Filter (v88 — generic) -->
       <div id="adj-other-filter" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px;padding:14px 18px;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;">
         <span style="font-size:.78rem;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.04em">Filter by</span>
-        <select id="other-filter-month" style="padding:7px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit;color:#1e293b" onchange="applyAdjFilter('other')">
+        <select id="other-filter-month" style="padding:7px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit;color:#1e293b" onchange="adjMyApply('other')">
           <option value="">All Months</option>
           <option value="1">January</option><option value="2">February</option>
           <option value="3">March</option><option value="4">April</option>
@@ -1535,17 +1535,17 @@ nav{flex:1;padding:10px 0;}
           <option value="9">September</option><option value="10">October</option>
           <option value="11">November</option><option value="12">December</option>
         </select>
-        <select id="other-filter-year" style="padding:7px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit;color:#1e293b" onchange="applyAdjFilter('other')">
+        <select id="other-filter-year" style="padding:7px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit;color:#1e293b" onchange="adjMyApply('other')">
           <option value="">All Years</option>
         </select>
         <span style="font-size:.78rem;font-weight:700;color:#94a3b8">— or —</span>
         <div style="display:flex;align-items:center;gap:6px">
           <label style="font-size:.75rem;font-weight:600;color:#475569">From</label>
-          <input type="date" id="other-filter-from" style="padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;color:#1e293b" onchange="applyAdjFilter('other')">
+          <input type="date" id="other-filter-from" style="padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;color:#1e293b" onchange="adjFtApply('other')">
         </div>
         <div style="display:flex;align-items:center;gap:6px">
           <label style="font-size:.75rem;font-weight:600;color:#475569">To</label>
-          <input type="date" id="other-filter-to" style="padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;color:#1e293b" onchange="applyAdjFilter('other')">
+          <input type="date" id="other-filter-to" style="padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;color:#1e293b" onchange="adjFtApply('other')">
         </div>
         <button class="bac" onclick="clearAdjFilter('other')" style="font-size:.8rem">✕ Clear</button>
         <button class="bac" onclick="loadAdjScreen('other')" style="font-size:.8rem">↻ Refresh</button>
@@ -1568,7 +1568,7 @@ nav{flex:1;padding:10px 0;}
       <div id="adj-payroll-filter" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px;padding:14px 18px;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;">
         <span style="font-size:.78rem;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.04em">Filter by</span>
         <select id="payroll-filter-month" style="padding:7px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit;color:#1e293b"
-          onchange="applyAdjFilter(&#39;payroll&#39;)">
+          onchange="adjMyApply(&#39;payroll&#39;)">
           <option value="">All Months</option>
           <option value="1">January</option><option value="2">February</option>
           <option value="3">March</option><option value="4">April</option>
@@ -1578,17 +1578,17 @@ nav{flex:1;padding:10px 0;}
           <option value="11">November</option><option value="12">December</option>
         </select>
         <select id="payroll-filter-year" style="padding:7px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit;color:#1e293b"
-          onchange="applyAdjFilter(&#39;payroll&#39;)">
+          onchange="adjMyApply(&#39;payroll&#39;)">
           <option value="">All Years</option>
         </select>
         <span style="font-size:.78rem;font-weight:700;color:#94a3b8">— or —</span>
         <div style="display:flex;align-items:center;gap:6px">
           <label style="font-size:.75rem;font-weight:600;color:#475569">From</label>
-          <input type="date" id="payroll-filter-from" style="padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;color:#1e293b" onchange="applyAdjFilter(&#39;payroll&#39;)">
+          <input type="date" id="payroll-filter-from" style="padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;color:#1e293b" onchange="adjFtApply(&#39;payroll&#39;)">
         </div>
         <div style="display:flex;align-items:center;gap:6px">
           <label style="font-size:.75rem;font-weight:600;color:#475569">To</label>
-          <input type="date" id="payroll-filter-to" style="padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;color:#1e293b" onchange="applyAdjFilter(&#39;payroll&#39;)">
+          <input type="date" id="payroll-filter-to" style="padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;color:#1e293b" onchange="adjFtApply(&#39;payroll&#39;)">
         </div>
         <button class="bac" onclick="clearAdjFilter(&#39;payroll&#39;)" style="font-size:.8rem">✕ Clear</button>
         <button class="bac" onclick="loadAdjScreen(&#39;payroll&#39;)" style="font-size:.8rem">↻ Refresh</button>
@@ -1610,7 +1610,7 @@ nav{flex:1;padding:10px 0;}
       <!-- Month/Year Filter (v88 — generic; uses checkDate field) -->
       <div id="adj-bills-filter" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px;padding:14px 18px;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;">
         <span style="font-size:.78rem;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.04em">Filter by</span>
-        <select id="bills-filter-month" style="padding:7px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit;color:#1e293b" onchange="applyAdjFilter('bills')">
+        <select id="bills-filter-month" style="padding:7px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit;color:#1e293b" onchange="adjMyApply('bills')">
           <option value="">All Months</option>
           <option value="1">January</option><option value="2">February</option>
           <option value="3">March</option><option value="4">April</option>
@@ -1619,17 +1619,17 @@ nav{flex:1;padding:10px 0;}
           <option value="9">September</option><option value="10">October</option>
           <option value="11">November</option><option value="12">December</option>
         </select>
-        <select id="bills-filter-year" style="padding:7px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit;color:#1e293b" onchange="applyAdjFilter('bills')">
+        <select id="bills-filter-year" style="padding:7px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit;color:#1e293b" onchange="adjMyApply('bills')">
           <option value="">All Years</option>
         </select>
         <span style="font-size:.78rem;font-weight:700;color:#94a3b8">— or —</span>
         <div style="display:flex;align-items:center;gap:6px">
           <label style="font-size:.75rem;font-weight:600;color:#475569">From</label>
-          <input type="date" id="bills-filter-from" style="padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;color:#1e293b" onchange="applyAdjFilter('bills')">
+          <input type="date" id="bills-filter-from" style="padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;color:#1e293b" onchange="adjFtApply('bills')">
         </div>
         <div style="display:flex;align-items:center;gap:6px">
           <label style="font-size:.75rem;font-weight:600;color:#475569">To</label>
-          <input type="date" id="bills-filter-to" style="padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;color:#1e293b" onchange="applyAdjFilter('bills')">
+          <input type="date" id="bills-filter-to" style="padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;color:#1e293b" onchange="adjFtApply('bills')">
         </div>
         <button class="bac" onclick="clearAdjFilter('bills')" style="font-size:.8rem">✕ Clear</button>
         <button class="bac" onclick="loadAdjScreen('bills')" style="font-size:.8rem">↻ Refresh</button>
@@ -9207,6 +9207,25 @@ function populateAdjYearDropdown(type) {
     if (y === current) opt.selected = true;
     sel.appendChild(opt);
   });
+}
+
+// v109 — onchange wrappers that make the "Month/Year — or — From/To" UI behave
+//        as a real OR: picking from one group clears the other so the user's
+//        most-recent intent always wins. Without these, v98's today-default
+//        on the From/To inputs silently overrode the Month/Year selectors.
+function adjMyApply(type) {
+  var fromEl = document.getElementById(type + '-filter-from');
+  var toEl   = document.getElementById(type + '-filter-to');
+  if (fromEl) fromEl.value = '';
+  if (toEl)   toEl.value = '';
+  applyAdjFilter(type);
+}
+function adjFtApply(type) {
+  var monthEl = document.getElementById(type + '-filter-month');
+  var yearEl  = document.getElementById(type + '-filter-year');
+  if (monthEl) monthEl.value = '';
+  if (yearEl)  yearEl.value  = '';
+  applyAdjFilter(type);
 }
 
 function applyAdjFilter(type) {
