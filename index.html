@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.05.14-112</title>
+<title>Mount Calvary M.B. Church Financial System v2026.05.14-113</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -174,7 +174,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.14-112</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.14-113</span>
     </div>
   </div>
 </div>
@@ -187,7 +187,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.14-112</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.14-113</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -198,6 +198,7 @@ nav{flex:1;padding:10px 0;}
       <div class="ni sec-up" onclick="sv('tithes-members',this);loadTithesMembers()">🙏 Tithes &amp; Offering by Members</div>
       <div class="ni sec-up" onclick="sv('giveify-donors',this);loadGDDonors()">📱 giveify by Donors</div>
       <div class="ni sec-up" onclick="sv('other-offerings',this);initODForm()">🎁 Other Offerings &amp; Donations</div>
+      <div class="ni sec-up" onclick="sv('bank-deposits',this);initBDForm()">🏦 Bank Deposits</div>
       <div class="ns sec-up">Expenses</div>
       <div class="ni sec-up" onclick="sv('payroll-view',this);initPayrollForm()">💼 Payroll</div>
       <div class="ni sec-up" onclick="sv('pay-bills',this);initBillForm();loadFundDropdowns()">🧾 Pay Bills</div>
@@ -206,6 +207,7 @@ nav{flex:1;padding:10px 0;}
       <div class="ni sec-up" onclick="sv('adj-tithes',this);loadAdjScreen('tithes')">🙏 Tithes &amp; Offering by Members</div>
       <div class="ni sec-up" onclick="sv('adj-giveify',this);loadAdjScreen('giveify')">📱 giveify by Donors</div>
       <div class="ni sec-up" onclick="sv('adj-other',this);loadAdjScreen('other')">🎁 Other Offerings &amp; Donations</div>
+      <div class="ni sec-up" onclick="sv('adj-bankdep',this);loadAdjScreen('bankdep')">🏦 Bank Deposits</div>
       <div class="ni sec-up" onclick="sv('adj-payroll',this);loadAdjScreen('payroll')">💼 Payroll</div>
       <div class="ni sec-up" onclick="sv('adj-bills',this);loadAdjScreen('bills')">🧾 Bills</div>
       <div class="ns sec-up">Management</div>
@@ -310,7 +312,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.14-112</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.14-113</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -1103,6 +1105,47 @@ nav{flex:1;padding:10px 0;}
       </div>
     </div>
 
+    <!-- BANK DEPOSITS (v113) -->
+    <div id="view-bank-deposits" class="vw">
+      <div class="ph"><h1>🏦 Bank Deposits</h1><p>Record Sunday/weekly bank deposits — check and cash totals saved to Google Sheets</p></div>
+
+      <div class="cd">
+        <div style="font-family:'Lora',serif;font-size:1.05rem;font-weight:700;color:var(--navy);margin-bottom:18px">Enter Bank Deposit</div>
+        <div class="fr">
+          <div class="fg3"><label>Deposit ID</label><input type="text" id="bd-id" value="BD-001" readonly style="background:#f1f5f9;color:#64748b;font-family:monospace"></div>
+          <div class="fg3"><label>Deposit Date</label><input type="date" id="bd-date"></div>
+        </div>
+        <div class="fr">
+          <div class="fg3"><label>Check Deposits ($)</label><input type="number" id="bd-check" placeholder="0.00" min="0" step="0.01" oninput="calcBDTotal()"></div>
+          <div class="fg3"><label>Cash Deposits ($)</label><input type="number" id="bd-cash" placeholder="0.00" min="0" step="0.01" oninput="calcBDTotal()"></div>
+        </div>
+        <div class="fr">
+          <div class="fg3"><label>Total Deposit</label><input type="text" id="bd-total" value="$0.00" readonly style="background:#dbeafe;font-weight:700;color:var(--blue)"></div>
+          <div class="fg3"></div>
+        </div>
+        <div class="fr">
+          <div class="fg3"><label>Notes (optional)</label><textarea id="bd-notes" rows="3" placeholder="Any additional notes..."></textarea></div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:18px">
+          <button class="bsv" onclick="saveBDRec()">💾 Save Record</button>
+          <button class="bcc" onclick="resetBDForm()">Reset</button>
+        </div>
+      </div>
+
+      <div class="cd" id="bd-saved-wrap" style="display:none;margin-top:18px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+          <div style="font-family:'Lora',serif;font-size:1.05rem;font-weight:700;color:var(--navy)">📋 Saved Bank Deposits</div>
+          <button class="bsv" onclick="saveBDToSheets()">Save All to Google Sheet</button>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="vt" style="width:100%">
+            <tr><th>ID</th><th>Date</th><th>Check Dep.</th><th>Cash Dep.</th><th>Total</th><th>Notes</th><th>Saved?</th><th style="text-align:center">Actions</th></tr>
+            <tbody id="bd-saved-table"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
     <!-- PAYROLL VIEW -->
     <div id="view-payroll-view" class="vw">
       <div class="ph"><h1>Payroll</h1><p>Enter staff salary and payroll payments — records saved to Google Sheets</p></div>
@@ -1553,6 +1596,47 @@ nav{flex:1;padding:10px 0;}
       </div>
 
       <div id="adj-other-content"><div style="text-align:center;padding:40px;color:#64748b">Loading…</div></div>
+    </div>
+
+    <!-- BANK DEPOSITS ADJUSTMENTS (v113) -->
+    <div id="view-adj-bankdep" class="vw">
+      <div class="ph" style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:10px">
+        <div>
+          <h1>🏦 Bank Deposits — Adjustments</h1>
+          <p>Review, edit, and delete bank deposit records</p>
+        </div>
+        <button class="bp" onclick="printAdj('bankdep')" style="margin-top:8px;white-space:nowrap">🖨 Print</button>
+      </div>
+
+      <div id="adj-bankdep-filter" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px;padding:14px 18px;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;">
+        <span style="font-size:.78rem;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.04em">Filter by</span>
+        <select id="bankdep-filter-month" style="padding:7px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit;color:#1e293b" onchange="adjMyApply('bankdep')">
+          <option value="">All Months</option>
+          <option value="1">January</option><option value="2">February</option>
+          <option value="3">March</option><option value="4">April</option>
+          <option value="5">May</option><option value="6">June</option>
+          <option value="7">July</option><option value="8">August</option>
+          <option value="9">September</option><option value="10">October</option>
+          <option value="11">November</option><option value="12">December</option>
+        </select>
+        <select id="bankdep-filter-year" style="padding:7px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit;color:#1e293b" onchange="adjMyApply('bankdep')">
+          <option value="">All Years</option>
+        </select>
+        <span style="font-size:.78rem;font-weight:700;color:#94a3b8">— or —</span>
+        <div style="display:flex;align-items:center;gap:6px">
+          <label style="font-size:.75rem;font-weight:600;color:#475569">From</label>
+          <input type="date" id="bankdep-filter-from" style="padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;color:#1e293b" onchange="adjFtApply('bankdep')">
+        </div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <label style="font-size:.75rem;font-weight:600;color:#475569">To</label>
+          <input type="date" id="bankdep-filter-to" style="padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;color:#1e293b" onchange="adjFtApply('bankdep')">
+        </div>
+        <button class="bac" onclick="clearAdjFilter('bankdep')" style="font-size:.8rem">✕ Clear</button>
+        <button class="bac" onclick="loadAdjScreen('bankdep')" style="font-size:.8rem">↻ Refresh</button>
+        <span id="bankdep-filter-count" style="font-size:.78rem;color:#64748b;margin-left:4px"></span>
+      </div>
+
+      <div id="adj-bankdep-content"><div style="text-align:center;padding:40px;color:#64748b">Loading…</div></div>
     </div>
 
     <div id="view-adj-payroll" class="vw">
@@ -2432,7 +2516,8 @@ function setDateRangeDefaults() {
     'giveify-filter-from','giveify-filter-to',
     'other-filter-from','other-filter-to',
     'payroll-filter-from','payroll-filter-to',
-    'bills-filter-from','bills-filter-to'
+    'bills-filter-from','bills-filter-to',
+    'bankdep-filter-from','bankdep-filter-to'
   ];
   ids.forEach(function(id) {
     var el = document.getElementById(id);
@@ -2448,6 +2533,181 @@ function saveUsersToStorage() {
 // v92 — fetch existing OtherOfferings records on view-open and set the next OD-NNN.
 // Without this, the form always started at OD-001 (hardcoded HTML default), causing
 // duplicate IDs whenever the sheet already had entries from previous sessions.
+// ── BANK DEPOSITS (v113) ─────────────────────────────────────────
+var bdPendingRows = [];
+
+function initBDForm() {
+  var idEl = document.getElementById('bd-id');
+  if (!idEl) return;
+  // Set today's date in the date field if empty
+  var dateEl = document.getElementById('bd-date');
+  if (dateEl && !dateEl.value) {
+    var d = new Date();
+    dateEl.value = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+  }
+  var url = localStorage.getItem('mcmbc_sheet_url') || '';
+  if (!url || url.indexOf('script.google.com') === -1) return;
+  var cb = 'bdInitCb_' + Date.now();
+  var t = setTimeout(function(){ delete window[cb]; }, 15000);
+  window[cb] = function(data) {
+    clearTimeout(t); delete window[cb];
+    var maxN = 0;
+    if (data && data.status === 'success' && Array.isArray(data.records)) {
+      data.records.forEach(function(r){
+        var m = String(r.id || '').match(/BD-(\d+)/i);
+        if (m) { var n = parseInt(m[1]); if (n > maxN) maxN = n; }
+      });
+    }
+    if (bdPendingRows.length) {
+      bdPendingRows.forEach(function(r){
+        var m = String(r.id || '').match(/BD-(\d+)/i);
+        if (m) { var n = parseInt(m[1]); if (n > maxN) maxN = n; }
+      });
+    }
+    idEl.value = 'BD-' + String(maxN + 1).padStart(3, '0');
+  };
+  var s = document.createElement('script');
+  s.onerror = function(){ clearTimeout(t); delete window[cb]; };
+  s.src = url + '?action=getBankDeposits&callback=' + cb;
+  document.head.appendChild(s);
+  setTimeout(function(){ if (s.parentNode) s.parentNode.removeChild(s); }, 17000);
+}
+
+function calcBDTotal() {
+  var check = parseFloat(document.getElementById('bd-check').value) || 0;
+  var cash  = parseFloat(document.getElementById('bd-cash').value)  || 0;
+  document.getElementById('bd-total').value = fmtCurrency(check + cash);
+}
+
+function resetBDForm() {
+  ['bd-check','bd-cash'].forEach(function(i){ document.getElementById(i).value = ''; });
+  document.getElementById('bd-notes').value = '';
+  document.getElementById('bd-total').value = '$0.00';
+}
+
+function saveBDRec() {
+  var id    = document.getElementById('bd-id').value;
+  var date  = document.getElementById('bd-date').value;
+  var check = parseFloat(document.getElementById('bd-check').value) || 0;
+  var cash  = parseFloat(document.getElementById('bd-cash').value)  || 0;
+  var total = check + cash;
+  var notes = document.getElementById('bd-notes').value || '';
+
+  if (!date) { showToast('Please enter a deposit date.'); return; }
+  if (total <= 0) { showToast('Enter at least one deposit amount before saving.'); return; }
+
+  var tb = document.getElementById('bd-saved-table');
+  var tr = document.createElement('tr');
+  tr.setAttribute('data-bdid', id);
+  tr.innerHTML =
+    '<td style="font-family:monospace;font-size:.78rem">' + id + '</td>' +
+    '<td>' + date + '</td>' +
+    '<td class="ta">' + fmtCurrency(check) + '</td>' +
+    '<td class="ta">' + fmtCurrency(cash) + '</td>' +
+    '<td style="font-weight:700;color:var(--blue)">' + fmtCurrency(total) + '</td>' +
+    '<td style="font-size:.78rem;color:#475569">' + (notes||'—') + '</td>' +
+    '<td id="bd-status-' + id + '"><span class="sb2" style="background:#fef3c7;color:#92400e">Pending</span></td>' +
+    '<td style="white-space:nowrap"></td>';
+  var actTd = tr.lastElementChild;
+  var dBtn = document.createElement('button');
+  dBtn.className = 'bac';
+  dBtn.style.cssText = 'background:#fee2e2;color:#b91c1c';
+  dBtn.textContent = '🗑';
+  dBtn.onclick = (function(bid){ return function(){ bdDeleteRow(bid); }; })(id);
+  actTd.appendChild(dBtn);
+  tb.appendChild(tr);
+
+  bdPendingRows.push({id:id, date:date, check:check, cash:cash, total:total, notes:notes, _saved:false});
+
+  document.getElementById('bd-saved-wrap').style.display = 'block';
+
+  // Bump ID via parse-and-increment so it stays consistent with the sheet
+  var m = String(id).match(/BD-(\d+)/i);
+  var next = m ? (parseInt(m[1]) + 1) : (bdPendingRows.length + 1);
+  document.getElementById('bd-id').value = 'BD-' + String(next).padStart(3, '0');
+  resetBDForm();
+}
+
+function bdDeleteRow(id) {
+  var idx = -1;
+  for (var i = 0; i < bdPendingRows.length; i++) {
+    if (bdPendingRows[i].id === id) { idx = i; break; }
+  }
+  if (idx < 0) return;
+  if (bdPendingRows[idx]._saved) {
+    showToast('Already saved to Google Sheets — delete it from Adjustments instead.');
+    return;
+  }
+  bdPendingRows.splice(idx, 1);
+  var row = document.querySelector('#bd-saved-table tr[data-bdid="' + id + '"]');
+  if (row && row.parentNode) row.parentNode.removeChild(row);
+  if (bdPendingRows.length === 0) {
+    document.getElementById('bd-saved-wrap').style.display = 'none';
+  }
+}
+
+function saveBDToSheets() {
+  var url = localStorage.getItem('mcmbc_sheet_url') || '';
+  if (!url || url.indexOf('script.google.com') === -1) {
+    showToast('Please set the Google Sheets URL on the Dashboard first.');
+    return;
+  }
+  var pending = bdPendingRows.filter(function(r){ return !r._saved; });
+  if (pending.length === 0) { showToast('No new bank deposits to save.'); return; }
+  var btn = event && event.target;
+  if (btn) { btn.textContent = 'Saving…'; btn.disabled = true; }
+  var saved = 0;
+
+  function saveNext(i) {
+    if (i >= pending.length) {
+      if (btn) { btn.textContent = 'Save All to Google Sheet'; btn.disabled = false; }
+      showToast(saved + ' bank deposit record(s) saved to Google Sheets!');
+      // v106-style cleanup: remove successfully-saved rows from the table
+      var tb = document.getElementById('bd-saved-table');
+      bdPendingRows.filter(function(r){ return r._saved; }).forEach(function(r){
+        var row = tb ? tb.querySelector('tr[data-bdid="' + r.id + '"]') : null;
+        if (row && row.parentNode) row.parentNode.removeChild(row);
+      });
+      bdPendingRows = bdPendingRows.filter(function(r){ return !r._saved; });
+      if (bdPendingRows.length === 0) document.getElementById('bd-saved-wrap').style.display = 'none';
+      return;
+    }
+    var r  = pending[i];
+    var cb = 'bdSaveCb_' + i + '_' + Date.now();
+    window[cb] = function(data) {
+      delete window[cb];
+      if (data && data.status === 'success') {
+        r._saved = true; saved++;
+        var statusEl = document.getElementById('bd-status-' + r.id);
+        if (statusEl) statusEl.innerHTML = '<span class="sb2" style="background:#d1fae5;color:#065f46">Saved</span>';
+      } else {
+        var statusEl = document.getElementById('bd-status-' + r.id);
+        if (statusEl) statusEl.innerHTML = '<span class="sb2" style="background:#fee2e2;color:#b91c1c">Error</span>';
+      }
+      saveNext(i + 1);
+    };
+    var s = document.createElement('script');
+    s.onerror = function(){
+      delete window[cb];
+      var statusEl = document.getElementById('bd-status-' + r.id);
+      if (statusEl) statusEl.innerHTML = '<span class="sb2" style="background:#fee2e2;color:#b91c1c">Error</span>';
+      saveNext(i + 1);
+    };
+    s.src = url +
+      '?action=addBankDeposit' +
+      '&bankDepositId=' + encodeURIComponent(r.id) +
+      '&date='          + encodeURIComponent(r.date) +
+      '&checkDep='      + encodeURIComponent(r.check) +
+      '&cashDep='       + encodeURIComponent(r.cash) +
+      '&totalDep='      + encodeURIComponent(r.total) +
+      '&notes='         + encodeURIComponent(r.notes||'') +
+      '&callback='      + cb;
+    document.head.appendChild(s);
+    setTimeout(function(){ if (s.parentNode) s.parentNode.removeChild(s); }, 27000);
+  }
+  saveNext(0);
+}
+
 function initODForm() {
   var idEl = document.getElementById('od-id');
   if (!idEl) return;
@@ -8989,6 +9249,16 @@ var ADJ_CFG = {
     labels:['Check Date','Check Number','Payee','Check Amount','Fund','Account Number','Memo','Type of Bill'],
     types: ['date','text','text','number','text','text','text','text'],
     idField:'id'
+  },
+  // v113 — Bank Deposits
+  bankdep: {
+    action:'getBankDeposits', updateAction:'updateBankDeposit', deleteAction:'deleteBankDeposit',
+    title:'Bank Deposits', contentId:'adj-bankdep-content',
+    dateField:'date', hasFilter:true,
+    cols:['Date','Check Dep.','Cash Dep.','Total','Notes'],
+    fields:['date','checkDep','cashDep','total','notes'],
+    labels:['Deposit Date','Check Deposits','Cash Deposits','Total Deposit','Notes'],
+    types: ['date','number','number','number','text']
   }
 };
 
