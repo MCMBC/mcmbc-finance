@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.05.11-109</title>
+<title>Mount Calvary M.B. Church Financial System v2026.05.11-110</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -174,7 +174,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.11-109</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.11-110</span>
     </div>
   </div>
 </div>
@@ -187,7 +187,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.11-109</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.11-110</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -310,7 +310,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.11-109</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.11-110</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -658,7 +658,7 @@ nav{flex:1;padding:10px 0;}
             <tr><th>Offering ID</th><th>Date</th><th>Tithes</th><th>Youth</th><th>Building Fund</th><th>Benevolent</th><th>Youth Education</th><th>Offering</th><th>Special Event</th><th>Other</th><th>Total Individual Tithes</th><th>Received By</th><th>Saved?</th><th style="text-align:center">Actions</th></tr>
           </table>
         </div>
-        <div style="margin-top:12px;padding:11px 14px;background:#fef9c3;border-left:4px solid #ca8a04;border-radius:8px;font-size:.8rem;color:#854d0e;">
+        <div id="offerings-setup-banner" style="margin-top:12px;padding:11px 14px;background:#fef9c3;border-left:4px solid #ca8a04;border-radius:8px;font-size:.8rem;color:#854d0e;">
           ⚙️ <strong>Setup required:</strong> Paste your Google Apps Script Web App URL into the field below before saving.
           <div style="margin-top:8px;display:flex;gap:8px;align-items:center;">
             <input type="text" id="sheet-url" placeholder="https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec" style="flex:1;padding:7px 10px;border:1.5px solid #ca8a04;border-radius:7px;font-size:.8rem;font-family:'DM Sans',sans-serif;outline:none;">
@@ -2401,6 +2401,12 @@ function initPage() {
   var sheetUrlField = document.getElementById('sheet-url');
   if (sheetUrlField && savedUrl) sheetUrlField.value = savedUrl;
 
+  // v110 — hide the "Setup required" banner on Offerings Collected once URL is saved
+  var setupBanner = document.getElementById('offerings-setup-banner');
+  if (setupBanner && savedUrl && savedUrl.indexOf('script.google.com') !== -1) {
+    setupBanner.style.display = 'none';
+  }
+
   // v98 — default all "Select Date Range" inputs (Reports + Adjustments) to today
   setDateRangeDefaults();
 }
@@ -3695,6 +3701,11 @@ function saveSheetUrl() {
   if (url) {
     localStorage.setItem('mcmbc_sheet_url', url);
     showToast('Web App URL saved!');
+    // v110 — hide the "Setup required" banner now that the URL is configured
+    var setupBanner = document.getElementById('offerings-setup-banner');
+    if (setupBanner && url.indexOf('script.google.com') !== -1) {
+      setupBanner.style.display = 'none';
+    }
   }
 }
 
