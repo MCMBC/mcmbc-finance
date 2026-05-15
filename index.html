@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.05.14-115</title>
+<title>Mount Calvary M.B. Church Financial System v2026.05.14-116</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -174,7 +174,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.14-115</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.14-116</span>
     </div>
   </div>
 </div>
@@ -187,7 +187,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.14-115</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.14-116</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -312,7 +312,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.14-115</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.14-116</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -602,8 +602,9 @@ nav{flex:1;padding:10px 0;}
           <div class="fg3"><label>Offering ID</label><input value="OF-001" readonly style="background:#f1f5f9;color:#64748b"></div>
           <div class="fg3"><label>Date</label><input type="date" id="to-date"></div>
         </div>
-        <div class="fr">
+        <div class="fr3">
           <div class="fg3"><label>Sunday School ($)</label><input type="number" id="amt-ss" placeholder="0.00" min="0" step="0.01" oninput="calcOfferingTotal()"></div>
+          <div class="fg3"><label>Youth Education ($)</label><input type="number" id="amt-yedu" placeholder="0.00" min="0" step="0.01" oninput="calcOfferingTotal()"></div>
           <div class="fg3"><label>General Offering Collected ($)</label><input type="number" id="amt-gen" placeholder="0.00" min="0" step="0.01" oninput="calcOfferingTotal()"></div>
         </div>
 
@@ -630,6 +631,7 @@ nav{flex:1;padding:10px 0;}
               <td style="text-align:right;padding:6px 8px;">—</td>
             </tr>
             <tr id="gl-ss"><td style="padding:5px 8px;padding-left:20px;color:#475569;">4030 — Sunday School Fund</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" class="gl-cr"></td></tr>
+            <tr id="gl-yedu"><td style="padding:5px 8px;padding-left:20px;color:#475569;">4050 — Youth Education Fund</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" class="gl-cr"></td></tr>
             <tr id="gl-gen"><td style="padding:5px 8px;padding-left:20px;color:#475569;">4010 — General Offering</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" class="gl-cr"></td></tr>
             <tr style="border-top:2px solid var(--light);font-weight:700;">
               <td style="padding:7px 8px;">Totals</td>
@@ -657,7 +659,7 @@ nav{flex:1;padding:10px 0;}
         <div id="sheet-status" style="display:none;margin-bottom:10px;padding:10px 14px;border-radius:8px;font-size:.82rem;"></div>
         <div style="overflow-x:auto">
           <table class="vt" id="saved-offerings-table">
-            <tr><th>Offering ID</th><th>Date</th><th>Tithes</th><th>Youth</th><th>Building Fund</th><th>Benevolent</th><th>Youth Education</th><th>Offering</th><th>Special Event</th><th>Other</th><th>Total Individual Tithes</th><th>Received By</th><th>Saved?</th><th style="text-align:center">Actions</th></tr>
+            <tr><th>Offering ID</th><th>Date</th><th>Sunday School</th><th>Youth Education</th><th>General Offering</th><th>Total</th><th>Received By</th><th>Saved?</th><th style="text-align:center">Actions</th></tr>
           </table>
         </div>
         <div id="offerings-setup-banner" style="margin-top:12px;padding:11px 14px;background:#fef9c3;border-left:4px solid #ca8a04;border-radius:8px;font-size:.8rem;color:#854d0e;">
@@ -3454,8 +3456,9 @@ function saveCashOfferingsToSheet() {
 
 function calcOfferingTotal() {
   var fields = [
-    {id:'amt-ss',  row:'gl-ss'},
-    {id:'amt-gen', row:'gl-gen'},
+    {id:'amt-ss',   row:'gl-ss'},
+    {id:'amt-yedu', row:'gl-yedu'},
+    {id:'amt-gen',  row:'gl-gen'},
   ];
   var total = 0;
   fields.forEach(function(f) {
@@ -3915,20 +3918,22 @@ function saveRec(type) {
   if (type === 'offering') {
     var id    = document.querySelector('#view-tithes .fcd input[readonly]').value;
     var date  = document.getElementById('to-date').value || '---';
-    var ss    = parseFloat(document.getElementById('amt-ss').value)  || 0;
-    var gen   = parseFloat(document.getElementById('amt-gen').value) || 0;
-    var total = ss + gen;
+    var ss    = parseFloat(document.getElementById('amt-ss').value)   || 0;
+    var yedu  = parseFloat(document.getElementById('amt-yedu').value) || 0;
+    var gen   = parseFloat(document.getElementById('amt-gen').value)  || 0;
+    var total = ss + yedu + gen;
     var rcvd  = document.getElementById('to-received-by').value || '';
     var notes = (document.getElementById('offering-notes') || {value:''}).value || '';
 
     var tb = document.getElementById('saved-offerings-table');
     var tr = document.createElement('tr');
-    tr.setAttribute('data-record', JSON.stringify({id:id,date:date,ss:ss,benv:0,bldg:0,gen:gen,yth:0,yedu:0,other:0,total:total,rcvd:rcvd,notes:notes}));
+    tr.setAttribute('data-record', JSON.stringify({id:id,date:date,ss:ss,benv:0,bldg:0,gen:gen,yth:0,yedu:yedu,other:0,total:total,rcvd:rcvd,notes:notes}));
     tr.innerHTML =
       '<td>' + id + '</td>' +
       '<td>' + date + '</td>' +
-      '<td class="ta">' + fmtCurrency(ss)  + '</td>' +
-      '<td class="ta">' + fmtCurrency(gen) + '</td>' +
+      '<td class="ta">' + fmtCurrency(ss)   + '</td>' +
+      '<td class="ta">' + fmtCurrency(yedu) + '</td>' +
+      '<td class="ta">' + fmtCurrency(gen)  + '</td>' +
       '<td style="font-weight:700;color:var(--blue)">' + fmtCurrency(total) + '</td>' +
       '<td>' + rcvd + '</td>' +
       '<td class="saved-status"><span class="sb2 sp">Pending</span></td>' +
@@ -3946,7 +3951,7 @@ function saveRec(type) {
     var nextNum = tb.querySelectorAll('tr').length;
     document.querySelector('#view-tithes .fcd input[readonly]').value = 'OF-' + String(nextNum).padStart(3,'0');
 
-    ['amt-ss','amt-gen'].forEach(function(fid){ var el=document.getElementById(fid); if(el) el.value=''; });
+    ['amt-ss','amt-yedu','amt-gen'].forEach(function(fid){ var el=document.getElementById(fid); if(el) el.value=''; });
     var notesEl = document.getElementById('offering-notes');
     if (notesEl) notesEl.value = '';
     calcOfferingTotal();
@@ -7192,25 +7197,24 @@ function ofEditRow(rowEl) {
   }
   var d = JSON.parse(rowEl.getAttribute('data-record') || '{}');
   openSessionEditModal({ fields: [
-    {key:'date',  label:'Date',            type:'date',   value:d.date},
-    {key:'ss',    label:'Sunday School',   type:'number', value:d.ss,   min:0, step:'0.01'},
-    {key:'benv',  label:'Benevolent',      type:'number', value:d.benv, min:0, step:'0.01'},
-    {key:'bldg',  label:'Building Fund',   type:'number', value:d.bldg, min:0, step:'0.01'},
-    {key:'gen',   label:'General Offering',type:'number', value:d.gen,  min:0, step:'0.01'},
-    {key:'yth',   label:'Youth',           type:'number', value:d.yth,  min:0, step:'0.01'},
-    {key:'yedu',  label:'Youth Education', type:'number', value:d.yedu, min:0, step:'0.01'},
-    {key:'other', label:'Other',           type:'number', value:d.other,min:0, step:'0.01'},
-    {key:'rcvd',  label:'Received By',     type:'text',   value:d.rcvd}
+    {key:'date',  label:'Date',                  type:'date',   value:d.date},
+    {key:'ss',    label:'Sunday School',         type:'number', value:d.ss,   min:0, step:'0.01'},
+    {key:'yedu',  label:'Youth Education',       type:'number', value:d.yedu, min:0, step:'0.01'},
+    {key:'gen',   label:'General Offering',      type:'number', value:d.gen,  min:0, step:'0.01'},
+    {key:'rcvd',  label:'Received By',           type:'text',   value:d.rcvd}
   ], onSave: function() {
-    var nd = {id:d.id, date:fvs('date'), ss:fv('ss'), benv:fv('benv'), bldg:fv('bldg'), gen:fv('gen'), yth:fv('yth'), yedu:fv('yedu'), other:fv('other'), rcvd:fvs('rcvd')};
-    nd.total = nd.ss + nd.benv + nd.bldg + nd.gen + nd.yth + nd.yedu + nd.other;
+    var nd = {id:d.id, date:fvs('date'), ss:fv('ss'), benv:d.benv||0, bldg:d.bldg||0, gen:fv('gen'), yth:d.yth||0, yedu:fv('yedu'), other:d.other||0, rcvd:fvs('rcvd'), notes:d.notes||''};
+    nd.total = (nd.ss||0) + (nd.yedu||0) + (nd.gen||0);
     rowEl.setAttribute('data-record', JSON.stringify(nd));
     var c = rowEl.cells;
-    c[0].textContent = nd.id; c[1].textContent = nd.date;
-    c[2].textContent = fmtCurrency(nd.ss);   c[3].textContent = fmtCurrency(nd.benv);
-    c[4].textContent = fmtCurrency(nd.bldg); c[5].textContent = fmtCurrency(nd.gen);
-    c[6].textContent = fmtCurrency(nd.yth);  c[7].textContent = fmtCurrency(nd.yedu);
-    c[8].textContent = fmtCurrency(nd.total);c[9].textContent = nd.rcvd;
+    // Cell layout: 0=id, 1=date, 2=SS, 3=YEdu, 4=Gen, 5=Total, 6=Rcvd, 7=Saved?, 8=Actions
+    c[0].textContent = nd.id;
+    c[1].textContent = nd.date;
+    c[2].textContent = fmtCurrency(nd.ss);
+    c[3].textContent = fmtCurrency(nd.yedu);
+    c[4].textContent = fmtCurrency(nd.gen);
+    c[5].textContent = fmtCurrency(nd.total);
+    c[6].textContent = nd.rcvd;
     showToast('✅ Offering entry updated.');
   }});
 }
