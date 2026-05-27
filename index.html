@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.05.27-117</title>
+<title>Mount Calvary M.B. Church Financial System v2026.05.27-119</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -174,7 +174,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.27-117</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.27-119</span>
     </div>
   </div>
 </div>
@@ -187,7 +187,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.27-117</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.27-119</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -312,7 +312,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.27-117</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.27-119</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -1304,17 +1304,29 @@ nav{flex:1;padding:10px 0;}
       <div class="fcd">
         <h3 style="margin:0 0 18px;font-family:'Lora',serif;color:var(--blue)">➕ New Bill Payment</h3>
 
-        <!-- Row 1: Bill ID + Check No + Check Date -->
+        <!-- Row 1: Bill ID + Payment Method + Payment Date -->
         <div class="fr" style="grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px">
           <div class="fg3"><label>Bill ID</label>
             <input type="text" id="pb-id" readonly style="background:#f1f5f9;color:#64748b;font-family:monospace;font-weight:700">
           </div>
+          <div class="fg3"><label>Payment Method</label>
+            <select id="pb-pay-method" onchange="togglePbCheckNo()">
+              <option value="Check">Check</option>
+              <option value="Credit Card">Credit Card</option>
+            </select>
+          </div>
+          <div class="fg3"><label>Payment Date</label>
+            <input type="date" id="pb-date">
+          </div>
+        </div>
+
+        <!-- Row 1b: Check No. (visible only when Payment Method = Check) -->
+        <div class="fr" id="pb-checkno-row" style="grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px">
           <div class="fg3"><label>Check No.</label>
             <input type="text" id="pb-checkno" placeholder="e.g. 1045">
           </div>
-          <div class="fg3"><label>Check Date</label>
-            <input type="date" id="pb-date">
-          </div>
+          <div class="fg3"></div>
+          <div class="fg3"></div>
         </div>
 
         <!-- Row 2: Payee + Type of Bill -->
@@ -1422,7 +1434,7 @@ nav{flex:1;padding:10px 0;}
         </div>
         <div style="overflow-x:auto">
           <table class="vt" id="pb-saved-table">
-            <tr><th>ID</th><th>Check No.</th><th>Date</th><th>Payee</th><th>Type</th><th>Fund</th><th>Amount</th><th>Memo</th><th>Saved?</th></tr>
+            <tr><th>ID</th><th>Payment</th><th>Check No.</th><th>Date</th><th>Payee</th><th>Type</th><th>Fund</th><th>Amount</th><th>Memo</th><th>Saved?</th></tr>
           </table>
         </div>
       </div>
@@ -5207,7 +5219,8 @@ function amountToWords(n) {
 
 function saveBillEntry() {
   var id     = document.getElementById('pb-id').value;
-  var checkno= document.getElementById('pb-checkno').value.trim();
+  var payMethod = (document.getElementById('pb-pay-method') || {value:'Check'}).value || 'Check';
+  var checkno= payMethod === 'Check' ? document.getElementById('pb-checkno').value.trim() : '';
   var date   = document.getElementById('pb-date').value;
   var payee  = document.getElementById('pb-payee').value.trim();
   var type   = document.getElementById('pb-type').value;
@@ -5220,6 +5233,7 @@ function saveBillEntry() {
   if (!payee) { showToast('Payee is required.'); return; }
   if (!type)  { showToast('Type of Bill is required.'); return; }
   if (amount <= 0) { showToast('Amount must be greater than $0.'); return; }
+  if (payMethod === 'Check' && !checkno) { showToast('Check No. is required when paying by check.'); return; }
 
   // Add to session table
   var tb = document.getElementById('pb-saved-table');
@@ -5227,6 +5241,7 @@ function saveBillEntry() {
   tr.setAttribute('data-pbid', id);
   tr.innerHTML = [
     '<td style="font-family:monospace;font-size:.78rem">' + id + '</td>',
+    '<td><span class="br2" style="font-size:.72rem;background:' + (payMethod==='Check'?'#dbeafe':'#fce7f3') + ';color:' + (payMethod==='Check'?'#1e40af':'#9d174d') + '">' + payMethod + '</span></td>',
     '<td>' + (checkno||'—') + '</td>',
     '<td>' + date + '</td>',
     '<td style="font-weight:600">' + payee + '</td>',
@@ -5238,7 +5253,7 @@ function saveBillEntry() {
   ].join('');
   tb.appendChild(tr);
 
-  pbEntries.push({id:id, checkNo:checkno, date:date, payee:payee, type:type,
+  pbEntries.push({id:id, payMethod:payMethod, checkNo:checkno, date:date, payee:payee, type:type,
     amount:amount, fund:fund, acctNo:acctno, memo:memo, words:words, _saved:false});
 
   pbSessionTotal += amount;
@@ -5260,7 +5275,24 @@ function clearBillForm() {
   document.getElementById('pb-type').value = '';
   document.getElementById('pb-new-vendor-wrap').style.display = 'none';
   document.getElementById('pb-fund').value = 'General Offering Fund';
+  // v118 — leave pb-pay-method at its current selection so consecutive
+  //        entries of the same payment type don't require re-selecting
+  togglePbCheckNo();
   calcBillEntry();
+}
+
+// v118 — show Check No. row only when Payment Method = Check.
+function togglePbCheckNo() {
+  var sel = document.getElementById('pb-pay-method');
+  var row = document.getElementById('pb-checkno-row');
+  var inp = document.getElementById('pb-checkno');
+  if (!sel || !row) return;
+  if (sel.value === 'Check') {
+    row.style.display = '';
+  } else {
+    row.style.display = 'none';
+    if (inp) inp.value = '';
+  }
 }
 
 function saveBillsToSheets() {
@@ -5314,6 +5346,7 @@ function saveBillsToSheets() {
     s.src = url + '?action=addBill'
       + '&callback='            + cb
       + '&billsId='             + encodeURIComponent(r.id)
+      + '&paymentMethod='       + encodeURIComponent(r.payMethod||'Check')
       + '&checkNo='             + encodeURIComponent(r.checkNo)
       + '&checkDate='           + encodeURIComponent(r.date)
       + '&payee='               + encodeURIComponent(r.payee)
@@ -9268,10 +9301,14 @@ var ADJ_CFG = {
     action:'getBillRecords', updateAction:'updateBill', deleteAction:'deleteBill',
     title:'Bills', contentId:'adj-bills-content',
     dateField:'checkDate', hasFilter:true,
-    cols:['Check Date','Check No','Payee','Amount','Fund','Acct No','Memo','Type of Bill'],
-    fields:['checkDate','checkNo','payee','amount','fund','accountNo','memo','typeOfBill'],
-    labels:['Check Date','Check Number','Payee','Check Amount','Fund','Account Number','Memo','Type of Bill'],
-    types: ['date','text','text','number','text','text','text','text'],
+    // v118 — added Payment Method (select: Check / Credit Card) as the first
+    //        editable field. Existing rows from before v118 will read as
+    //        'Check' via the getBillRecords default.
+    cols:['Payment Method','Check Date','Check No','Payee','Amount','Fund','Acct No','Memo','Type of Bill'],
+    fields:['paymentMethod','checkDate','checkNo','payee','amount','fund','accountNo','memo','typeOfBill'],
+    labels:['Payment Method','Check Date','Check Number','Payee','Check Amount','Fund','Account Number','Memo','Type of Bill'],
+    types: ['select','date','text','text','number','text','text','text','text'],
+    options: [['Check','Credit Card'], null, null, null, null, null, null, null, null],
     idField:'id'
   },
   // v113 — Bank Deposits
@@ -9741,10 +9778,21 @@ function adjEdit(type, idx) {
     } else {
       extraInput = ' style="padding:8px 11px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit"';
     }
+    // v118 — 'select' type renders a <select> built from cfg.options[fi] (array of strings).
+    //        Used by Bills to let users edit Payment Method = Check / Credit Card.
+    var inputEl;
+    if (cfg.types[fi] === 'select' && cfg.options && cfg.options[fi]) {
+      var opts = cfg.options[fi].map(function(o){
+        return '<option value="' + esc(o) + '"' + (o===fieldVal?' selected':'') + '>' + esc(o) + '</option>';
+      }).join('');
+      inputEl = '<select id="adj-field-' + type + '-' + f + '"' + extraInput + '>' + opts + '</select>';
+    } else {
+      inputEl = '<input id="adj-field-' + type + '-' + f + '" type="' + cfg.types[fi] + '" value="' + fieldVal + '"' + extraInput + '>';
+    }
     formEl.innerHTML +=
       '<div style="display:flex;flex-direction:column;gap:4px;flex:1;min-width:' + w + '">' +
       '<label style="font-size:.75rem;font-weight:600;color:#475569;text-transform:uppercase">' + cfg.labels[fi] + '</label>' +
-      '<input id="adj-field-' + type + '-' + f + '" type="' + cfg.types[fi] + '" value="' + fieldVal + '"' + extraInput + '></div>';
+      inputEl + '</div>';
   });
 
   document.getElementById('adj-modal-' + type).style.display = 'flex';
