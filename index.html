@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.05.27-119</title>
+<title>Mount Calvary M.B. Church Financial System v2026.05.27-121</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -174,7 +174,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.27-119</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.27-121</span>
     </div>
   </div>
 </div>
@@ -187,7 +187,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.27-119</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.27-121</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -312,7 +312,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.27-119</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.27-121</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -607,6 +607,11 @@ nav{flex:1;padding:10px 0;}
           <div class="fg3"><label>Youth Education ($)</label><input type="number" id="amt-yedu" placeholder="0.00" min="0" step="0.01" oninput="calcOfferingTotal()"></div>
           <div class="fg3"><label>General Offering Collected ($)</label><input type="number" id="amt-gen" placeholder="0.00" min="0" step="0.01" oninput="calcOfferingTotal()"></div>
         </div>
+        <div class="fr3">
+          <div class="fg3"><label>Bible Study ($)</label><input type="number" id="amt-bs" placeholder="0.00" min="0" step="0.01" oninput="calcOfferingTotal()"></div>
+          <div class="fg3"><label>Evening Services ($)</label><input type="number" id="amt-es" placeholder="0.00" min="0" step="0.01" oninput="calcOfferingTotal()"></div>
+          <div class="fg3"></div>
+        </div>
 
         <!-- Total -->
         <div class="fg3" style="background:#f0f9ff;border:1.5px solid #bfdbfe;border-radius:9px;padding:14px 16px;">
@@ -632,6 +637,8 @@ nav{flex:1;padding:10px 0;}
             </tr>
             <tr id="gl-ss"><td style="padding:5px 8px;padding-left:20px;color:#475569;">4030 — Sunday School Fund</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" class="gl-cr"></td></tr>
             <tr id="gl-yedu"><td style="padding:5px 8px;padding-left:20px;color:#475569;">4050 — Youth Education Fund</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" class="gl-cr"></td></tr>
+            <tr id="gl-bs"><td style="padding:5px 8px;padding-left:20px;color:#475569;">4035 — Bible Study Fund</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" class="gl-cr"></td></tr>
+            <tr id="gl-es"><td style="padding:5px 8px;padding-left:20px;color:#475569;">4015 — Evening Services Fund</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" class="gl-cr"></td></tr>
             <tr id="gl-gen"><td style="padding:5px 8px;padding-left:20px;color:#475569;">4010 — General Offering</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" class="gl-cr"></td></tr>
             <tr style="border-top:2px solid var(--light);font-weight:700;">
               <td style="padding:7px 8px;">Totals</td>
@@ -659,7 +666,7 @@ nav{flex:1;padding:10px 0;}
         <div id="sheet-status" style="display:none;margin-bottom:10px;padding:10px 14px;border-radius:8px;font-size:.82rem;"></div>
         <div style="overflow-x:auto">
           <table class="vt" id="saved-offerings-table">
-            <tr><th>Offering ID</th><th>Date</th><th>Sunday School</th><th>Youth Education</th><th>General Offering</th><th>Total</th><th>Received By</th><th>Saved?</th><th style="text-align:center">Actions</th></tr>
+            <tr><th>Offering ID</th><th>Date</th><th>Sunday School</th><th>Youth Education</th><th>General Offering</th><th>Bible Study</th><th>Evening Services</th><th>Total</th><th>Received By</th><th>Saved?</th><th style="text-align:center">Actions</th></tr>
           </table>
         </div>
         <div id="offerings-setup-banner" style="margin-top:12px;padding:11px 14px;background:#fef9c3;border-left:4px solid #ca8a04;border-radius:8px;font-size:.8rem;color:#854d0e;">
@@ -3470,6 +3477,8 @@ function calcOfferingTotal() {
   var fields = [
     {id:'amt-ss',   row:'gl-ss'},
     {id:'amt-yedu', row:'gl-yedu'},
+    {id:'amt-bs',   row:'gl-bs'},
+    {id:'amt-es',   row:'gl-es'},
     {id:'amt-gen',  row:'gl-gen'},
   ];
   var total = 0;
@@ -3933,19 +3942,23 @@ function saveRec(type) {
     var ss    = parseFloat(document.getElementById('amt-ss').value)   || 0;
     var yedu  = parseFloat(document.getElementById('amt-yedu').value) || 0;
     var gen   = parseFloat(document.getElementById('amt-gen').value)  || 0;
-    var total = ss + yedu + gen;
+    var bs    = parseFloat(document.getElementById('amt-bs').value)   || 0;
+    var es    = parseFloat(document.getElementById('amt-es').value)   || 0;
+    var total = ss + yedu + gen + bs + es;
     var rcvd  = document.getElementById('to-received-by').value || '';
     var notes = (document.getElementById('offering-notes') || {value:''}).value || '';
 
     var tb = document.getElementById('saved-offerings-table');
     var tr = document.createElement('tr');
-    tr.setAttribute('data-record', JSON.stringify({id:id,date:date,ss:ss,benv:0,bldg:0,gen:gen,yth:0,yedu:yedu,other:0,total:total,rcvd:rcvd,notes:notes}));
+    tr.setAttribute('data-record', JSON.stringify({id:id,date:date,ss:ss,benv:0,bldg:0,gen:gen,yth:0,yedu:yedu,other:0,bs:bs,es:es,total:total,rcvd:rcvd,notes:notes}));
     tr.innerHTML =
       '<td>' + id + '</td>' +
       '<td>' + date + '</td>' +
       '<td class="ta">' + fmtCurrency(ss)   + '</td>' +
       '<td class="ta">' + fmtCurrency(yedu) + '</td>' +
       '<td class="ta">' + fmtCurrency(gen)  + '</td>' +
+      '<td class="ta">' + fmtCurrency(bs)   + '</td>' +
+      '<td class="ta">' + fmtCurrency(es)   + '</td>' +
       '<td style="font-weight:700;color:var(--blue)">' + fmtCurrency(total) + '</td>' +
       '<td>' + rcvd + '</td>' +
       '<td class="saved-status"><span class="sb2 sp">Pending</span></td>' +
@@ -3963,7 +3976,7 @@ function saveRec(type) {
     var nextNum = tb.querySelectorAll('tr').length;
     document.querySelector('#view-tithes .fcd input[readonly]').value = 'OF-' + String(nextNum).padStart(3,'0');
 
-    ['amt-ss','amt-yedu','amt-gen'].forEach(function(fid){ var el=document.getElementById(fid); if(el) el.value=''; });
+    ['amt-ss','amt-yedu','amt-gen','amt-bs','amt-es'].forEach(function(fid){ var el=document.getElementById(fid); if(el) el.value=''; });
     var notesEl = document.getElementById('offering-notes');
     if (notesEl) notesEl.value = '';
     calcOfferingTotal();
@@ -4045,6 +4058,8 @@ function saveAllToSheet() {
       '&youth=' + (d.yth||0) +
       '&youthEducation=' + (d.yedu||0) +
       '&other=' + (d.other||0) +
+      '&bibleStudy=' + (d.bs||0) +
+      '&eveningServices=' + (d.es||0) +
       '&totalDeposit=' + d.total +
       '&receivedBy=' + encodeURIComponent(d.rcvd) +
       '&notes=' + encodeURIComponent(d.notes||'');
@@ -6616,19 +6631,43 @@ function renderMonthlyCFReport(data, monthName, body) {
   // Preferred inflow row order
   // v115 — Bank Deposits is rendered as its own section below the Inflows
   //        table, so it's intentionally excluded from inflowOrder.
+  // v120 — Order updated per Debbie's request. Bible Study and Evening
+  //        Services added as always-visible placeholder rows (no data
+  //        source today; will show $0 until a sheet column feeds them).
   var inflowOrder = [
-    'MCMBC- Benevolent','MCMBC- Building','MCMBC- Church Anniversary',
-    'MCMBC- Gen. Fund Offering','MCMBC- Other','MCMBC- Sunday School',
-    'MCMBC- Tithes','MCMBC- Youth','MCMBC- Youth Education'
+    'MCMBC- Sunday School',
+    'MCMBC- Gen. Fund Offering',
+    'MCMBC- Tithes',
+    'MCMBC- Benevolent',
+    'MCMBC- Bible Study',
+    'MCMBC- Evening Services',
+    'MCMBC- Building',
+    'MCMBC- Youth',
+    'MCMBC- Youth Education'
   ];
+  // v120 — these labels always render (even with $0) so the report layout
+  //        stays consistent month-to-month regardless of activity.
+  var alwaysShowInflows = ['MCMBC- Bible Study', 'MCMBC- Evening Services'];
+  // Ensure each placeholder has a properly-sized zero array so dataRow
+  // renders the full set of Sunday-column cells (otherwise the row would
+  // collapse to just label + Online/Tithes + Totals and break alignment).
+  alwaysShowInflows.forEach(function(label) {
+    if (!inflows[label] || !inflows[label].length) {
+      var zeros = []; for (var i = 0; i < nCols; i++) zeros.push(0);
+      inflows[label] = zeros;
+    }
+  });
   // Add any extra inflow labels not in preferred order (but skip the Bank
   // Deposits label so it doesn't sneak back into Inflows)
   Object.keys(inflows).forEach(function(k){
     if (k === 'MCMBC- Bank Deposits') return;
     if (inflowOrder.indexOf(k) === -1) inflowOrder.push(k);
   });
-  // Filter to only those with data
-  inflowOrder = inflowOrder.filter(function(k){ return inflows[k] && sumRow(inflows[k]) > 0; });
+  // Filter to only those with data — but keep always-show placeholders
+  inflowOrder = inflowOrder.filter(function(k){
+    if (alwaysShowInflows.indexOf(k) !== -1) return true;
+    return inflows[k] && sumRow(inflows[k]) > 0;
+  });
 
   // CSS
   var css = [
@@ -7237,20 +7276,24 @@ function ofEditRow(rowEl) {
     {key:'ss',    label:'Sunday School',         type:'number', value:d.ss,   min:0, step:'0.01'},
     {key:'yedu',  label:'Youth Education',       type:'number', value:d.yedu, min:0, step:'0.01'},
     {key:'gen',   label:'General Offering',      type:'number', value:d.gen,  min:0, step:'0.01'},
+    {key:'bs',    label:'Bible Study',           type:'number', value:d.bs,   min:0, step:'0.01'},
+    {key:'es',    label:'Evening Services',      type:'number', value:d.es,   min:0, step:'0.01'},
     {key:'rcvd',  label:'Received By',           type:'text',   value:d.rcvd}
   ], onSave: function() {
-    var nd = {id:d.id, date:fvs('date'), ss:fv('ss'), benv:d.benv||0, bldg:d.bldg||0, gen:fv('gen'), yth:d.yth||0, yedu:fv('yedu'), other:d.other||0, rcvd:fvs('rcvd'), notes:d.notes||''};
-    nd.total = (nd.ss||0) + (nd.yedu||0) + (nd.gen||0);
+    var nd = {id:d.id, date:fvs('date'), ss:fv('ss'), benv:d.benv||0, bldg:d.bldg||0, gen:fv('gen'), yth:d.yth||0, yedu:fv('yedu'), other:d.other||0, bs:fv('bs'), es:fv('es'), rcvd:fvs('rcvd'), notes:d.notes||''};
+    nd.total = (nd.ss||0) + (nd.yedu||0) + (nd.gen||0) + (nd.bs||0) + (nd.es||0);
     rowEl.setAttribute('data-record', JSON.stringify(nd));
     var c = rowEl.cells;
-    // Cell layout: 0=id, 1=date, 2=SS, 3=YEdu, 4=Gen, 5=Total, 6=Rcvd, 7=Saved?, 8=Actions
+    // Cell layout: 0=id, 1=date, 2=SS, 3=YEdu, 4=Gen, 5=BS, 6=ES, 7=Total, 8=Rcvd, 9=Saved?, 10=Actions
     c[0].textContent = nd.id;
     c[1].textContent = nd.date;
     c[2].textContent = fmtCurrency(nd.ss);
     c[3].textContent = fmtCurrency(nd.yedu);
     c[4].textContent = fmtCurrency(nd.gen);
-    c[5].textContent = fmtCurrency(nd.total);
-    c[6].textContent = nd.rcvd;
+    c[5].textContent = fmtCurrency(nd.bs);
+    c[6].textContent = fmtCurrency(nd.es);
+    c[7].textContent = fmtCurrency(nd.total);
+    c[8].textContent = nd.rcvd;
     showToast('✅ Offering entry updated.');
   }});
 }
@@ -9242,10 +9285,12 @@ var ADJ_CFG = {
     action:'getOfferings', updateAction:'updateOffering', deleteAction:'deleteOffering',
     title:'Offerings Collected', contentId:'adj-offerings-content',
     dateField:'date', hasFilter:true,
-    cols:['Date','Sun School','Benevolent','Bldg Fund','General','Youth','Youth Edu','Other','Total','Received By','Notes'],
-    fields:['date','sundaySchool','benevolent','buildingFund','generalOffering','youth','youthEducation','other','total','receivedBy','notes'],
-    labels:['Date','Sunday School','Benevolent','Building Fund','General Offering','Youth','Youth Education','Other','Total','Received By','Notes'],
-    types: ['date','number','number','number','number','number','number','number','number','text','text'],
+    // v121 — added Bible Study and Evening Services so the Adjustments edit
+    //        modal can read and update those new columns on the Offerings sheet.
+    cols:['Date','Sun School','Benevolent','Bldg Fund','General','Youth','Youth Edu','Other','Bible Study','Evening Svc','Total','Received By','Notes'],
+    fields:['date','sundaySchool','benevolent','buildingFund','generalOffering','youth','youthEducation','other','bibleStudy','eveningServices','total','receivedBy','notes'],
+    labels:['Date','Sunday School','Benevolent','Building Fund','General Offering','Youth','Youth Education','Other','Bible Study','Evening Services','Total','Received By','Notes'],
+    types: ['date','number','number','number','number','number','number','number','number','number','number','text','text'],
     idField:'id'
   },
   cashOfferings: {
