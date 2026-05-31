@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.05.30-123</title>
+<title>Mount Calvary M.B. Church Financial System v2026.05.30-124</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -174,7 +174,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.30-123</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.30-124</span>
     </div>
   </div>
 </div>
@@ -187,7 +187,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.30-123</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.30-124</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -312,7 +312,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.30-123</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.30-124</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -5732,7 +5732,7 @@ function _writeRptWin(w, html) {
     + '.btn{padding:8px 20px;border:none;border-radius:4px;cursor:pointer;font-size:13px;margin-right:8px}'
     + '.bp{background:#1e3a5f;color:#fff}.bc{background:#6b7280;color:#fff}'
     + '@keyframes cfSpin{to{transform:rotate(360deg)}}'
-    + '@media print{.np{display:none!important}}</style></head><body>'
+    + '@media print{.np,.no-print{display:none!important}}</style></head><body>'
     + '<div class="np" style="margin-bottom:20px;display:flex;gap:8px">'
     + '<button class="btn bp" onclick="window.print()">\uD83D\uDDA8 Print / Save as PDF</button>'
     + '<button class="btn bc" onclick="window.close()">\u2715 Close Window</button>'
@@ -6361,7 +6361,7 @@ function renderTithesReport(data, s1, s2, rptWin) {
       '.bp{background:#1e3a5f;color:#fff}.bc{background:#6b7280;color:#fff}' +
       '@media print{' +
       '  @page{size:landscape;margin:10mm}' +
-      '  .np{display:none!important}' +
+      '  .np,.no-print{display:none!important}' +
       '  body{margin:0}' +
       '}' +
       '</style></head><body>' +
@@ -9542,7 +9542,7 @@ function printAdj(type) {
     '.btn{padding:7px 18px;border:none;border-radius:4px;cursor:pointer;font-size:12px;margin-right:7px}' +
     '.bp{background:#1e3a5f;color:#fff}.bc{background:#6b7280;color:#fff}' +
     '.bar{margin-bottom:14px;display:flex;gap:8px}' +
-    '@media print{.np{display:none!important}}</style></head><body>' +
+    '@media print{.np,.no-print{display:none!important}}</style></head><body>' +
     '<div class="np bar">' +
     '<button class="btn bp" onclick="window.print()">\uD83D\uDDA8 Print / Save as PDF</button>' +
     '<button class="btn bc" onclick="window.close()">\u2715 Close Window</button>' +
