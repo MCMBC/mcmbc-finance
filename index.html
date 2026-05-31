@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.05.27-121</title>
+<title>Mount Calvary M.B. Church Financial System v2026.05.30-122</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -174,7 +174,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.27-121</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.30-122</span>
     </div>
   </div>
 </div>
@@ -187,7 +187,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.27-121</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.05.30-122</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -312,7 +312,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.27-121</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.05.30-122</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -5813,12 +5813,11 @@ function renderWeeklyFinancialReport(data, s1, s2, startDate, endDate, body) {
     return '<tr><td colspan="3" style="padding:8px 4px 2px;font-size:.78rem;font-weight:700;text-decoration:underline;color:#0F2744">' + txt + '</td></tr>';
   }
 
-  // v117 — Benevolent removed from WFR per Debbie's request: not in the visible
-  //        list and not in the Subtotal (which feeds Grand Total). The aggregation
-  //        of inc.benevolent across sheets is unchanged so the standalone
-  //        Benevolent Report still works.
+  // v122 — Benevolent restored on the WFR (reverses v117). The standalone
+  //        Benevolent Report continues to work because inc.benevolent was
+  //        kept aggregating in AppScript through both versions.
   var incSubtotal   = (inc.sundaySchool||0) + (inc.generalOffering||0) + (inc.tithes||0) +
-                      (inc.building||0);
+                      (inc.building||0) + (inc.benevolent||0);
   var auxTotal      = (inc.youth||0) + (inc.youthEducation||0) +
                       (inc.brotherhood||0) + (inc.inspChoir||0) + (inc.seniorUsher||0);
   var miscTotal     = (inc.special||0) + (inc.reimbursements||0) +
@@ -5850,6 +5849,7 @@ function renderWeeklyFinancialReport(data, s1, s2, startDate, endDate, body) {
   rpt += row('Sunday School',    '', inc.sundaySchool,    false);
   rpt += row('General Offering', '', inc.generalOffering, false);
   rpt += row('Tithes',           '', inc.tithes,          false);
+  rpt += row('Benevolent',       '', inc.benevolent,      false);
   rpt += row('Bible Study',      '', 0,                   false);
   rpt += row('Evening Services', '', 0,                   false);
   rpt += row('Building Fund',    '', inc.building,        false);
