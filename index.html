@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.06.02-127</title>
+<title>Mount Calvary M.B. Church Financial System v2026.06.02-128</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -174,7 +174,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.06.02-127</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.06.02-128</span>
     </div>
   </div>
 </div>
@@ -187,7 +187,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.06.02-127</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.06.02-128</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -312,7 +312,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.06.02-127</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.06.02-128</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -380,12 +380,6 @@ nav{flex:1;padding:10px 0;}
           <div style="font-size:.78rem;color:#64748b">Income, salaries, utilities & disbursements</div>
         </div>
 
-        <div class="rpt-card" onclick="showCashFlowDatePicker()" style="background:#fff;border:2px solid #e2e8f0;border-radius:14px;padding:28px 24px;cursor:pointer;transition:all .2s;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.05)" onmouseover="this.style.borderColor='var(--blue)';this.style.boxShadow='0 6px 24px rgba(15,39,68,.12)'" onmouseout="this.style.borderColor='#e2e8f0';this.style.boxShadow='0 2px 8px rgba(0,0,0,.05)'">
-          <div style="font-size:2.4rem;margin-bottom:12px">💵</div>
-          <div style="font-family:'Lora',serif;font-size:1.05rem;font-weight:700;color:var(--blue);margin-bottom:6px">Weekly Cash Flow Report</div>
-          <div style="font-size:.78rem;color:#64748b">Income vs expenses by fund and period</div>
-        </div>
-
         <div class="rpt-card" onclick="showMonthlyCFPicker()" style="background:#fff;border:2px solid #e2e8f0;border-radius:14px;padding:28px 24px;cursor:pointer;transition:all .2s;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.05)" onmouseover="this.style.borderColor='var(--blue)';this.style.boxShadow='0 6px 24px rgba(15,39,68,.12)'" onmouseout="this.style.borderColor='#e2e8f0';this.style.boxShadow='0 2px 8px rgba(0,0,0,.05)'">
           <div style="font-size:2.4rem;margin-bottom:12px">📆</div>
           <div style="font-family:'Lora',serif;font-size:1.05rem;font-weight:700;color:var(--blue);margin-bottom:6px">Monthly Cash Flow Report</div>
@@ -402,6 +396,12 @@ nav{flex:1;padding:10px 0;}
           <div style="font-size:2.4rem;margin-bottom:12px">🙏</div>
           <div style="font-family:'Lora',serif;font-size:1.05rem;font-weight:700;color:var(--blue);margin-bottom:6px">Annual Contribution Statement</div>
           <div style="font-size:.78rem;color:#64748b">Member and donor giving history</div>
+        </div>
+
+        <div class="rpt-card" onclick="showCashFlowDatePicker()" style="background:#fff;border:2px solid #e2e8f0;border-radius:14px;padding:28px 24px;cursor:pointer;transition:all .2s;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.05)" onmouseover="this.style.borderColor='var(--blue)';this.style.boxShadow='0 6px 24px rgba(15,39,68,.12)'" onmouseout="this.style.borderColor='#e2e8f0';this.style.boxShadow='0 2px 8px rgba(0,0,0,.05)'">
+          <div style="font-size:2.4rem;margin-bottom:12px">💵</div>
+          <div style="font-family:'Lora',serif;font-size:1.05rem;font-weight:700;color:var(--blue);margin-bottom:6px">Weekly Cash Flow Report</div>
+          <div style="font-size:.78rem;color:#64748b">Income vs expenses by fund and period</div>
         </div>
 
       </div>
