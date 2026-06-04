@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.06.03-132</title>
+<title>Mount Calvary M.B. Church Financial System v2026.06.03-133</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -174,7 +174,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.06.03-132</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.06.03-133</span>
     </div>
   </div>
 </div>
@@ -187,7 +187,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.06.03-132</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.06.03-133</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -312,7 +312,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.06.03-132</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.06.03-133</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -5837,8 +5837,8 @@ function renderWeeklyFinancialReport(data, s1, s2, startDate, endDate, body) {
       '<td style="text-align:right;font-size:.7rem;color:#94a3b8;font-style:italic;padding-left:8px">' + fc(amount) + '</td>' +
       '</tr>';
   }
-  function subtotalRow(label, amount) {
-    return '<tr style="border-top:1px solid #cbd5e1"><td style="padding:4px 4px;font-size:.8rem;font-weight:700">' + label + '</td>' +
+  function subtotalRow(label, amount, indent) {
+    return '<tr style="border-top:1px solid #cbd5e1"><td style="padding:4px 4px 4px ' + (indent?'20px':'4px') + ';font-size:.8rem;font-weight:700">' + label + '</td>' +
       '<td></td><td style="text-align:right;font-size:.8rem;font-weight:700;border-top:2px solid #334155;padding-left:8px">' + fc(amount) + '</td></tr>';
   }
   function sectionHead(txt) {
@@ -5915,57 +5915,57 @@ function renderWeeklyFinancialReport(data, s1, s2, startDate, endDate, body) {
 
   // Subsection 1 — Funds/Revenue (the main collections, non-giveify)
   rpt += subUmbrellaHead('Funds/Revenue');
-  rpt += row('Sunday School',    '', inc.sundaySchool,    false);
-  rpt += row('General Offering', '', inc.generalOffering, false);
-  rpt += row('Tithes',           '', inc.tithes,          false);
-  rpt += row('Benevolent',       '', inc.benevolent,      false);
-  rpt += row('Bible Study',      '', 0,                   false);
-  rpt += row('Evening Services', '', 0,                   false);
-  rpt += row('Building Fund',    '', inc.building,        false);
-  rpt += subtotalRow('Funds/Revenue Subtotal', fundsRevSubtotal);
+  rpt += row('Sunday School',    '', inc.sundaySchool,    true);
+  rpt += row('General Offering', '', inc.generalOffering, true);
+  rpt += row('Tithes',           '', inc.tithes,          true);
+  rpt += row('Benevolent',       '', inc.benevolent,      true);
+  rpt += row('Bible Study',      '', 0,                   true);
+  rpt += row('Evening Services', '', 0,                   true);
+  rpt += row('Building Fund',    '', inc.building,        true);
+  rpt += subtotalRow('Funds/Revenue Subtotal', fundsRevSubtotal, true);
 
   // Subsection 2 — giveify (electronic giving, kept separate per Debbie's request)
   rpt += subUmbrellaHead('giveify');
-  rpt += row('Sunday School',      '', giv.sundaySchool||0,    false);
-  rpt += row('General Offering',   '', giv.generalOffering||0, false);
-  rpt += row('Tithes',             '', giv.tithes||0,          false);
-  rpt += row('Benevolent',         '', giv.benevolent||0,      false);
-  rpt += row('Building Fund',      '', giv.building||0,        false);
-  rpt += row('Youth',              '', giv.youth||0,           false);
-  rpt += row('Youth Education',    '', giv.youthEducation||0,  false);
-  rpt += row('Church Anniversary', '', giv.churchAnniv||0,     false);
-  rpt += subtotalRow('giveify Subtotal', giveifySubtotal);
+  rpt += row('Sunday School',      '', giv.sundaySchool||0,    true);
+  rpt += row('General Offering',   '', giv.generalOffering||0, true);
+  rpt += row('Tithes',             '', giv.tithes||0,          true);
+  rpt += row('Benevolent',         '', giv.benevolent||0,      true);
+  rpt += row('Building Fund',      '', giv.building||0,        true);
+  rpt += row('Youth',              '', giv.youth||0,           true);
+  rpt += row('Youth Education',    '', giv.youthEducation||0,  true);
+  rpt += row('Church Anniversary', '', giv.churchAnniv||0,     true);
+  rpt += subtotalRow('giveify Subtotal', giveifySubtotal, true);
 
   // Subsection 3 — Auxiliaries (moved from the prior right column)
   rpt += subUmbrellaHead('Auxiliaries');
-  rpt += row('Brotherhood',         '', inc.brotherhood||0,  false);
-  rpt += row('Inspirational Choir', '', inc.inspChoir||0,    false);
-  rpt += row('Senior Usher',        '', inc.seniorUsher||0,  false);
-  rpt += row('Youth',               '', inc.youth,           false);
-  rpt += row('Youth Education',     '', inc.youthEducation,  false);
-  rpt += row('Misc:',               '', 0, false);
-  rpt += row('Misc:',               '', 0, false);
-  rpt += row('Misc:',               '', 0, false);
-  rpt += row('Misc:',               '', 0, false);
-  rpt += subtotalRow('Auxiliaries Subtotal', auxTotal);
+  rpt += row('Brotherhood',         '', inc.brotherhood||0,  true);
+  rpt += row('Inspirational Choir', '', inc.inspChoir||0,    true);
+  rpt += row('Senior Usher',        '', inc.seniorUsher||0,  true);
+  rpt += row('Youth',               '', inc.youth,           true);
+  rpt += row('Youth Education',     '', inc.youthEducation,  true);
+  rpt += row('Misc:',               '', 0, true);
+  rpt += row('Misc:',               '', 0, true);
+  rpt += row('Misc:',               '', 0, true);
+  rpt += row('Misc:',               '', 0, true);
+  rpt += subtotalRow('Auxiliaries Subtotal', auxTotal, true);
 
-  // Subsection 4 — MISC (Special Event, Reimbursements, Anniversaries, Other)
-  rpt += subUmbrellaHead('MISC');
-  rpt += row('Special Event', '', inc.special, false);
+  // Subsection 4 — Miscellaneous (Special Event, Reimbursements, Anniversaries, Other)
+  rpt += subUmbrellaHead('Miscellaneous');
+  rpt += row('Special Event', '', inc.special, true);
   rpt += diagRow('TithesByMembers', mb.special.TithesByMembers||0);
   rpt += diagRow('OtherOfferings',  mb.special.OtherOfferings||0);
-  rpt += row('Reimbursements', '', inc.reimbursements, false);
+  rpt += row('Reimbursements', '', inc.reimbursements, true);
   rpt += diagRow('OtherOfferings',  (mb.reimbursements && mb.reimbursements.OtherOfferings)||0);
-  rpt += row('Church Anniversary', '', inc.churchAnniv||0, false);
+  rpt += row('Church Anniversary', '', inc.churchAnniv||0, true);
   rpt += diagRow('OtherOfferings',  (mb.churchAnniv && mb.churchAnniv.OtherOfferings)||0);
-  rpt += row('Pastor Anniversary', '', inc.pastorAnniv||0, false);
+  rpt += row('Pastor Anniversary', '', inc.pastorAnniv||0, true);
   rpt += diagRow('OtherOfferings',  (mb.pastorAnniv && mb.pastorAnniv.OtherOfferings)||0);
-  rpt += row('Other',         '', inc.other,   false);
+  rpt += row('Other',         '', inc.other,   true);
   rpt += diagRow('Offerings',         mb.other.Offerings||0);
   rpt += diagRow('TithesByMembers',   mb.other.TithesByMembers||0);
   rpt += diagRow('giveifyByDonors',   mb.other.giveifyByDonors||0);
   rpt += diagRow('OtherOfferings',    mb.other.OtherOfferings||0);
-  rpt += subtotalRow('MISC Subtotal', miscTotal);
+  rpt += subtotalRow('Miscellaneous Subtotal', miscTotal, true);
 
   // Grand Total Incoming Revenue — sums all four subsections above
   rpt += subtotalRow('Grand Total Incoming Revenue', grandIncoming);
