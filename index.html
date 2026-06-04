@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.06.04-138</title>
+<title>Mount Calvary M.B. Church Financial System v2026.06.04-140</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -174,7 +174,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.06.04-138</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.06.04-140</span>
     </div>
   </div>
 </div>
@@ -187,7 +187,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.06.04-138</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.06.04-140</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -312,7 +312,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.06.04-138</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.06.04-140</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -7013,7 +7013,7 @@ function renderMonthlyCFReport(data, monthName, body) {
   //        Deposits feature itself remains available on the sidebar for
   //        entry and adjustments — only the Monthly Cash Flow display of
   //        them as a separate section has been removed.
-  rpt += totalRow('Grand Inflow Total', inflowDataArrays, 'gtot');
+  rpt += totalRow('TOTAL INFLOW', inflowDataArrays, 'gtot');
   rpt += '</table>';
 
   // OUTFLOWS
@@ -7118,8 +7118,8 @@ function renderMonthlyCFReport(data, monthName, body) {
     rpt += tr;
   })();
 
-  // Miscellaneous row
-  rpt += '<tr><td class="sub">Miscellaneous</td>' + cols.map(function(){ return '<td></td>'; }).join('') + '<td></td><td></td></tr>';
+  // v139 — trailing "Miscellaneous" placeholder row removed per Debbie's
+  //        request; the report now ends with the TOTAL GAIN/LOSS row.
   rpt += '</table>';
 
   rpt += '</div>';
@@ -10125,6 +10125,12 @@ function adjEdit(type, idx) {
       extraInput = ' readonly style="padding:8px 11px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;background:#f1f5f9;color:#1e3a5f;font-weight:700"';
     } else if (type === 'tithes' && cfg.types[fi] === 'number' && f !== 'total') {
       extraInput = ' oninput="adjCalcTithesTotal()" style="padding:8px 11px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit"';
+    } else if (type === 'giveify' && f === 'total') {
+      // v140 — mirror the tithes pattern for giveify: total is read-only and
+      //        auto-recomputed when any contributing number field changes.
+      extraInput = ' readonly style="padding:8px 11px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;background:#f1f5f9;color:#1e3a5f;font-weight:700"';
+    } else if (type === 'giveify' && cfg.types[fi] === 'number' && f !== 'total') {
+      extraInput = ' oninput="adjCalcGiveifyTotal()" style="padding:8px 11px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit"';
     } else {
       extraInput = ' style="padding:8px 11px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit"';
     }
@@ -10161,6 +10167,19 @@ function adjCalcTithesTotal() {
     if (el) total += parseFloat(el.value) || 0;
   });
   var totEl = document.getElementById('adj-field-tithes-total');
+  if (totEl) totEl.value = total.toFixed(2);
+}
+// v140 — mirror of adjCalcTithesTotal for the giveify by Donors adjustment
+//        modal. Sums the eight giveify contribution fields and writes the
+//        result into the read-only total input.
+function adjCalcGiveifyTotal() {
+  var fields = ['sundaySchool','building','benevolent','tithes','youth','offering','youthEdu','anniversary'];
+  var total = 0;
+  fields.forEach(function(f) {
+    var el = document.getElementById('adj-field-giveify-' + f);
+    if (el) total += parseFloat(el.value) || 0;
+  });
+  var totEl = document.getElementById('adj-field-giveify-total');
   if (totEl) totEl.value = total.toFixed(2);
 }
 
