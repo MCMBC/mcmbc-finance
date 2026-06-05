@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.06.04-141</title>
+<title>Mount Calvary M.B. Church Financial System v2026.06.04-142</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -174,7 +174,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.06.04-141</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.06.04-142</span>
     </div>
   </div>
 </div>
@@ -187,7 +187,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.06.04-141</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.06.04-142</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -314,7 +314,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.06.04-141</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.06.04-142</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -7391,6 +7391,34 @@ function renderMonthlyCFReport(data, monthName, body) {
 
   // v139 — trailing "Miscellaneous" placeholder row removed per Debbie's
   //        request; the report now ends with the TOTAL GAIN/LOSS row.
+  rpt += '</table>';
+
+  // v142 — BANK BALANCES section. Renders the most recent BankEndingBalance
+  //        entry within the report month (Option A — strict in-month). If no
+  //        entry exists for the month, shows a friendly empty-state message.
+  var beb = data.bankEndingBalance;
+  rpt += '<table style="width:100%;border-collapse:collapse;margin-top:24px">';
+  rpt += '<tr><td colspan="3" style="padding:10px 4px 4px;font-size:.9rem;font-weight:700;text-decoration:underline;color:#0F2744;letter-spacing:.04em">BANK BALANCES</td></tr>';
+  if (beb) {
+    function bebRow(label, amount) {
+      return '<tr><td style="padding:3px 4px 3px 24px;font-size:.82rem;color:#1e293b">' + label + '</td>' +
+             '<td></td>' +
+             '<td style="text-align:right;font-size:.82rem;padding-left:8px">$' +
+             parseFloat(amount||0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '</td></tr>';
+    }
+    rpt += '<tr><td colspan="3" style="padding:2px 4px 6px 24px;font-size:.72rem;font-style:italic;color:#64748b">As of ' + (beb.date || '') + '</td></tr>';
+    rpt += bebRow('General Fund',    beb.generalFund);
+    rpt += bebRow('giveify',         beb.giveify);
+    rpt += bebRow('Building Fund',   beb.buildingFund);
+    rpt += bebRow('Christmas Club',  beb.christmasClub);
+    rpt += bebRow('Savings',         beb.savings);
+    rpt += '<tr style="border-top:1px solid #cbd5e1"><td style="padding:6px 4px 6px 24px;font-size:.88rem;font-weight:700;color:#0F2744">GRAND TOTAL</td>' +
+           '<td></td>' +
+           '<td style="text-align:right;font-size:.95rem;font-weight:700;color:#0F2744;border-top:2px solid #334155;padding:6px 8px">$' +
+           parseFloat(beb.total||0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') + '</td></tr>';
+  } else {
+    rpt += '<tr><td colspan="3" style="padding:8px 4px 8px 24px;font-size:.82rem;font-style:italic;color:#94a3b8">(no balance recorded this month)</td></tr>';
+  }
   rpt += '</table>';
 
   rpt += '</div>';
