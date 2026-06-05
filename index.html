@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.06.04-140</title>
+<title>Mount Calvary M.B. Church Financial System v2026.06.04-141</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -174,7 +174,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.06.04-140</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.06.04-141</span>
     </div>
   </div>
 </div>
@@ -187,7 +187,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.06.04-140</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.06.04-141</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -199,6 +199,7 @@ nav{flex:1;padding:10px 0;}
       <div class="ni sec-up" onclick="sv('giveify-donors',this);loadGDDonors()">📱 giveify by Donors</div>
       <div class="ni sec-up" onclick="sv('other-offerings',this);initODForm()">🎁 Other Offerings &amp; Donations</div>
       <div class="ni sec-up" onclick="sv('bank-deposits',this);initBDForm()">🏦 Bank Deposits</div>
+      <div class="ni sec-up" onclick="sv('bank-ending',this);initBEBForm()">🏦 Bank Ending Balances</div>
       <div class="ns sec-up">Expenses</div>
       <div class="ni sec-up" onclick="sv('payroll-view',this);initPayrollForm()">💼 Payroll</div>
       <div class="ni sec-up" onclick="sv('pay-bills',this);initBillForm();loadFundDropdowns()">🧾 Pay Bills</div>
@@ -208,6 +209,7 @@ nav{flex:1;padding:10px 0;}
       <div class="ni sec-up" onclick="sv('adj-giveify',this);loadAdjScreen('giveify')">📱 giveify by Donors</div>
       <div class="ni sec-up" onclick="sv('adj-other',this);loadAdjScreen('other')">🎁 Other Offerings &amp; Donations</div>
       <div class="ni sec-up" onclick="sv('adj-bankdep',this);loadAdjScreen('bankdep')">🏦 Bank Deposits</div>
+      <div class="ni sec-up" onclick="sv('adj-bankending',this);loadAdjScreen('bankending')">🏦 Bank Ending Balances</div>
       <div class="ni sec-up" onclick="sv('adj-payroll',this);loadAdjScreen('payroll')">💼 Payroll</div>
       <div class="ni sec-up" onclick="sv('adj-bills',this);loadAdjScreen('bills')">🧾 Bills</div>
       <div class="ns sec-up">Management</div>
@@ -312,7 +314,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.06.04-140</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.06.04-141</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -1187,6 +1189,48 @@ nav{flex:1;padding:10px 0;}
       </div>
     </div>
 
+    <!-- BANK ENDING BALANCES (v141) -->
+    <div id="view-bank-ending" class="vw">
+      <div class="ph"><h1>🏦 Bank Ending Balances</h1><p>Record period-end balances for each church account — saved to Google Sheets</p></div>
+
+      <div class="cd">
+        <div style="font-family:'Lora',serif;font-size:1.05rem;font-weight:700;color:var(--navy);margin-bottom:18px">Enter Bank Ending Balance</div>
+        <div class="fr">
+          <div class="fg3"><label>EndingBalance ID</label><input type="text" id="beb-id" value="BEB-001" readonly style="background:#f1f5f9;color:#64748b;font-family:monospace"></div>
+          <div class="fg3"><label>Date</label><input type="date" id="beb-date"></div>
+        </div>
+        <div class="fr">
+          <div class="fg3"><label>General Fund ($)</label><input type="number" id="beb-general" placeholder="0.00" min="0" step="0.01" oninput="calcBEBTotal()"></div>
+          <div class="fg3"><label>giveify ($)</label><input type="number" id="beb-giveify" placeholder="0.00" min="0" step="0.01" oninput="calcBEBTotal()"></div>
+        </div>
+        <div class="fr">
+          <div class="fg3"><label>Building Fund ($)</label><input type="number" id="beb-building" placeholder="0.00" min="0" step="0.01" oninput="calcBEBTotal()"></div>
+          <div class="fg3"><label>Christmas Club ($)</label><input type="number" id="beb-xmas" placeholder="0.00" min="0" step="0.01" oninput="calcBEBTotal()"></div>
+        </div>
+        <div class="fr">
+          <div class="fg3"><label>Savings ($)</label><input type="number" id="beb-savings" placeholder="0.00" min="0" step="0.01" oninput="calcBEBTotal()"></div>
+          <div class="fg3"><label>Total</label><input type="text" id="beb-total" value="$0.00" readonly style="background:#dbeafe;font-weight:700;color:var(--blue)"></div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:18px">
+          <button class="bsv" onclick="saveBEBRec()">💾 Save Record</button>
+          <button class="bcc" onclick="resetBEBForm()">Reset</button>
+        </div>
+      </div>
+
+      <div class="cd" id="beb-saved-wrap" style="display:none;margin-top:18px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+          <div style="font-family:'Lora',serif;font-size:1.05rem;font-weight:700;color:var(--navy)">📋 Saved Bank Ending Balances</div>
+          <button class="bsv" onclick="saveBEBToSheets()">Save All to Google Sheet</button>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="vt" style="width:100%">
+            <tr><th>ID</th><th>Date</th><th>Gen Fund</th><th>giveify</th><th>Bldg Fund</th><th>Xmas Club</th><th>Savings</th><th>Total</th><th>Saved?</th><th style="text-align:center">Actions</th></tr>
+            <tbody id="beb-saved-table"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
     <!-- PAYROLL VIEW -->
     <div id="view-payroll-view" class="vw">
       <div class="ph"><h1>Payroll</h1><p>Enter staff salary and payroll payments — records saved to Google Sheets</p></div>
@@ -1690,6 +1734,47 @@ nav{flex:1;padding:10px 0;}
       </div>
 
       <div id="adj-bankdep-content"><div style="text-align:center;padding:40px;color:#64748b">Loading…</div></div>
+    </div>
+
+    <!-- BANK ENDING BALANCES — ADJUSTMENTS (v141) -->
+    <div id="view-adj-bankending" class="vw">
+      <div class="ph" style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:10px">
+        <div>
+          <h1>🏦 Bank Ending Balances — Adjustments</h1>
+          <p>Review, edit, and delete bank ending balance records</p>
+        </div>
+        <button class="bp" onclick="printAdj('bankending')" style="margin-top:8px;white-space:nowrap">🖨 Print</button>
+      </div>
+
+      <div id="adj-bankending-filter" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px;padding:14px 18px;background:#f8fafc;border:1.5px solid #e2e8f0;border-radius:10px;">
+        <span style="font-size:.78rem;font-weight:700;color:#475569;text-transform:uppercase;letter-spacing:.04em">Filter by</span>
+        <select id="bankending-filter-month" style="padding:7px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit;color:#1e293b" onchange="adjMyApply('bankending')">
+          <option value="">All Months</option>
+          <option value="1">January</option><option value="2">February</option>
+          <option value="3">March</option><option value="4">April</option>
+          <option value="5">May</option><option value="6">June</option>
+          <option value="7">July</option><option value="8">August</option>
+          <option value="9">September</option><option value="10">October</option>
+          <option value="11">November</option><option value="12">December</option>
+        </select>
+        <select id="bankending-filter-year" style="padding:7px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit;color:#1e293b" onchange="adjMyApply('bankending')">
+          <option value="">All Years</option>
+        </select>
+        <span style="font-size:.78rem;font-weight:700;color:#94a3b8">— or —</span>
+        <div style="display:flex;align-items:center;gap:6px">
+          <label style="font-size:.75rem;font-weight:600;color:#475569">From</label>
+          <input type="date" id="bankending-filter-from" style="padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;color:#1e293b" onchange="adjFtApply('bankending')">
+        </div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <label style="font-size:.75rem;font-weight:600;color:#475569">To</label>
+          <input type="date" id="bankending-filter-to" style="padding:7px 10px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;color:#1e293b" onchange="adjFtApply('bankending')">
+        </div>
+        <button class="bac" onclick="clearAdjFilter('bankending')" style="font-size:.8rem">✕ Clear</button>
+        <button class="bac" onclick="loadAdjScreen('bankending')" style="font-size:.8rem">↻ Refresh</button>
+        <span id="bankending-filter-count" style="font-size:.78rem;color:#64748b;margin-left:4px"></span>
+      </div>
+
+      <div id="adj-bankending-content"><div style="text-align:center;padding:40px;color:#64748b">Loading…</div></div>
     </div>
 
     <div id="view-adj-payroll" class="vw">
@@ -2755,6 +2840,192 @@ function saveBDToSheets() {
       '&totalDep='      + encodeURIComponent(r.total) +
       '&notes='         + encodeURIComponent(r.notes||'') +
       '&callback='      + cb;
+    document.head.appendChild(s);
+    setTimeout(function(){ if (s.parentNode) s.parentNode.removeChild(s); }, 27000);
+  }
+  saveNext(0);
+}
+
+// ── BANK ENDING BALANCES (v141) ───────────────────────────────────
+// Full mirror of the Bank Deposits client-side flow: init form (today's
+// date + next ID by querying the sheet), live total auto-calc, pending
+// row queue, batch save, and Adjustments support. Sheet creation happens
+// automatically on the AppScript side via getOrCreateSheet on first save.
+var bebPendingRows = [];
+
+function initBEBForm() {
+  var idEl = document.getElementById('beb-id');
+  if (!idEl) return;
+  var dateEl = document.getElementById('beb-date');
+  if (dateEl && !dateEl.value) {
+    var d = new Date();
+    dateEl.value = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+  }
+  var url = localStorage.getItem('mcmbc_sheet_url') || '';
+  if (!url || url.indexOf('script.google.com') === -1) return;
+  var cb = 'bebInitCb_' + Date.now();
+  var t = setTimeout(function(){ delete window[cb]; }, 15000);
+  window[cb] = function(data) {
+    clearTimeout(t); delete window[cb];
+    var maxN = 0;
+    if (data && data.status === 'success' && Array.isArray(data.records)) {
+      data.records.forEach(function(r){
+        var m = String(r.id || '').match(/BEB-(\d+)/i);
+        if (m) { var n = parseInt(m[1]); if (n > maxN) maxN = n; }
+      });
+    }
+    if (bebPendingRows.length) {
+      bebPendingRows.forEach(function(r){
+        var m = String(r.id || '').match(/BEB-(\d+)/i);
+        if (m) { var n = parseInt(m[1]); if (n > maxN) maxN = n; }
+      });
+    }
+    idEl.value = 'BEB-' + String(maxN + 1).padStart(3, '0');
+  };
+  var s = document.createElement('script');
+  s.onerror = function(){ clearTimeout(t); delete window[cb]; };
+  s.src = url + '?action=getBankEndingBalances&callback=' + cb;
+  document.head.appendChild(s);
+  setTimeout(function(){ if (s.parentNode) s.parentNode.removeChild(s); }, 17000);
+}
+
+function calcBEBTotal() {
+  var gen  = parseFloat(document.getElementById('beb-general').value)  || 0;
+  var giv  = parseFloat(document.getElementById('beb-giveify').value)  || 0;
+  var bldg = parseFloat(document.getElementById('beb-building').value) || 0;
+  var xmas = parseFloat(document.getElementById('beb-xmas').value)     || 0;
+  var sav  = parseFloat(document.getElementById('beb-savings').value)  || 0;
+  document.getElementById('beb-total').value = fmtCurrency(gen + giv + bldg + xmas + sav);
+}
+
+function resetBEBForm() {
+  ['beb-general','beb-giveify','beb-building','beb-xmas','beb-savings'].forEach(function(i){
+    document.getElementById(i).value = '';
+  });
+  document.getElementById('beb-total').value = '$0.00';
+}
+
+function saveBEBRec() {
+  var id    = document.getElementById('beb-id').value;
+  var date  = document.getElementById('beb-date').value;
+  var gen   = parseFloat(document.getElementById('beb-general').value)  || 0;
+  var giv   = parseFloat(document.getElementById('beb-giveify').value)  || 0;
+  var bldg  = parseFloat(document.getElementById('beb-building').value) || 0;
+  var xmas  = parseFloat(document.getElementById('beb-xmas').value)     || 0;
+  var sav   = parseFloat(document.getElementById('beb-savings').value)  || 0;
+  var total = gen + giv + bldg + xmas + sav;
+
+  if (!date)      { showToast('Please enter a date.'); return; }
+  if (total <= 0) { showToast('Enter at least one balance amount before saving.'); return; }
+
+  var tb = document.getElementById('beb-saved-table');
+  var tr = document.createElement('tr');
+  tr.setAttribute('data-bebid', id);
+  tr.innerHTML =
+    '<td style="font-family:monospace;font-size:.78rem">' + id + '</td>' +
+    '<td>' + date + '</td>' +
+    '<td class="ta">' + fmtCurrency(gen)  + '</td>' +
+    '<td class="ta">' + fmtCurrency(giv)  + '</td>' +
+    '<td class="ta">' + fmtCurrency(bldg) + '</td>' +
+    '<td class="ta">' + fmtCurrency(xmas) + '</td>' +
+    '<td class="ta">' + fmtCurrency(sav)  + '</td>' +
+    '<td style="font-weight:700;color:var(--blue)">' + fmtCurrency(total) + '</td>' +
+    '<td id="beb-status-' + id + '"><span class="sb2" style="background:#fef3c7;color:#92400e">Pending</span></td>' +
+    '<td style="white-space:nowrap"></td>';
+  var actTd = tr.lastElementChild;
+  var dBtn = document.createElement('button');
+  dBtn.className = 'bac';
+  dBtn.style.cssText = 'background:#fee2e2;color:#b91c1c';
+  dBtn.textContent = '🗑';
+  dBtn.onclick = (function(bid){ return function(){ bebDeleteRow(bid); }; })(id);
+  actTd.appendChild(dBtn);
+  tb.appendChild(tr);
+
+  bebPendingRows.push({id:id, date:date, generalFund:gen, giveify:giv, buildingFund:bldg, christmasClub:xmas, savings:sav, total:total, _saved:false});
+
+  document.getElementById('beb-saved-wrap').style.display = 'block';
+
+  var m = String(id).match(/BEB-(\d+)/i);
+  var next = m ? (parseInt(m[1]) + 1) : (bebPendingRows.length + 1);
+  document.getElementById('beb-id').value = 'BEB-' + String(next).padStart(3, '0');
+  resetBEBForm();
+}
+
+function bebDeleteRow(id) {
+  var idx = -1;
+  for (var i = 0; i < bebPendingRows.length; i++) {
+    if (bebPendingRows[i].id === id) { idx = i; break; }
+  }
+  if (idx < 0) return;
+  if (bebPendingRows[idx]._saved) {
+    showToast('Already saved to Google Sheets — delete it from Adjustments instead.');
+    return;
+  }
+  bebPendingRows.splice(idx, 1);
+  var row = document.querySelector('#beb-saved-table tr[data-bebid="' + id + '"]');
+  if (row && row.parentNode) row.parentNode.removeChild(row);
+  if (bebPendingRows.length === 0) {
+    document.getElementById('beb-saved-wrap').style.display = 'none';
+  }
+}
+
+function saveBEBToSheets() {
+  var url = localStorage.getItem('mcmbc_sheet_url') || '';
+  if (!url || url.indexOf('script.google.com') === -1) {
+    showToast('Please set the Google Sheets URL on the Dashboard first.');
+    return;
+  }
+  var pending = bebPendingRows.filter(function(r){ return !r._saved; });
+  if (pending.length === 0) { showToast('No new bank ending balances to save.'); return; }
+  var btn = event && event.target;
+  if (btn) { btn.textContent = 'Saving…'; btn.disabled = true; }
+  var saved = 0;
+
+  function saveNext(i) {
+    if (i >= pending.length) {
+      if (btn) { btn.textContent = 'Save All to Google Sheet'; btn.disabled = false; }
+      showToast(saved + ' bank ending balance record(s) saved to Google Sheets!');
+      var tb = document.getElementById('beb-saved-table');
+      bebPendingRows.filter(function(r){ return r._saved; }).forEach(function(r){
+        var row = tb ? tb.querySelector('tr[data-bebid="' + r.id + '"]') : null;
+        if (row && row.parentNode) row.parentNode.removeChild(row);
+      });
+      bebPendingRows = bebPendingRows.filter(function(r){ return !r._saved; });
+      if (bebPendingRows.length === 0) document.getElementById('beb-saved-wrap').style.display = 'none';
+      return;
+    }
+    var r  = pending[i];
+    var cb = 'bebSaveCb_' + i + '_' + Date.now();
+    window[cb] = function(data) {
+      delete window[cb];
+      if (data && data.status === 'success') {
+        r._saved = true; saved++;
+        var statusEl = document.getElementById('beb-status-' + r.id);
+        if (statusEl) statusEl.innerHTML = '<span class="sb2" style="background:#d1fae5;color:#065f46">Saved</span>';
+      } else {
+        var statusEl = document.getElementById('beb-status-' + r.id);
+        if (statusEl) statusEl.innerHTML = '<span class="sb2" style="background:#fee2e2;color:#b91c1c">Error</span>';
+      }
+      saveNext(i + 1);
+    };
+    var s = document.createElement('script');
+    s.onerror = function(){
+      delete window[cb];
+      var statusEl = document.getElementById('beb-status-' + r.id);
+      if (statusEl) statusEl.innerHTML = '<span class="sb2" style="background:#fee2e2;color:#b91c1c">Error</span>';
+      saveNext(i + 1);
+    };
+    s.src = url +
+      '?action=addBankEndingBalance' +
+      '&endingBalanceId=' + encodeURIComponent(r.id) +
+      '&date='            + encodeURIComponent(r.date) +
+      '&generalFund='     + encodeURIComponent(r.generalFund) +
+      '&giveify='         + encodeURIComponent(r.giveify) +
+      '&buildingFund='    + encodeURIComponent(r.buildingFund) +
+      '&christmasClub='   + encodeURIComponent(r.christmasClub) +
+      '&savings='         + encodeURIComponent(r.savings) +
+      '&total='           + encodeURIComponent(r.total) +
+      '&callback='        + cb;
     document.head.appendChild(s);
     setTimeout(function(){ if (s.parentNode) s.parentNode.removeChild(s); }, 27000);
   }
@@ -9670,6 +9941,16 @@ var ADJ_CFG = {
     fields:['date','checkDep','cashDep','total','notes'],
     labels:['Deposit Date','Check Deposits','Cash Deposits','Total Deposit','Notes'],
     types: ['date','number','number','number','text']
+  },
+  // v141 — Bank Ending Balances
+  bankending: {
+    action:'getBankEndingBalances', updateAction:'updateBankEndingBalance', deleteAction:'deleteBankEndingBalance',
+    title:'Bank Ending Balances', contentId:'adj-bankending-content',
+    dateField:'date', hasFilter:true,
+    cols:['Date','Gen Fund','giveify','Bldg Fund','Xmas Club','Savings','Total'],
+    fields:['date','generalFund','giveify','buildingFund','christmasClub','savings','total'],
+    labels:['Date','General Fund','giveify','Building Fund','Christmas Club','Savings','Total'],
+    types: ['date','number','number','number','number','number','number']
   }
 };
 
@@ -10131,6 +10412,13 @@ function adjEdit(type, idx) {
       extraInput = ' readonly style="padding:8px 11px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;background:#f1f5f9;color:#1e3a5f;font-weight:700"';
     } else if (type === 'giveify' && cfg.types[fi] === 'number' && f !== 'total') {
       extraInput = ' oninput="adjCalcGiveifyTotal()" style="padding:8px 11px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit"';
+    } else if (type === 'bankending' && f === 'total') {
+      // v141 — same auto-recalc pattern for Bank Ending Balances: Total is
+      //        read-only and recomputed live as any of the five account
+      //        balance fields change.
+      extraInput = ' readonly style="padding:8px 11px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit;background:#f1f5f9;color:#1e3a5f;font-weight:700"';
+    } else if (type === 'bankending' && cfg.types[fi] === 'number' && f !== 'total') {
+      extraInput = ' oninput="adjCalcBankEndingTotal()" style="padding:8px 11px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit"';
     } else {
       extraInput = ' style="padding:8px 11px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.85rem;font-family:inherit"';
     }
@@ -10180,6 +10468,18 @@ function adjCalcGiveifyTotal() {
     if (el) total += parseFloat(el.value) || 0;
   });
   var totEl = document.getElementById('adj-field-giveify-total');
+  if (totEl) totEl.value = total.toFixed(2);
+}
+// v141 — same helper for the Bank Ending Balances adjustment modal. Sums
+//        the five account balance fields and writes to the read-only total.
+function adjCalcBankEndingTotal() {
+  var fields = ['generalFund','giveify','buildingFund','christmasClub','savings'];
+  var total = 0;
+  fields.forEach(function(f) {
+    var el = document.getElementById('adj-field-bankending-' + f);
+    if (el) total += parseFloat(el.value) || 0;
+  });
+  var totEl = document.getElementById('adj-field-bankending-total');
   if (totEl) totEl.value = total.toFixed(2);
 }
 
