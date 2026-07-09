@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.06.06-143</title>
+<title>Mount Calvary M.B. Church Financial System v2026.07.08-144</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -174,7 +174,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.06.06-143</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.07.08-144</span>
     </div>
   </div>
 </div>
@@ -187,7 +187,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.06.06-143</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.07.08-144</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -314,7 +314,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.06.06-143</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.07.08-144</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -828,28 +828,23 @@ nav{flex:1;padding:10px 0;}
           </div>
         </div>
         <div class="fr3">
+          <div class="fg3"><label>Sunday School ($)</label><input type="number" id="tm-ss" placeholder="0.00" min="0" step="0.01" oninput="calcTMTotal()"></div>
           <div class="fg3"><label>Tithes ($)</label><input type="number" id="tm-tithes" placeholder="0.00" min="0" step="0.01" oninput="calcTMTotal()"></div>
           <div class="fg3"><label>Youth ($)</label><input type="number" id="tm-youth" placeholder="0.00" min="0" step="0.01" oninput="calcTMTotal()"></div>
-          <div class="fg3"><label>Building Fund ($)</label><input type="number" id="tm-bldg" placeholder="0.00" min="0" step="0.01" oninput="calcTMTotal()"></div>
         </div>
         <div class="fr3">
+          <div class="fg3"><label>Building Fund ($)</label><input type="number" id="tm-bldg" placeholder="0.00" min="0" step="0.01" oninput="calcTMTotal()"></div>
           <div class="fg3"><label>Benevolent ($)</label><input type="number" id="tm-benv" placeholder="0.00" min="0" step="0.01" oninput="calcTMTotal()"></div>
           <div class="fg3"><label>Youth Education ($)</label><input type="number" id="tm-yedu" placeholder="0.00" min="0" step="0.01" oninput="calcTMTotal()"></div>
-          <div class="fg3"><label>Offering ($)</label><input type="number" id="tm-offering" placeholder="0.00" min="0" step="0.01" oninput="calcTMTotal()"></div>
         </div>
         <div class="fr3">
+          <div class="fg3"><label>Offering ($)</label><input type="number" id="tm-offering" placeholder="0.00" min="0" step="0.01" oninput="calcTMTotal()"></div>
           <div class="fg3"><label>Church Anniversary ($)</label><input type="number" id="tm-channiv" placeholder="0.00" min="0" step="0.01" oninput="calcTMTotal()"></div>
           <div class="fg3"><label>Pastor Anniversary ($)</label><input type="number" id="tm-panniv" placeholder="0.00" min="0" step="0.01" oninput="calcTMTotal()"></div>
-          <div class="fg3"><label>Brotherhood ($)</label><input type="number" id="tm-brother" placeholder="0.00" min="0" step="0.01" oninput="calcTMTotal()"></div>
         </div>
         <div class="fr3">
-          <div class="fg3"><label>Insp. Choir ($)</label><input type="number" id="tm-ichoir" placeholder="0.00" min="0" step="0.01" oninput="calcTMTotal()"></div>
-          <div class="fg3"><label>Senior Usher ($)</label><input type="number" id="tm-susher" placeholder="0.00" min="0" step="0.01" oninput="calcTMTotal()"></div>
           <div class="fg3"><label>Special Event ($)</label><input type="number" id="tm-special" placeholder="0.00" min="0" step="0.01" oninput="calcTMTotal()"></div>
-        </div>
-        <div class="fr3">
           <div class="fg3"><label>Other ($)</label><input type="number" id="tm-other" placeholder="0.00" min="0" step="0.01" oninput="calcTMTotal()"></div>
-          <div class="fg3"></div>
           <div class="fg3"></div>
         </div>
 
@@ -875,6 +870,7 @@ nav{flex:1;padding:10px 0;}
               <td style="text-align:right;padding:6px 8px;font-weight:700;color:var(--green);" id="tm-gl-dr">$0.00</td>
               <td style="text-align:right;padding:6px 8px;">—</td>
             </tr>
+            <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4030 — Sunday School Fund</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="tm-gl-ss">$0.00</td></tr>
             <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4010 — Tithes Fund</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="tm-gl-tithes">$0.00</td></tr>
             <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4040 — Youth Fund</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="tm-gl-yth">$0.00</td></tr>
             <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4080 — Building Fund Offerings</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="tm-gl-bldg">$0.00</td></tr>
@@ -883,9 +879,6 @@ nav{flex:1;padding:10px 0;}
             <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4070 — Offering / General</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="tm-gl-offering">$0.00</td></tr>
             <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4091 — Church Anniversary</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="tm-gl-channiv">$0.00</td></tr>
             <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4092 — Pastor Anniversary</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="tm-gl-panniv">$0.00</td></tr>
-            <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4093 — Brotherhood</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="tm-gl-brother">$0.00</td></tr>
-            <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4094 — Inspirational Choir</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="tm-gl-ichoir">$0.00</td></tr>
-            <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4095 — Senior Usher</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="tm-gl-susher">$0.00</td></tr>
             <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4060 — Special Event / Programs</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="tm-gl-special">$0.00</td></tr>
             <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4070 — Other / Miscellaneous</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="tm-gl-other">$0.00</td></tr>
             <tr style="border-top:2px solid var(--light);font-weight:700;">
@@ -911,7 +904,7 @@ nav{flex:1;padding:10px 0;}
         </div>
         <div style="overflow-x:auto">
           <table class="vt" id="tm-saved-table">
-            <tr><th>ID</th><th>Date</th><th>Member</th><th>Tithes</th><th>Youth</th><th>Building Fund</th><th>Benevolent</th><th>Youth Education</th><th>Offering</th><th>Ch. Anniv.</th><th>Pas. Anniv.</th><th>Brotherhood</th><th>Insp. Choir</th><th>Sr. Usher</th><th>Special Event</th><th>Other</th><th>Total</th><th>Received By</th><th>Saved?</th><th style="text-align:center">Actions</th></tr>
+            <tr><th>ID</th><th>Date</th><th>Member</th><th>Sunday School</th><th>Tithes</th><th>Youth</th><th>Building Fund</th><th>Benevolent</th><th>Youth Education</th><th>Offering</th><th>Ch. Anniv.</th><th>Pas. Anniv.</th><th>Special Event</th><th>Other</th><th>Total</th><th>Received By</th><th>Saved?</th><th style="text-align:center">Actions</th></tr>
           </table>
         </div>
       </div>
@@ -1055,28 +1048,24 @@ nav{flex:1;padding:10px 0;}
           <div class="fg3"><label>Date</label><input type="date" id="od-date"></div>
         </div>
         <div class="fr">
+          <div class="fg3"><label>Sunday School ($)</label><input type="number" id="od-ss" placeholder="0.00" min="0" step="0.01" oninput="calcODTotal()"></div>
           <div class="fg3"><label>Tithes ($)</label><input type="number" id="od-tithes" placeholder="0.00" min="0" step="0.01" oninput="calcODTotal()"></div>
+        </div>
+        <div class="fr">
           <div class="fg3"><label>Youth ($)</label><input type="number" id="od-youth" placeholder="0.00" min="0" step="0.01" oninput="calcODTotal()"></div>
-        </div>
-        <div class="fr">
           <div class="fg3"><label>Building Fund ($)</label><input type="number" id="od-bldg" placeholder="0.00" min="0" step="0.01" oninput="calcODTotal()"></div>
+        </div>
+        <div class="fr">
           <div class="fg3"><label>Benevolent ($)</label><input type="number" id="od-benv" placeholder="0.00" min="0" step="0.01" oninput="calcODTotal()"></div>
-        </div>
-        <div class="fr">
           <div class="fg3"><label>Youth Education ($)</label><input type="number" id="od-yedu" placeholder="0.00" min="0" step="0.01" oninput="calcODTotal()"></div>
+        </div>
+        <div class="fr">
           <div class="fg3"><label>Offering ($)</label><input type="number" id="od-offering" placeholder="0.00" min="0" step="0.01" oninput="calcODTotal()"></div>
-        </div>
-        <div class="fr">
           <div class="fg3"><label>Reimbursements ($)</label><input type="number" id="od-reimb" placeholder="0.00" min="0" step="0.01" oninput="calcODTotal()"></div>
+        </div>
+        <div class="fr">
           <div class="fg3"><label>Church Anniversary ($)</label><input type="number" id="od-channiv" placeholder="0.00" min="0" step="0.01" oninput="calcODTotal()"></div>
-        </div>
-        <div class="fr">
           <div class="fg3"><label>Pastor Anniversary ($)</label><input type="number" id="od-panniv" placeholder="0.00" min="0" step="0.01" oninput="calcODTotal()"></div>
-          <div class="fg3"><label>Brotherhood ($)</label><input type="number" id="od-brother" placeholder="0.00" min="0" step="0.01" oninput="calcODTotal()"></div>
-        </div>
-        <div class="fr">
-          <div class="fg3"><label>Insp. Choir ($)</label><input type="number" id="od-ichoir" placeholder="0.00" min="0" step="0.01" oninput="calcODTotal()"></div>
-          <div class="fg3"><label>Senior Usher ($)</label><input type="number" id="od-susher" placeholder="0.00" min="0" step="0.01" oninput="calcODTotal()"></div>
         </div>
         <div class="fr">
           <div class="fg3"><label>Special Event ($)</label><input type="number" id="od-special" placeholder="0.00" min="0" step="0.01" oninput="calcODTotal()"></div>
@@ -1105,6 +1094,7 @@ nav{flex:1;padding:10px 0;}
               <td style="text-align:right;padding:6px 8px;font-weight:700;color:var(--green);" id="od-gl-dr">$0.00</td>
               <td style="text-align:right;padding:6px 8px;">—</td>
             </tr>
+            <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4030 — Sunday School Fund</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="od-gl-ss">$0.00</td></tr>
             <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4010 — Tithes Fund</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="od-gl-tithes">$0.00</td></tr>
             <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4040 — Youth Fund</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="od-gl-yth">$0.00</td></tr>
             <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4080 — Building Fund Offerings</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="od-gl-bldg">$0.00</td></tr>
@@ -1114,9 +1104,6 @@ nav{flex:1;padding:10px 0;}
             <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4090 — Reimbursements</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="od-gl-reimb">$0.00</td></tr>
             <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4091 — Church Anniversary</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="od-gl-channiv">$0.00</td></tr>
             <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4092 — Pastor Anniversary</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="od-gl-panniv">$0.00</td></tr>
-            <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4093 — Brotherhood</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="od-gl-brother">$0.00</td></tr>
-            <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4094 — Inspirational Choir</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="od-gl-ichoir">$0.00</td></tr>
-            <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4095 — Senior Usher</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="od-gl-susher">$0.00</td></tr>
             <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4060 — Special Event / Programs</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="od-gl-special">$0.00</td></tr>
             <tr><td style="padding:5px 8px;padding-left:20px;color:#475569;">4070 — Other / Miscellaneous</td><td style="text-align:right;padding:5px 8px;">—</td><td style="text-align:right;padding:5px 8px;color:var(--red);" id="od-gl-other">$0.00</td></tr>
             <tr style="border-top:2px solid var(--light);font-weight:700;">
@@ -1142,7 +1129,7 @@ nav{flex:1;padding:10px 0;}
         </div>
         <div style="overflow-x:auto">
           <table class="vt" id="od-saved-table">
-            <tr><th>ID</th><th>Date</th><th>Tithes</th><th>Youth</th><th>Building Fund</th><th>Benevolent</th><th>Youth Education</th><th>Offering</th><th>Reimbursements</th><th>Ch. Anniv.</th><th>Pas. Anniv.</th><th>Brotherhood</th><th>Insp. Choir</th><th>Sr. Usher</th><th>Special Event</th><th>Other</th><th>Total</th><th>Received By</th><th>Saved?</th><th style="text-align:center">Actions</th></tr>
+            <tr><th>ID</th><th>Date</th><th>Sunday School</th><th>Tithes</th><th>Youth</th><th>Building Fund</th><th>Benevolent</th><th>Youth Education</th><th>Offering</th><th>Reimbursements</th><th>Ch. Anniv.</th><th>Pas. Anniv.</th><th>Special Event</th><th>Other</th><th>Total</th><th>Received By</th><th>Saved?</th><th style="text-align:center">Actions</th></tr>
           </table>
         </div>
       </div>
@@ -3075,6 +3062,7 @@ function initODForm() {
 }
 
 function calcODTotal() {
+  var ss       = parseFloat(document.getElementById('od-ss').value) || 0;
   var tithes   = parseFloat(document.getElementById('od-tithes').value) || 0;
   var yth      = parseFloat(document.getElementById('od-youth').value) || 0;
   var bldg     = parseFloat(document.getElementById('od-bldg').value) || 0;
@@ -3084,17 +3072,15 @@ function calcODTotal() {
   var reimb    = parseFloat(document.getElementById('od-reimb').value) || 0;
   var chAnniv  = parseFloat(document.getElementById('od-channiv').value) || 0;
   var psAnniv  = parseFloat(document.getElementById('od-panniv').value) || 0;
-  var brother  = parseFloat(document.getElementById('od-brother').value) || 0;
-  var iChoir   = parseFloat(document.getElementById('od-ichoir').value) || 0;
-  var sUsher   = parseFloat(document.getElementById('od-susher').value) || 0;
   var special  = parseFloat(document.getElementById('od-special').value) || 0;
   var other    = parseFloat(document.getElementById('od-other').value) || 0;
-  var tot = tithes + yth + bldg + benv + yedu + offering + reimb +
-            chAnniv + psAnniv + brother + iChoir + sUsher + special + other;
+  var tot = ss + tithes + yth + bldg + benv + yedu + offering + reimb +
+            chAnniv + psAnniv + special + other;
   document.getElementById('od-total').textContent         = fmtCurrency(tot);
   document.getElementById('od-gl-dr').textContent         = fmtCurrency(tot);
   document.getElementById('od-gl-tdr').innerHTML          = '<strong>' + fmtCurrency(tot) + '</strong>';
   document.getElementById('od-gl-tcr').innerHTML          = '<strong>' + fmtCurrency(tot) + '</strong>';
+  document.getElementById('od-gl-ss').textContent         = fmtCurrency(ss);
   document.getElementById('od-gl-tithes').textContent     = fmtCurrency(tithes);
   document.getElementById('od-gl-yth').textContent        = fmtCurrency(yth);
   document.getElementById('od-gl-bldg').textContent       = fmtCurrency(bldg);
@@ -3104,9 +3090,6 @@ function calcODTotal() {
   document.getElementById('od-gl-reimb').textContent      = fmtCurrency(reimb);
   document.getElementById('od-gl-channiv').textContent    = fmtCurrency(chAnniv);
   document.getElementById('od-gl-panniv').textContent     = fmtCurrency(psAnniv);
-  document.getElementById('od-gl-brother').textContent    = fmtCurrency(brother);
-  document.getElementById('od-gl-ichoir').textContent     = fmtCurrency(iChoir);
-  document.getElementById('od-gl-susher').textContent     = fmtCurrency(sUsher);
   document.getElementById('od-gl-special').textContent    = fmtCurrency(special);
   document.getElementById('od-gl-other').textContent      = fmtCurrency(other);
 }
@@ -3116,6 +3099,7 @@ var odPendingRows = [];
 function saveODRec() {
   var id       = document.getElementById('od-id').value;
   var date     = document.getElementById('od-date').value || '—';
+  var ss       = parseFloat(document.getElementById('od-ss').value) || 0;
   var tithes   = parseFloat(document.getElementById('od-tithes').value) || 0;
   var yth      = parseFloat(document.getElementById('od-youth').value) || 0;
   var bldg     = parseFloat(document.getElementById('od-bldg').value) || 0;
@@ -3125,13 +3109,10 @@ function saveODRec() {
   var reimb    = parseFloat(document.getElementById('od-reimb').value) || 0;
   var chAnniv  = parseFloat(document.getElementById('od-channiv').value) || 0;
   var psAnniv  = parseFloat(document.getElementById('od-panniv').value) || 0;
-  var brother  = parseFloat(document.getElementById('od-brother').value) || 0;
-  var iChoir   = parseFloat(document.getElementById('od-ichoir').value) || 0;
-  var sUsher   = parseFloat(document.getElementById('od-susher').value) || 0;
   var special  = parseFloat(document.getElementById('od-special').value) || 0;
   var other    = parseFloat(document.getElementById('od-other').value) || 0;
-  var total    = tithes + yth + bldg + benv + yedu + offering + reimb +
-                 chAnniv + psAnniv + brother + iChoir + sUsher + special + other;
+  var total    = ss + tithes + yth + bldg + benv + yedu + offering + reimb +
+                 chAnniv + psAnniv + special + other;
   var rcvd     = document.getElementById('od-received-by').value || '—';
   var notes    = (document.getElementById('od-notes') || {value:''}).value || '';
 
@@ -3141,6 +3122,7 @@ function saveODRec() {
   tr.innerHTML =
     '<td style="font-family:monospace;font-size:.78rem">' + id + '</td>' +
     '<td>' + date + '</td>' +
+    '<td class="ta">' + fmtCurrency(ss)        + '</td>' +
     '<td class="ta">' + fmtCurrency(tithes)   + '</td>' +
     '<td class="ta">' + fmtCurrency(yth)       + '</td>' +
     '<td class="ta">' + fmtCurrency(bldg)      + '</td>' +
@@ -3150,9 +3132,6 @@ function saveODRec() {
     '<td class="ta">' + fmtCurrency(reimb)     + '</td>' +
     '<td class="ta">' + fmtCurrency(chAnniv)   + '</td>' +
     '<td class="ta">' + fmtCurrency(psAnniv)   + '</td>' +
-    '<td class="ta">' + fmtCurrency(brother)   + '</td>' +
-    '<td class="ta">' + fmtCurrency(iChoir)    + '</td>' +
-    '<td class="ta">' + fmtCurrency(sUsher)    + '</td>' +
     '<td class="ta">' + fmtCurrency(special)   + '</td>' +
     '<td class="ta">' + fmtCurrency(other)     + '</td>' +
     '<td style="font-weight:700;color:var(--blue)">' + fmtCurrency(total) + '</td>' +
@@ -3166,9 +3145,9 @@ function saveODRec() {
   dBtn.onclick = (function(oid){ return function(){ odDeleteRow(oid); }; })(id);
   actTd.appendChild(eBtn); actTd.appendChild(dBtn);
   tb.appendChild(tr);
-  odPendingRows.push({id:id, date:date, tithes:tithes, youth:yth, bldg:bldg, benv:benv,
+  odPendingRows.push({id:id, date:date, sundaySchool:ss, tithes:tithes, youth:yth, bldg:bldg, benv:benv,
     yedu:yedu, offering:offering, reimb:reimb,
-    chAnniv:chAnniv, psAnniv:psAnniv, brother:brother, iChoir:iChoir, sUsher:sUsher,
+    chAnniv:chAnniv, psAnniv:psAnniv,
     special:special, other:other, total:total, rcvd:rcvd, notes:notes, _saved:false});
 
   document.getElementById('od-saved-wrap').style.display = 'block';
@@ -3177,8 +3156,8 @@ function saveODRec() {
   var curMatch = String(id).match(/OD-(\d+)/i);
   var curN = curMatch ? parseInt(curMatch[1]) : 0;
   document.getElementById('od-id').value = 'OD-' + String(curN + 1).padStart(3,'0');
-  ['od-tithes','od-youth','od-bldg','od-benv','od-yedu','od-offering','od-reimb',
-   'od-channiv','od-panniv','od-brother','od-ichoir','od-susher',
+  ['od-ss','od-tithes','od-youth','od-bldg','od-benv','od-yedu','od-offering','od-reimb',
+   'od-channiv','od-panniv',
    'od-special','od-other'].forEach(function(i) {
     document.getElementById(i).value = '';
   });
@@ -3238,6 +3217,7 @@ function saveODToSheets() {
       + '&callback='       + cb
       + '&offeringId='     + encodeURIComponent(r.id)
       + '&date='           + encodeURIComponent(r.date)
+      + '&sundaySchool='   + encodeURIComponent(r.sundaySchool||0)
       + '&tithes='         + encodeURIComponent(r.tithes)
       + '&youth='          + encodeURIComponent(r.youth)
       + '&buildingFund='   + encodeURIComponent(r.bldg)
@@ -3247,9 +3227,6 @@ function saveODToSheets() {
       + '&reimbursements='   + encodeURIComponent(r.reimb)
       + '&churchAnniv='      + encodeURIComponent(r.chAnniv)
       + '&pastorAnniv='      + encodeURIComponent(r.psAnniv)
-      + '&brotherhood='      + encodeURIComponent(r.brother)
-      + '&inspChoir='        + encodeURIComponent(r.iChoir)
-      + '&seniorUsher='      + encodeURIComponent(r.sUsher)
       + '&specialEvent='     + encodeURIComponent(r.special)
       + '&other='            + encodeURIComponent(r.other)
       + '&total='            + encodeURIComponent(r.total)
@@ -3419,6 +3396,7 @@ function saveGDToSheets() {
 
 
 function calcTMTotal() {
+  var ss       = parseFloat(document.getElementById('tm-ss').value) || 0;
   var tithes   = parseFloat(document.getElementById('tm-tithes').value) || 0;
   var yth      = parseFloat(document.getElementById('tm-youth').value) || 0;
   var bldg     = parseFloat(document.getElementById('tm-bldg').value) || 0;
@@ -3427,16 +3405,14 @@ function calcTMTotal() {
   var offering = parseFloat(document.getElementById('tm-offering').value) || 0;
   var chAnniv  = parseFloat(document.getElementById('tm-channiv').value) || 0;
   var psAnniv  = parseFloat(document.getElementById('tm-panniv').value) || 0;
-  var brother  = parseFloat(document.getElementById('tm-brother').value) || 0;
-  var iChoir   = parseFloat(document.getElementById('tm-ichoir').value) || 0;
-  var sUsher   = parseFloat(document.getElementById('tm-susher').value) || 0;
   var special  = parseFloat(document.getElementById('tm-special').value) || 0;
   var other    = parseFloat(document.getElementById('tm-other').value) || 0;
-  var tot = tithes + yth + bldg + benv + yedu + offering + chAnniv + psAnniv + brother + iChoir + sUsher + special + other;
+  var tot = ss + tithes + yth + bldg + benv + yedu + offering + chAnniv + psAnniv + special + other;
   document.getElementById('tm-total').textContent          = fmtCurrency(tot);
   document.getElementById('tm-gl-dr').textContent          = fmtCurrency(tot);
   document.getElementById('tm-gl-tdr').innerHTML           = '<strong>' + fmtCurrency(tot) + '</strong>';
   document.getElementById('tm-gl-tcr').innerHTML           = '<strong>' + fmtCurrency(tot) + '</strong>';
+  document.getElementById('tm-gl-ss').textContent          = fmtCurrency(ss);
   document.getElementById('tm-gl-tithes').textContent      = fmtCurrency(tithes);
   document.getElementById('tm-gl-yth').textContent         = fmtCurrency(yth);
   document.getElementById('tm-gl-bldg').textContent        = fmtCurrency(bldg);
@@ -3445,9 +3421,6 @@ function calcTMTotal() {
   document.getElementById('tm-gl-offering').textContent    = fmtCurrency(offering);
   document.getElementById('tm-gl-channiv').textContent     = fmtCurrency(chAnniv);
   document.getElementById('tm-gl-panniv').textContent      = fmtCurrency(psAnniv);
-  document.getElementById('tm-gl-brother').textContent     = fmtCurrency(brother);
-  document.getElementById('tm-gl-ichoir').textContent      = fmtCurrency(iChoir);
-  document.getElementById('tm-gl-susher').textContent      = fmtCurrency(sUsher);
   document.getElementById('tm-gl-special').textContent     = fmtCurrency(special);
   document.getElementById('tm-gl-other').textContent       = fmtCurrency(other);
 }
@@ -3514,6 +3487,7 @@ function saveTMRec() {
   var id     = document.getElementById('tm-id').value;
   var date   = document.getElementById('tm-date').value || '—';
   var member = document.getElementById('tm-member').value || 'Anonymous';
+  var ss       = parseFloat(document.getElementById('tm-ss').value)       || 0;
   var tithes   = parseFloat(document.getElementById('tm-tithes').value)   || 0;
   var yth      = parseFloat(document.getElementById('tm-youth').value)    || 0;
   var bldg     = parseFloat(document.getElementById('tm-bldg').value)     || 0;
@@ -3522,12 +3496,9 @@ function saveTMRec() {
   var offering = parseFloat(document.getElementById('tm-offering').value) || 0;
   var chAnniv  = parseFloat(document.getElementById('tm-channiv').value)  || 0;
   var psAnniv  = parseFloat(document.getElementById('tm-panniv').value)   || 0;
-  var brother  = parseFloat(document.getElementById('tm-brother').value)  || 0;
-  var iChoir   = parseFloat(document.getElementById('tm-ichoir').value)   || 0;
-  var sUsher   = parseFloat(document.getElementById('tm-susher').value)   || 0;
   var special  = parseFloat(document.getElementById('tm-special').value)  || 0;
   var other    = parseFloat(document.getElementById('tm-other').value)    || 0;
-  var total    = tithes + yth + bldg + benv + yedu + offering + chAnniv + psAnniv + brother + iChoir + sUsher + special + other;
+  var total    = ss + tithes + yth + bldg + benv + yedu + offering + chAnniv + psAnniv + special + other;
   var rcvd     = document.getElementById('tm-received-by').value || '—';
   var payMethod = document.querySelector('input[name="tm-payment"]:checked') ? document.querySelector('input[name="tm-payment"]:checked').value : 'Cash';
   var checkNo   = payMethod === 'Check' ? (document.getElementById('tm-check-no').value || '') : '';
@@ -3542,6 +3513,7 @@ function saveTMRec() {
     '<td style="font-family:monospace;font-size:.78rem">' + id + '</td>' +
     '<td>' + date + '</td>' +
     '<td style="font-weight:600">' + member + '</td>' +
+    '<td class="ta">' + fmtCurrency(ss)        + '</td>' +
     '<td class="ta">' + fmtCurrency(tithes)   + '</td>' +
     '<td class="ta">' + fmtCurrency(yth)       + '</td>' +
     '<td class="ta">' + fmtCurrency(bldg)      + '</td>' +
@@ -3550,9 +3522,6 @@ function saveTMRec() {
     '<td class="ta">' + fmtCurrency(offering)  + '</td>' +
     '<td class="ta">' + fmtCurrency(chAnniv)   + '</td>' +
     '<td class="ta">' + fmtCurrency(psAnniv)   + '</td>' +
-    '<td class="ta">' + fmtCurrency(brother)   + '</td>' +
-    '<td class="ta">' + fmtCurrency(iChoir)    + '</td>' +
-    '<td class="ta">' + fmtCurrency(sUsher)    + '</td>' +
     '<td class="ta">' + fmtCurrency(special)   + '</td>' +
     '<td class="ta">' + fmtCurrency(other)     + '</td>' +
     '<td style="font-weight:700;color:var(--blue)">' + fmtCurrency(total) + '</td>' +
@@ -3567,17 +3536,17 @@ function saveTMRec() {
   actTd.appendChild(eBtn); actTd.appendChild(dBtn);
   tb.appendChild(tr);
 
-  tmPendingRows.push({id:id, date:date, member:member, tithes:tithes, youth:yth,
+  tmPendingRows.push({id:id, date:date, member:member, sundaySchool:ss, tithes:tithes, youth:yth,
     bldg:bldg, benv:benv, yedu:yedu, offering:offering,
-    chAnniv:chAnniv, psAnniv:psAnniv, brother:brother, iChoir:iChoir, sUsher:sUsher,
+    chAnniv:chAnniv, psAnniv:psAnniv,
     special:special, other:other, total:total, rcvd:rcvd, payMethod:payMethod, checkNo:checkNo, notes:notes});
 
   document.getElementById('tm-saved-wrap').style.display = 'block';
 
   var nextNum = tb.querySelectorAll('tr').length;
   document.getElementById('tm-id').value = 'TM-' + String(nextNum).padStart(3,'0');
-  ['tm-tithes','tm-youth','tm-bldg','tm-benv','tm-yedu','tm-offering',
-   'tm-channiv','tm-panniv','tm-brother','tm-ichoir','tm-susher',
+  ['tm-ss','tm-tithes','tm-youth','tm-bldg','tm-benv','tm-yedu','tm-offering',
+   'tm-channiv','tm-panniv',
    'tm-special','tm-other'].forEach(function(i) {
     document.getElementById(i).value = '';
   });
@@ -3655,6 +3624,7 @@ function saveTMToSheets() {
       + '&offeringId='     + encodeURIComponent(r.id)
       + '&date='           + encodeURIComponent(r.date)
       + '&memberName='     + encodeURIComponent(r.member)
+      + '&sundaySchool='   + encodeURIComponent(r.sundaySchool||0)
       + '&tithes='         + encodeURIComponent(r.tithes)
       + '&youth='          + encodeURIComponent(r.youth)
       + '&buildingFund='   + encodeURIComponent(r.bldg)
@@ -3663,9 +3633,6 @@ function saveTMToSheets() {
       + '&offering='       + encodeURIComponent(r.offering)
       + '&churchAnniversary=' + encodeURIComponent(r.chAnniv||0)
       + '&pastorAnniversary=' + encodeURIComponent(r.psAnniv||0)
-      + '&brotherhood='    + encodeURIComponent(r.brother||0)
-      + '&inspChoir='      + encodeURIComponent(r.iChoir||0)
-      + '&seniorUsher='    + encodeURIComponent(r.sUsher||0)
       + '&specialEvent='   + encodeURIComponent(r.special)
       + '&other='          + encodeURIComponent(r.other)
       + '&total='          + encodeURIComponent(r.total)
@@ -7925,29 +7892,35 @@ function tmEditRow(id) {
   openSessionEditModal({ fields: [
     {key:'date',     label:'Date',           type:'date',   value:r.date},
     {key:'member',   label:'Member',         type:'text',   value:r.member},
+    {key:'ss',       label:'Sunday School',  type:'number', value:r.sundaySchool, min:0, step:'0.01'},
     {key:'tithes',   label:'Tithes',         type:'number', value:r.tithes,   min:0, step:'0.01'},
     {key:'youth',    label:'Youth',          type:'number', value:r.youth,    min:0, step:'0.01'},
     {key:'bldg',     label:'Building Fund',  type:'number', value:r.bldg,     min:0, step:'0.01'},
     {key:'benv',     label:'Benevolent',     type:'number', value:r.benv,     min:0, step:'0.01'},
     {key:'yedu',     label:'Youth Education',type:'number', value:r.yedu,     min:0, step:'0.01'},
     {key:'offering', label:'Offering',       type:'number', value:r.offering, min:0, step:'0.01'},
+    {key:'chAnniv',  label:'Church Anniversary', type:'number', value:r.chAnniv, min:0, step:'0.01'},
+    {key:'psAnniv',  label:'Pastor Anniversary', type:'number', value:r.psAnniv, min:0, step:'0.01'},
     {key:'special',  label:'Special Event',  type:'number', value:r.special,  min:0, step:'0.01'},
     {key:'other',    label:'Other',          type:'number', value:r.other,    min:0, step:'0.01'},
     {key:'rcvd',     label:'Received By',    type:'text',   value:r.rcvd}
   ], onSave: function() {
-    r.date=fvs('date'); r.member=fvs('member'); r.tithes=fv('tithes'); r.youth=fv('youth');
+    r.date=fvs('date'); r.member=fvs('member'); r.sundaySchool=fv('ss'); r.tithes=fv('tithes'); r.youth=fv('youth');
     r.bldg=fv('bldg'); r.benv=fv('benv'); r.yedu=fv('yedu'); r.offering=fv('offering');
+    r.chAnniv=fv('chAnniv'); r.psAnniv=fv('psAnniv');
     r.special=fv('special'); r.other=fv('other'); r.rcvd=fvs('rcvd');
-    r.total = r.tithes+r.youth+r.bldg+r.benv+r.yedu+r.offering+r.special+r.other;
+    r.total = r.sundaySchool+r.tithes+r.youth+r.bldg+r.benv+r.yedu+r.offering+r.chAnniv+r.psAnniv+r.special+r.other;
     if (rowEl) {
       var c = rowEl.cells;
       c[1].textContent=r.date; c[2].textContent=r.member;
-      c[3].textContent=fmtCurrency(r.tithes);   c[4].textContent=fmtCurrency(r.youth);
-      c[5].textContent=fmtCurrency(r.bldg);     c[6].textContent=fmtCurrency(r.benv);
-      c[7].textContent=fmtCurrency(r.yedu);     c[8].textContent=fmtCurrency(r.offering);
-      c[9].textContent=fmtCurrency(r.special);  c[10].textContent=fmtCurrency(r.other);
-      c[11].innerHTML='<strong style="color:var(--blue)">'+fmtCurrency(r.total)+'</strong>';
-      c[12].textContent=r.rcvd;
+      c[3].textContent=fmtCurrency(r.sundaySchool); c[4].textContent=fmtCurrency(r.tithes);
+      c[5].textContent=fmtCurrency(r.youth);    c[6].textContent=fmtCurrency(r.bldg);
+      c[7].textContent=fmtCurrency(r.benv);     c[8].textContent=fmtCurrency(r.yedu);
+      c[9].textContent=fmtCurrency(r.offering); c[10].textContent=fmtCurrency(r.chAnniv);
+      c[11].textContent=fmtCurrency(r.psAnniv); c[12].textContent=fmtCurrency(r.special);
+      c[13].textContent=fmtCurrency(r.other);
+      c[14].innerHTML='<strong style="color:var(--blue)">'+fmtCurrency(r.total)+'</strong>';
+      c[15].textContent=r.rcvd;
     }
     showToast('✅ Tithes entry updated.');
   }});
@@ -8011,7 +7984,8 @@ function odEditRow(id) {
   if (!r) { showToast('Row not found.'); return; }
   var rowEl = document.querySelector('tr[data-odid="' + id + '"]');
   openSessionEditModal({ fields: [
-    {key:'date',     label:'Date',                type:'date',  value:r.date},
+    {key:'date',      label:'Date',                type:'date',  value:r.date},
+    {key:'ss',        label:'Sunday School',       type:'number',value:r.sundaySchool, min:0, step:'0.01'},
     {key:'tithes',   label:'Tithes',              type:'number',value:r.tithes,   min:0, step:'0.01'},
     {key:'youth',    label:'Youth',               type:'number',value:r.youth,    min:0, step:'0.01'},
     {key:'bldg',     label:'Building Fund',       type:'number',value:r.bldg,     min:0, step:'0.01'},
@@ -8021,32 +7995,27 @@ function odEditRow(id) {
     {key:'reimb',    label:'Reimbursements',      type:'number',value:r.reimb,    min:0, step:'0.01'},
     {key:'chAnniv',  label:'Church Anniversary',  type:'number',value:r.chAnniv,  min:0, step:'0.01'},
     {key:'psAnniv',  label:'Pastor Anniversary',  type:'number',value:r.psAnniv,  min:0, step:'0.01'},
-    {key:'brother',  label:'Brotherhood',         type:'number',value:r.brother,  min:0, step:'0.01'},
-    {key:'iChoir',   label:'Inspirational Choir', type:'number',value:r.iChoir,   min:0, step:'0.01'},
-    {key:'sUsher',   label:'Senior Usher',        type:'number',value:r.sUsher,   min:0, step:'0.01'},
     {key:'special',  label:'Special Event',       type:'number',value:r.special,  min:0, step:'0.01'},
     {key:'other',    label:'Other',               type:'number',value:r.other,    min:0, step:'0.01'},
     {key:'rcvd',     label:'Received By',         type:'text',  value:r.rcvd}
   ], onSave: function() {
-    r.date=fvs('date'); r.tithes=fv('tithes'); r.youth=fv('youth'); r.bldg=fv('bldg');
+    r.date=fvs('date'); r.sundaySchool=fv('ss'); r.tithes=fv('tithes'); r.youth=fv('youth'); r.bldg=fv('bldg');
     r.benv=fv('benv'); r.yedu=fv('yedu'); r.offering=fv('offering');
     r.reimb=fv('reimb'); r.chAnniv=fv('chAnniv'); r.psAnniv=fv('psAnniv');
-    r.brother=fv('brother'); r.iChoir=fv('iChoir'); r.sUsher=fv('sUsher');
     r.special=fv('special'); r.other=fv('other'); r.rcvd=fvs('rcvd');
-    r.total = r.tithes+r.youth+r.bldg+r.benv+r.yedu+r.offering+r.reimb+
-              r.chAnniv+r.psAnniv+r.brother+r.iChoir+r.sUsher+r.special+r.other;
+    r.total = r.sundaySchool+r.tithes+r.youth+r.bldg+r.benv+r.yedu+r.offering+r.reimb+
+              r.chAnniv+r.psAnniv+r.special+r.other;
     if (rowEl) {
       var c = rowEl.cells;
       c[1].textContent=r.date;
-      c[2].textContent=fmtCurrency(r.tithes);   c[3].textContent=fmtCurrency(r.youth);
-      c[4].textContent=fmtCurrency(r.bldg);     c[5].textContent=fmtCurrency(r.benv);
-      c[6].textContent=fmtCurrency(r.yedu);     c[7].textContent=fmtCurrency(r.offering);
-      c[8].textContent=fmtCurrency(r.reimb);    c[9].textContent=fmtCurrency(r.chAnniv);
-      c[10].textContent=fmtCurrency(r.psAnniv); c[11].textContent=fmtCurrency(r.brother);
-      c[12].textContent=fmtCurrency(r.iChoir);  c[13].textContent=fmtCurrency(r.sUsher);
-      c[14].textContent=fmtCurrency(r.special); c[15].textContent=fmtCurrency(r.other);
-      c[16].innerHTML='<strong style="color:var(--blue)">'+fmtCurrency(r.total)+'</strong>';
-      c[17].textContent=r.rcvd;
+      c[2].textContent=fmtCurrency(r.sundaySchool); c[3].textContent=fmtCurrency(r.tithes);
+      c[4].textContent=fmtCurrency(r.youth);    c[5].textContent=fmtCurrency(r.bldg);
+      c[6].textContent=fmtCurrency(r.benv);     c[7].textContent=fmtCurrency(r.yedu);
+      c[8].textContent=fmtCurrency(r.offering); c[9].textContent=fmtCurrency(r.reimb);
+      c[10].textContent=fmtCurrency(r.chAnniv); c[11].textContent=fmtCurrency(r.psAnniv);
+      c[12].textContent=fmtCurrency(r.special); c[13].textContent=fmtCurrency(r.other);
+      c[14].innerHTML='<strong style="color:var(--blue)">'+fmtCurrency(r.total)+'</strong>';
+      c[15].textContent=r.rcvd;
     }
     showToast('✅ Other Offering entry updated.');
   }});
@@ -9918,10 +9887,10 @@ var ADJ_CFG = {
     action:'getTithesRecords', updateAction:'updateTithes', deleteAction:'deleteTithes',
     title:'Tithes & Offering by Members', contentId:'adj-tithes-content',
     dateField:'date', hasFilter:true,
-    cols:['Date','Member','Tithes','Youth','Bldg Fund','Benevolent','Youth Edu','Offering','Ch. Anniv.','Pas. Anniv.','Brotherhood','Insp. Choir','Sr. Usher','Special','Other','Total','Payment','Check #','Received By','Notes'],
-    fields:['date','member','tithes','youth','building','benevolent','youthEdu','offering','churchAnniv','pastorAnniv','brotherhood','inspChoir','seniorUsher','special','other','total','payMethod','checkNo','receivedBy','notes'],
-    labels:['Date','Member Name','Tithes','Youth','Building Fund','Benevolent','Youth Education','Offering','Church Anniversary','Pastor Anniversary','Brotherhood','Inspirational Choir','Senior Usher','Special Event','Other','Total','Payment Method','Check No.','Received By','Notes'],
-    types: ['date','text','number','number','number','number','number','number','number','number','number','number','number','number','number','number','text','text','text','text'],
+    cols:['Date','Member','Sun School','Tithes','Youth','Bldg Fund','Benevolent','Youth Edu','Offering','Ch. Anniv.','Pas. Anniv.','Special','Other','Total','Payment','Check #','Received By','Notes'],
+    fields:['date','member','sundaySchool','tithes','youth','building','benevolent','youthEdu','offering','churchAnniv','pastorAnniv','special','other','total','payMethod','checkNo','receivedBy','notes'],
+    labels:['Date','Member Name','Sunday School','Tithes','Youth','Building Fund','Benevolent','Youth Education','Offering','Church Anniversary','Pastor Anniversary','Special Event','Other','Total','Payment Method','Check No.','Received By','Notes'],
+    types: ['date','text','number','number','number','number','number','number','number','number','number','number','number','number','text','text','text','text'],
     idField:'id'
   },
   giveify: {
@@ -9938,10 +9907,10 @@ var ADJ_CFG = {
     action:'getOtherOfferings', updateAction:'updateOtherOffering', deleteAction:'deleteOtherOffering',
     title:'Other Offerings & Donations', contentId:'adj-other-content',
     dateField:'date', hasFilter:true,
-    cols:['Date','Tithes','Youth','Bldg Fund','Benevolent','Youth Edu','Offering','Reimb.','Ch. Anniv.','Pas. Anniv.','Brotherhood','Insp. Choir','Sr. Usher','Special','Other','Total','Received By','Notes'],
-    fields:['date','tithes','youth','building','benevolent','youthEdu','offering','reimbursements','churchAnniv','pastorAnniv','brotherhood','inspChoir','seniorUsher','special','other','total','receivedBy','notes'],
-    labels:['Date','Tithes','Youth','Building Fund','Benevolent','Youth Education','Offering','Reimbursements','Church Anniversary','Pastor Anniversary','Brotherhood','Inspirational Choir','Senior Usher','Special Event','Other','Total','Received By','Notes'],
-    types: ['date','number','number','number','number','number','number','number','number','number','number','number','number','number','number','number','text','text'],
+    cols:['Date','Sun School','Tithes','Youth','Bldg Fund','Benevolent','Youth Edu','Offering','Reimb.','Ch. Anniv.','Pas. Anniv.','Special','Other','Total','Received By','Notes'],
+    fields:['date','sundaySchool','tithes','youth','building','benevolent','youthEdu','offering','reimbursements','churchAnniv','pastorAnniv','special','other','total','receivedBy','notes'],
+    labels:['Date','Sunday School','Tithes','Youth','Building Fund','Benevolent','Youth Education','Offering','Reimbursements','Church Anniversary','Pastor Anniversary','Special Event','Other','Total','Received By','Notes'],
+    types: ['date','number','number','number','number','number','number','number','number','number','number','number','number','number','text','text'],
     idField:'id'
   },
   payroll: {
