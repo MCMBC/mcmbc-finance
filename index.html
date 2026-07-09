@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.07.08-144</title>
+<title>Mount Calvary M.B. Church Financial System v2026.07.09-145</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -174,7 +174,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.07.08-144</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.07.09-145</span>
     </div>
   </div>
 </div>
@@ -187,7 +187,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.07.08-144</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.07.09-145</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -314,7 +314,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.07.08-144</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.07.09-145</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -597,6 +597,15 @@ nav{flex:1;padding:10px 0;}
             <label style="font-size:.78rem;font-weight:600;color:#475569;text-transform:uppercase;letter-spacing:.04em">Member <span style="font-weight:400;text-transform:none;color:#94a3b8">(optional)</span></label>
             <select id="cs-member" style="padding:9px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit">
               <option value="">All Members</option>
+            </select>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:5px;min-width:240px">
+            <label style="font-size:.78rem;font-weight:600;color:#475569;text-transform:uppercase;letter-spacing:.04em">Statement Type</label>
+            <select id="cs-type" style="padding:9px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit">
+              <option value="itemized">Itemized Contribution Statement</option>
+              <option value="byfund">Contribution Statement by Funds</option>
+              <option value="summary">Total Summary Contribution Statement</option>
+              <option value="weekly">Weekly Breakdown (classic)</option>
             </select>
           </div>
         </div>
@@ -6929,18 +6938,26 @@ function generateContributionStatement() {
   var start  = document.getElementById('cs-start').value;
   var end    = document.getElementById('cs-end').value;
   var member = document.getElementById('cs-member').value;
+  var csType = (document.getElementById('cs-type') || {}).value || 'weekly';
   if (!start || !end) { showToast('Please select both a start and end date.'); return; }
   if (start > end)    { showToast('Start date must be before end date.'); return; }
+
+  // The three per-member statement types require a specific member.
+  if (csType !== 'weekly' && !member) {
+    showToast('Please select a member for this statement type.');
+    return;
+  }
+
+  var s1 = new Date(start + 'T00:00:00').toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  var s2 = new Date(end   + 'T00:00:00').toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+
   closeContributionPicker();
   var rptWin = _openRptWin('Annual Contribution Statement - ' + s1 + ' to ' + s2);
 
   var panel = document.getElementById('rpt-output');
   var title = document.getElementById('rpt-output-title');
-  var s1 = new Date(start + 'T00:00:00').toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
-  var s2 = new Date(end   + 'T00:00:00').toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
   title.textContent = '🙏 Annual Contribution Statement — ' + s1 + ' to ' + s2;
   panel.style.display = 'block';
-  if(!rptWin||rptWin.closed){} // cleared
   panel.scrollIntoView({behavior:'smooth', block:'start'});
 
   var url = localStorage.getItem('mcmbc_sheet_url') || '';
@@ -6949,9 +6966,34 @@ function generateContributionStatement() {
     return;
   }
 
-  // loading shown in popup window
+  // ── Classic weekly breakdown keeps the original endpoint ──
+  if (csType === 'weekly') {
+    var cbW = 'csCb_' + Date.now();
+    var tW  = setTimeout(function(){ delete window[cbW]; rptWin.document.body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Timed out. Try again.</div>'; }, 30000);
+    setTimeout(function() {
+      window[cbW] = function(data) {
+        clearTimeout(tW); delete window[cbW];
+        if (!data || data.status !== 'success') {
+          rptWin.document.body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Error: ' + JSON.stringify(data) + '</div>';
+          return;
+        }
+        try { var _orw=openReportWindow; openReportWindow=function(t,h){_writeRptWin(rptWin,h);}; renderContributionStatement(data, s1, s2, member, null); openReportWindow=_orw; }
+        catch(e) { rptWin.document.body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c;font-size:.82rem"><strong>Render error:</strong><br>' + e.message + '</div>'; }
+      };
+      var sW = document.createElement('script');
+      sW.onerror = function(){ clearTimeout(tW); delete window[cbW]; rptWin.document.body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Could not reach Google Sheets.</div>'; };
+      sW.src = url + '?action=getContributionStatement&callback=' + cbW
+        + '&startDate='   + encodeURIComponent(start)
+        + '&endDate='     + encodeURIComponent(end)
+        + '&memberName='  + encodeURIComponent(member);
+      document.head.appendChild(sW);
+      setTimeout(function(){ if(sW.parentNode) sW.parentNode.removeChild(sW); }, 32000);
+    }, 80);
+    return;
+  }
 
-  var cb = 'csCb_' + Date.now();
+  // ── New per-member statement types use getMemberContributions ──
+  var cb = 'csMemCb_' + Date.now();
   var t  = setTimeout(function(){ delete window[cb]; rptWin.document.body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Timed out. Try again.</div>'; }, 30000);
 
   setTimeout(function() {
@@ -6961,18 +7003,109 @@ function generateContributionStatement() {
         rptWin.document.body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Error: ' + JSON.stringify(data) + '</div>';
         return;
       }
-      try { var _orw=openReportWindow; openReportWindow=function(t,h){_writeRptWin(rptWin,h);}; renderContributionStatement(data, s1, s2, member, null); openReportWindow=_orw; }
-      catch(e) { rptWin.document.body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c;font-size:.82rem"><strong>Render error:</strong><br>' + e.message + '</div>'; }
+      try {
+        var html = renderMemberStatement(csType, data, s1, s2);
+        _writeRptWin(rptWin, html);
+      } catch(e) {
+        rptWin.document.body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c;font-size:.82rem"><strong>Render error:</strong><br>' + e.message + '</div>';
+      }
     };
     var s = document.createElement('script');
     s.onerror = function(){ clearTimeout(t); delete window[cb]; rptWin.document.body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Could not reach Google Sheets.</div>'; };
-    s.src = url + '?action=getContributionStatement&callback=' + cb
+    s.src = url + '?action=getMemberContributions&callback=' + cb
       + '&startDate='   + encodeURIComponent(start)
       + '&endDate='     + encodeURIComponent(end)
       + '&memberName='  + encodeURIComponent(member);
     document.head.appendChild(s);
     setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); }, 32000);
   }, 80);
+}
+
+// ── v145 — Render the three per-member Annual Contribution Statement types ──
+function renderMemberStatement(type, data, s1, s2) {
+  function fc(v){ return fmtCurrency(v||0); }
+  function fmtD(iso){
+    if (!iso) return '';
+    var d = new Date(iso + 'T00:00:00');
+    if (isNaN(d.getTime())) return iso;
+    return (d.getMonth()+1) + '/' + d.getDate() + '/' + d.getFullYear();
+  }
+
+  var member = data.member || '(Member)';
+  var items  = data.items  || [];
+  var funds  = data.funds  || [];
+  var grand  = data.grandTotal || 0;
+
+  var typeTitle = type === 'itemized' ? 'Itemized Contribution Statement'
+                : type === 'byfund'   ? 'Contribution Statement by Funds'
+                : 'Total Summary Contribution Statement';
+
+  var thL = 'padding:6px 12px;border-bottom:2px solid #334155;font-size:.8rem;text-align:left;font-weight:600;color:#334155';
+  var thR = 'padding:6px 12px;border-bottom:2px solid #334155;font-size:.8rem;text-align:right;font-weight:600;color:#334155';
+  var tdL = 'padding:5px 12px;font-size:.82rem;text-align:left;border-bottom:1px solid #f1f5f9';
+  var tdR = 'padding:5px 12px;font-size:.82rem;text-align:right;border-bottom:1px solid #f1f5f9';
+  var gtL = 'padding:9px 12px;font-size:.9rem;font-weight:700;text-align:left;color:#15803d';
+  var gtR = 'padding:9px 12px;font-size:1rem;font-weight:700;text-align:right;color:#15803d';
+
+  var rpt = '<div style="font-family:Arial,sans-serif;max-width:820px;margin:0 auto">';
+
+  // Church header
+  rpt += '<div style="text-align:center;margin-bottom:18px">';
+  rpt += '<div style="font-weight:700;font-size:.98rem">Mount Calvary Missionary Baptist Church</div>';
+  rpt += '<div>10314 Canal Rd. &nbsp; Gulfport, Ms. 39503</div>';
+  rpt += '<div style="font-weight:700;margin-top:8px">' + typeTitle + '</div>';
+  rpt += '<div style="color:#475569;font-size:.85rem">' + s1 + ' - ' + s2 + '</div>';
+  rpt += '</div>';
+
+  // Member name (from Members tab)
+  rpt += '<div style="margin-bottom:16px;font-size:.9rem"><strong>Name:</strong> ' + member + '</div>';
+
+  if (type === 'itemized') {
+    // Date | Fund | Amount, then grand total
+    rpt += '<table style="width:100%;border-collapse:collapse">';
+    rpt += '<thead><tr><th style="' + thL + '">Date</th><th style="' + thL + '">Fund</th><th style="' + thR + '">Amount</th></tr></thead><tbody>';
+    if (!items.length) {
+      rpt += '<tr><td colspan="3" style="padding:14px 12px;text-align:center;color:#94a3b8;font-style:italic">No contributions found for this member and period.</td></tr>';
+    } else {
+      items.forEach(function(it){
+        rpt += '<tr><td style="' + tdL + '">' + fmtD(it.date) + '</td>' +
+               '<td style="' + tdL + '">' + it.fund + '</td>' +
+               '<td style="' + tdR + '">' + fc(it.amount) + '</td></tr>';
+      });
+    }
+    rpt += '<tr><td style="' + gtL + ';border-top:2px solid #334155" colspan="2">Grand Total</td>' +
+           '<td style="' + gtR + ';border-top:2px solid #334155">' + fc(grand) + '</td></tr>';
+    rpt += '</tbody></table>';
+
+  } else if (type === 'byfund') {
+    // Fund | Total (subtotal per fund), then grand total
+    rpt += '<table style="width:100%;border-collapse:collapse">';
+    rpt += '<thead><tr><th style="' + thL + '">Fund</th><th style="' + thR + '">Total</th></tr></thead><tbody>';
+    if (!funds.length) {
+      rpt += '<tr><td colspan="2" style="padding:14px 12px;text-align:center;color:#94a3b8;font-style:italic">No contributions found for this member and period.</td></tr>';
+    } else {
+      funds.forEach(function(f){
+        rpt += '<tr><td style="' + tdL + '">' + f.fund + '</td>' +
+               '<td style="' + tdR + '">' + fc(f.amount) + '</td></tr>';
+      });
+    }
+    rpt += '<tr><td style="' + gtL + ';border-top:2px solid #334155">Grand Total</td>' +
+           '<td style="' + gtR + ';border-top:2px solid #334155">' + fc(grand) + '</td></tr>';
+    rpt += '</tbody></table>';
+
+  } else {
+    // summary — grand total only
+    rpt += '<div style="background:#f0fdf4;border:2px solid #bbf7d0;border-radius:12px;padding:28px 24px;text-align:center;margin-top:10px">';
+    rpt += '<div style="font-size:.85rem;color:#475569;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Total Contributions</div>';
+    rpt += '<div style="font-size:2rem;font-weight:700;color:#15803d">' + fc(grand) + '</div>';
+    rpt += '</div>';
+  }
+
+  // Print button
+  rpt += '<div class="no-print" style="text-align:center;margin-top:24px"><button class="bsv" onclick="printReport()" style="padding:10px 28px">🖨️ Print Statement</button></div>';
+  rpt += '</div>';
+  rpt += '<style>@media print { .no-print { display:none !important; } }</style>';
+  return rpt;
 }
 
 function renderContributionStatement(data, s1, s2, member, body) {
