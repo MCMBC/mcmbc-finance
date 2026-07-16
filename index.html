@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.07.15-149</title>
+<title>Mount Calvary M.B. Church Financial System v2026.07.15-150</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -174,7 +174,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.07.15-149</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.07.15-150</span>
     </div>
   </div>
 </div>
@@ -187,7 +187,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.07.15-149</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.07.15-150</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -314,7 +314,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.07.15-149</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.07.15-150</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -5994,48 +5994,47 @@ function wfrPresetYear() {
 }
 
 // ── Report popup window helpers ───────────────────────────────────
-// v149 — Shared print chrome for all Financial Reports.
-// Returns { css, header, footer, name } to inject into a report popup so that,
-// WHEN PRINTED:
-//   • "Page N of M" prints in the bottom-right corner of EVERY page, and
-//   • the report's name repeats at the TOP of every page from PAGE 2 onward
-//     (page 1 already carries the report's own title block).
-// Technique (works in Chrome/Edge/Firefox print engines):
-//   - A position:fixed footer uses CSS counter(page)/counter(pages) to render
-//     the page-of-total text on every printed page.
-//   - A position:fixed header holds the report name on every printed page; it
-//     is hidden on page 1 by a script that runs at print time and toggles the
-//     header off until the first page break is passed. Because fixed elements
-//     otherwise repeat on all pages (including page 1), we suppress page 1 with
-//     an opaque first-page band that is part of the normal flow (not fixed), so
-//     it only paints once at the very top of the first page and covers the
-//     running header there.
-// On screen all three elements are hidden; they appear only in the print view.
+// v150 — Shared print chrome for all Financial Reports (Chrome-compatible).
+// Intended workflow: Chrome → Print → Save as PDF, with Chrome's built-in
+// "Headers and footers" option ENABLED. That native option stamps an EXACT
+// "page N/M" in the bottom margin (Chrome knows its own pagination, so the
+// total is always correct) and the document title in the top margin — something
+// no HTML/CSS trick can do reliably in Chrome, since Chrome neither repeats
+// position:fixed elements per page nor exposes a CSS page-count counter.
+//
+// This helper therefore does two things:
+//   • Repeats the REPORT NAME at the top of every printed page via a table
+//     <thead> (browsers, incl. Chrome, repeat <thead> on each page). Page 1's
+//     copy is masked by an in-flow cover band, since page 1 already shows the
+//     report's own title block.
+//   • Exposes the report name so callers can set the print window's
+//     document.title, which is what Chrome prints in its native top margin.
+// Returns { css, openTag, closeTag, name }. Callers put openTag right after the
+// on-screen toolbar, then the report html, then closeTag; and set the window
+// title to pc.name.
 function _printChrome(reportName) {
   var safe = String(reportName || 'Financial Report')
     .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   var css = [
     '@media print{',
-    '  @page{ margin:16mm 12mm 16mm 12mm; }',
-    '  .rpt-run-header{ position:fixed; top:0; left:0; right:0;',
-    '     font-family:Georgia,serif; font-size:11pt; font-weight:700; color:#0f2744;',
-    '     padding:2px 0 5px; margin:0; border-bottom:1px solid #c9a84c; background:#fff; }',
-    // In-flow opaque band at the very top of page 1 that covers the fixed
-    // header on the first page only (in-flow elements paint once, not per page).
-    '  .rpt-firstpage-cover{ display:block; height:20px; background:#fff;',
-    '     margin:-6px 0 4px; position:relative; z-index:5; }',
-    '  .rpt-run-footer{ position:fixed; bottom:0; left:0; right:0;',
-    '     font-family:Arial,sans-serif; font-size:9pt; color:#334155; text-align:right;',
-    '     padding-top:5px; border-top:1px solid #e2e8f0; background:#fff; }',
-    '  .rpt-run-footer .pnum::after{ counter-increment:page; content:"Page " counter(page) " of " counter(pages); }',
+    '  @page{ margin:14mm 12mm 16mm 12mm; }',
+    '  html,body{ height:auto !important; }',
+    '  table.rpt-page-wrap{ width:100%; border-collapse:collapse; }',
+    '  thead.rpt-run-head th{ font-family:Georgia,serif; font-size:11pt; font-weight:700;',
+    '     color:#0f2744; text-align:left; padding:0 0 5px; border-bottom:1px solid #c9a84c;',
+    '     background:#fff; }',
+    // hide the running head on page 1 with an in-flow white cover band
+    '  .rpt-firstpage-cover{ display:block; height:22px; background:#fff; position:relative;',
+    '     z-index:5; margin:-18px 0 2px; }',
     '  .no-print,.np{ display:none !important; }',
     '}',
-    '@media screen{ .rpt-run-header,.rpt-run-footer,.rpt-firstpage-cover{ display:none; } }'
+    '@media screen{ thead.rpt-run-head, .rpt-firstpage-cover{ display:none; } }'
   ].join('');
-  var header = '<div class="rpt-run-header">' + safe + '</div>'
-             + '<div class="rpt-firstpage-cover"></div>';
-  var footer = '<div class="rpt-run-footer"><span class="pnum"></span></div>';
-  return { css: css, header: header, footer: footer, name: safe };
+  var openTag = '<table class="rpt-page-wrap"><thead class="rpt-run-head"><tr><th>'
+              + safe + '</th></tr></thead><tbody><tr><td>'
+              + '<div class="rpt-firstpage-cover"></div>';
+  var closeTag = '</td></tr></tbody></table>';
+  return { css: css, openTag: openTag, closeTag: closeTag, name: safe };
 }
 
 function _openRptWin(title) {
@@ -6064,15 +6063,16 @@ function _writeRptWin(w, html, reportName) {
     + '.bp{background:#1e3a5f;color:#fff}.bc{background:#6b7280;color:#fff}'
     + '@keyframes cfSpin{to{transform:rotate(360deg)}}'
     + '@media print{.np,.no-print{display:none!important}}'
-    + pc.css + '</style></head><body>'
-    + pc.header
+    + pc.css + '</style>'
+    + '<title>' + pc.name + '</title></head><body>'
     + '<div class="np" style="margin-bottom:20px;display:flex;gap:8px">'
     + '<button class="btn bp" onclick="window.print()">\uD83D\uDDA8 Print / Save as PDF</button>'
     + '<button class="btn bc" onclick="window.close()">\u2715 Close Window</button>'
     + '</div>'
+    + pc.openTag
     + html
+    + pc.closeTag
     + '<div class="np" style="margin-top:24px"><button class="btn bp" onclick="window.print()">\uD83D\uDDA8 Print / Save as PDF</button></div>'
-    + pc.footer
     + '</body></html>';
   w.document.open(); w.document.write(full); w.document.close(); w.focus();
 }
@@ -6410,16 +6410,16 @@ function openReportWindow(title, bodyHtml) {
     '  @media print{.no-print{display:none!important}}',
     pc.css,
     '</style></head><body>',
-    pc.header,
     '<div class="no-print" style="margin-bottom:20px;display:flex;gap:8px">',
     '  <button class="btn btn-print" onclick="window.print()">\u{1F5A8} Print / Save as PDF</button>',
     '  <button class="btn btn-close" onclick="window.close()">&times; Close Window</button>',
     '</div>',
+    pc.openTag,
     bodyHtml,
+    pc.closeTag,
     '<div class="no-print" style="margin-top:24px">',
     '  <button class="btn btn-print" onclick="window.print()">\u{1F5A8} Print / Save as PDF</button>',
     '</div>',
-    pc.footer,
     '</body></html>'
   ].join('\n');
   if (!_reportWin || _reportWin.closed) {
@@ -6451,10 +6451,10 @@ function printReport() {
     pc.css,
     '</style>',
     '</head><body>',
-    pc.header,
+    pc.openTag,
     '<h2 style="font-family: Georgia, serif; color: #0F2744; margin: 0 0 16px">' + title + '</h2>',
     body,
-    pc.footer,
+    pc.closeTag,
     '<scr'+'ipt>window.onload = function(){ window.print(); window.onafterprint = function(){ window.close(); }; }<\/script>',
     '</body></html>'
   ].join('\n'));
