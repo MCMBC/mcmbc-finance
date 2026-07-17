@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.07.15-150</title>
+<title>Mount Calvary M.B. Church Financial System v2026.07.17-151</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -174,7 +174,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.07.15-150</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.07.17-151</span>
     </div>
   </div>
 </div>
@@ -187,7 +187,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.07.15-150</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.07.17-151</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -314,7 +314,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.07.15-150</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.07.17-151</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -7023,22 +7023,20 @@ function csPresetYear(yr) {
 }
 
 function csTypeChanged() {
-  var csType = (document.getElementById('cs-type') || {}).value || 'weekly';
-  var perMember = (csType !== 'weekly');
+  // v151 — "All Members" is now allowed for every statement type. For the three
+  // per-member types, choosing All Members generates one statement per member,
+  // each starting on a new printed page.
   var reqSpan = document.getElementById('cs-member-req');
   var sel = document.getElementById('cs-member');
   if (reqSpan) {
-    reqSpan.textContent = perMember ? '(required)' : '(optional)';
-    reqSpan.style.color = perMember ? '#dc2626' : '#94a3b8';
+    reqSpan.textContent = '(optional)';
+    reqSpan.style.color = '#94a3b8';
   }
-  // Enable/disable the "All Members" option for per-member statement types
   if (sel && sel.options.length) {
     var allOpt = sel.options[0]; // value="" All Members
     if (allOpt && allOpt.value === '') {
-      allOpt.disabled = perMember;
-      allOpt.textContent = perMember ? 'All Members (not available)' : 'All Members';
-      // If All Members was selected while switching to a per-member type, clear it
-      if (perMember && sel.value === '') sel.selectedIndex = sel.options.length > 1 ? 1 : 0;
+      allOpt.disabled = false;
+      allOpt.textContent = 'All Members';
     }
   }
 }
@@ -7051,12 +7049,9 @@ function generateContributionStatement() {
   if (!start || !end) { showToast('Please select both a start and end date.'); return; }
   if (start > end)    { showToast('Start date must be before end date.'); return; }
 
-  // The three per-member statement types require a specific member.
-  // "All Members" has an empty value, so it is treated as no selection here.
-  if (csType !== 'weekly' && !member) {
-    showToast('These statement types are per-member — please choose a specific member (not "All Members").');
-    return;
-  }
+  // v151 — "All Members" is allowed for all types. For the three per-member
+  // types, an empty member value means "generate one statement per member".
+  var allMembers = (csType !== 'weekly' && !member);
 
   var s1 = new Date(start + 'T00:00:00').toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
   var s2 = new Date(end   + 'T00:00:00').toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
@@ -7114,11 +7109,29 @@ function generateContributionStatement() {
         return;
       }
       try {
-        var html = renderMemberStatement(csType, data, s1, s2);
         var _csName = (csType === 'itemized' ? 'Itemized Contribution Statement'
                       : csType === 'byfund' ? 'Contribution Statement by Funds'
                       : csType === 'summary' ? 'Total Summary Contribution Statement'
                       : 'Annual Contribution Statement');
+        var html;
+        if (data.allMembers) {
+          // One statement per member, each starting on a new printed page.
+          var list = data.perMember || [];
+          if (!list.length) {
+            html = '<div style="padding:30px;text-align:center;color:#64748b">No members had contributions in this period.</div>';
+          } else {
+            html = '';
+            list.forEach(function(memberData, i) {
+              var block = renderMemberStatement(csType, memberData, s1, s2, true);
+              // page-break before every statement after the first
+              var pb = (i > 0) ? ' style="page-break-before:always;break-before:page"' : '';
+              html += '<div' + pb + '>' + block + '</div>';
+            });
+          }
+          _csName = 'Annual Contribution Statements — All Members';
+        } else {
+          html = renderMemberStatement(csType, data, s1, s2);
+        }
         _writeRptWin(rptWin, html, _csName);
       } catch(e) {
         rptWin.document.body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c;font-size:.82rem"><strong>Render error:</strong><br>' + e.message + '</div>';
@@ -7129,14 +7142,14 @@ function generateContributionStatement() {
     s.src = url + '?action=getMemberContributions&callback=' + cb
       + '&startDate='   + encodeURIComponent(start)
       + '&endDate='     + encodeURIComponent(end)
-      + '&memberName='  + encodeURIComponent(member);
+      + '&memberName='  + encodeURIComponent(allMembers ? '__ALL__' : member);
     document.head.appendChild(s);
     setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); }, 32000);
   }, 80);
 }
 
 // ── v145 — Render the three per-member Annual Contribution Statement types ──
-function renderMemberStatement(type, data, s1, s2) {
+function renderMemberStatement(type, data, s1, s2, hideBtn) {
   function fc(v){ return fmtCurrency(v||0); }
   function fmtD(iso){
     if (!iso) return '';
@@ -7215,8 +7228,11 @@ function renderMemberStatement(type, data, s1, s2) {
     rpt += '</div>';
   }
 
-  // Print button
-  rpt += '<div class="no-print" style="text-align:center;margin-top:24px"><button class="bsv" onclick="printReport()" style="padding:10px 28px">🖨️ Print Statement</button></div>';
+  // Print button (suppressed in All-Members stacked mode; the report window
+  // supplies its own print button once for the whole batch)
+  if (!hideBtn) {
+    rpt += '<div class="no-print" style="text-align:center;margin-top:24px"><button class="bsv" onclick="printReport()" style="padding:10px 28px">🖨️ Print Statement</button></div>';
+  }
   rpt += '</div>';
   rpt += '<style>@media print { .no-print { display:none !important; } }</style>';
   return rpt;
