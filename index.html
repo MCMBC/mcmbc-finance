@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.07.17-151</title>
+<title>Mount Calvary M.B. Church Financial System v2026.07.20-152</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -174,7 +174,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.07.17-151</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.07.20-152</span>
     </div>
   </div>
 </div>
@@ -187,7 +187,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.07.17-151</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.07.20-152</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -314,7 +314,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.07.17-151</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.07.20-152</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -6026,6 +6026,16 @@ function _printChrome(reportName) {
     // hide the running head on page 1 with an in-flow white cover band
     '  .rpt-firstpage-cover{ display:block; height:22px; background:#fff; position:relative;',
     '     z-index:5; margin:-18px 0 2px; }',
+    // v152 — All-Members statements: force each member onto a fresh page. A
+    // page break on a plain <div> inside a table cell is ignored by Chrome, so
+    // the wrapper table/cell are released to block layout when member blocks are
+    // present, and each block after the first breaks before itself.
+    '  .rpt-has-members table.rpt-page-wrap,',
+    '  .rpt-has-members table.rpt-page-wrap > tbody,',
+    '  .rpt-has-members table.rpt-page-wrap > tbody > tr,',
+    '  .rpt-has-members table.rpt-page-wrap > tbody > tr > td{ display:block; }',
+    '  .rpt-member-page{ break-before:page; page-break-before:always; }',
+    '  .rpt-member-first{ break-before:auto !important; page-break-before:auto !important; }',
     '  .no-print,.np{ display:none !important; }',
     '}',
     '@media screen{ thead.rpt-run-head, .rpt-firstpage-cover{ display:none; } }'
@@ -6051,9 +6061,10 @@ function _openRptWin(title) {
   w.document.close();
   return w;
 }
-function _writeRptWin(w, html, reportName) {
+function _writeRptWin(w, html, reportName, hasMembers) {
   if (!w || w.closed) { openReportWindow(reportName || 'Report', html); return; }
   var pc = _printChrome(reportName || 'Financial Report');
+  var bodyCls = hasMembers ? ' class="rpt-has-members"' : '';
   var full = '<html><head><style>'
     + 'body{font-family:Arial,sans-serif;padding:24px 32px;color:#1e293b;margin:0}'
     + 'table{width:100%;border-collapse:collapse}'
@@ -6064,7 +6075,7 @@ function _writeRptWin(w, html, reportName) {
     + '@keyframes cfSpin{to{transform:rotate(360deg)}}'
     + '@media print{.np,.no-print{display:none!important}}'
     + pc.css + '</style>'
-    + '<title>' + pc.name + '</title></head><body>'
+    + '<title>' + pc.name + '</title></head><body' + bodyCls + '>'
     + '<div class="np" style="margin-bottom:20px;display:flex;gap:8px">'
     + '<button class="btn bp" onclick="window.print()">\uD83D\uDDA8 Print / Save as PDF</button>'
     + '<button class="btn bc" onclick="window.close()">\u2715 Close Window</button>'
@@ -7123,16 +7134,18 @@ function generateContributionStatement() {
             html = '';
             list.forEach(function(memberData, i) {
               var block = renderMemberStatement(csType, memberData, s1, s2, true);
-              // page-break before every statement after the first
-              var pb = (i > 0) ? ' style="page-break-before:always;break-before:page"' : '';
-              html += '<div' + pb + '>' + block + '</div>';
+              // First member has no page break before it; the rest each start a
+              // new page via the .rpt-member-page print rule.
+              var cls = 'rpt-member-page' + (i === 0 ? ' rpt-member-first' : '');
+              html += '<div class="' + cls + '">' + block + '</div>';
             });
           }
           _csName = 'Annual Contribution Statements — All Members';
+          _writeRptWin(rptWin, html, _csName, true);
         } else {
           html = renderMemberStatement(csType, data, s1, s2);
+          _writeRptWin(rptWin, html, _csName);
         }
-        _writeRptWin(rptWin, html, _csName);
       } catch(e) {
         rptWin.document.body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c;font-size:.82rem"><strong>Render error:</strong><br>' + e.message + '</div>';
       }
