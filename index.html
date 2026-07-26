@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.07.20-152</title>
+<title>Mount Calvary M.B. Church Financial System v2026.07.26-153</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -174,7 +174,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.07.20-152</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.07.26-153</span>
     </div>
   </div>
 </div>
@@ -187,7 +187,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.07.20-152</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.07.26-153</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -314,7 +314,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.07.20-152</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.07.26-153</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -956,6 +956,12 @@ nav{flex:1;padding:10px 0;}
           </select>
         </div>
 
+        <!-- v153 — First / Last name fields (stored alongside Donor Name) -->
+        <div class="fr" style="grid-template-columns:1fr 1fr;gap:12px;margin-bottom:4px">
+          <div class="fg3"><label>First Name</label><input type="text" id="gd-first" placeholder="First name"></div>
+          <div class="fg3"><label>Last Name</label><input type="text" id="gd-last" placeholder="Last name"></div>
+        </div>
+
         <!-- Quick-Add Donor -->
         <div id="gd-new-donor-wrap" style="display:none;background:#f0f9ff;border:1.5px solid #bae6fd;border-radius:10px;padding:16px;margin-bottom:14px">
           <div style="font-weight:700;font-size:.85rem;color:var(--blue);margin-bottom:12px">➕ Add New Donor</div>
@@ -1042,7 +1048,7 @@ nav{flex:1;padding:10px 0;}
         </div>
         <div style="overflow-x:auto">
           <table class="vt" id="gd-saved-table">
-            <tr><th>ID</th><th>Date</th><th>Donor</th><th>Sunday School</th><th>Building Fund</th><th>Benevolent</th><th>Tithes</th><th>Youth</th><th>Offering</th><th>Youth Education</th><th>Church Anniversary</th><th>Total</th><th>Received By</th><th>Saved?</th><th style="text-align:center">Actions</th></tr>
+            <tr><th>ID</th><th>Date</th><th>Donor</th><th>First Name</th><th>Last Name</th><th>Sunday School</th><th>Building Fund</th><th>Benevolent</th><th>Tithes</th><th>Youth</th><th>Offering</th><th>Youth Education</th><th>Church Anniversary</th><th>Total</th><th>Received By</th><th>Saved?</th><th style="text-align:center">Actions</th></tr>
           </table>
         </div>
       </div>
@@ -3277,6 +3283,8 @@ function saveGDRec() {
   var id       = document.getElementById('gd-id').value;
   var date     = document.getElementById('gd-date').value || '—';
   var donor    = document.getElementById('gd-donor').value || 'Anonymous';
+  var first    = (document.getElementById('gd-first') || {value:''}).value || '';
+  var last     = (document.getElementById('gd-last')  || {value:''}).value || '';
   var ss       = parseFloat(document.getElementById('gd-ss').value)       || 0;
   var bldg     = parseFloat(document.getElementById('gd-bldg').value)     || 0;
   var benv     = parseFloat(document.getElementById('gd-benv').value)     || 0;
@@ -3298,6 +3306,8 @@ function saveGDRec() {
     '<td style="font-family:monospace;font-size:.78rem">' + id + '</td>' +
     '<td>' + date + '</td>' +
     '<td style="font-weight:600">' + donor + '</td>' +
+    '<td>' + (first || '—') + '</td>' +
+    '<td>' + (last || '—') + '</td>' +
     '<td class="ta">' + fmtCurrency(ss)       + '</td>' +
     '<td class="ta">' + fmtCurrency(bldg)     + '</td>' +
     '<td class="ta">' + fmtCurrency(benv)     + '</td>' +
@@ -3318,7 +3328,7 @@ function saveGDRec() {
   actTd.appendChild(eBtn); actTd.appendChild(dBtn);
   tb.appendChild(tr);
 
-  gdPendingRows.push({id:id, date:date, donor:donor, ss:ss, bldg:bldg, benv:benv,
+  gdPendingRows.push({id:id, date:date, donor:donor, firstName:first, lastName:last, ss:ss, bldg:bldg, benv:benv,
     tithes:tithes, youth:yth, offering:offering, yedu:yedu, anniv:anniv,
     total:total, rcvd:rcvd, notes:notes, _saved:false});
 
@@ -3329,6 +3339,8 @@ function saveGDRec() {
     document.getElementById(i).value = '';
   });
   document.getElementById('gd-donor').value = '';
+  var gdFirstEl = document.getElementById('gd-first'); if (gdFirstEl) gdFirstEl.value = '';
+  var gdLastEl  = document.getElementById('gd-last');  if (gdLastEl)  gdLastEl.value  = '';
   var gdNotesEl = document.getElementById('gd-notes'); if (gdNotesEl) gdNotesEl.value = '';
   calcGDTotal();
   showToast('Entry added — click Save All to Google Sheet to sync.');
@@ -3386,6 +3398,8 @@ function saveGDToSheets() {
       + '&giveifyId='         + encodeURIComponent(r.id)
       + '&date='              + encodeURIComponent(r.date)
       + '&donorName='         + encodeURIComponent(r.donor)
+      + '&firstName='         + encodeURIComponent(r.firstName||'')
+      + '&lastName='          + encodeURIComponent(r.lastName||'')
       + '&sundaySchool='      + encodeURIComponent(r.ss)
       + '&buildingFund='      + encodeURIComponent(r.bldg)
       + '&benevolent='        + encodeURIComponent(r.benv)
@@ -6889,6 +6903,8 @@ function renderGiveifyReport(data, s1, s2, rptWin) {
   body += '<th style="'+thL+';width:60px">giveify ID</th>';
   body += '<th style="'+thL+';width:60px">Date</th>';
   body += '<th style="'+thL+'">Donor Name</th>';
+  body += '<th style="'+thL+'">First Name</th>';
+  body += '<th style="'+thL+'">Last Name</th>';
   body += '<th style="'+th+'">Tithes</th>';
   body += '<th style="'+th+'">Sun. School</th>';
   body += '<th style="'+th+'">Youth</th>';
@@ -6901,7 +6917,7 @@ function renderGiveifyReport(data, s1, s2, rptWin) {
   body += '</tr></thead><tbody>';
 
   if (rows.length === 0) {
-    body += '<tr><td colspan="12" style="text-align:center;padding:16px;color:#94a3b8;font-style:italic">No records for this period.</td></tr>';
+    body += '<tr><td colspan="14" style="text-align:center;padding:16px;color:#94a3b8;font-style:italic">No records for this period.</td></tr>';
   } else {
     rows.forEach(function(r, i) {
       var bg = i%2===0 ? '#ffffff' : '#f8fafc';
@@ -6911,6 +6927,8 @@ function renderGiveifyReport(data, s1, s2, rptWin) {
       body += '<td style="'+tdL+';font-family:monospace;font-size:8px">' + (r.id||'') + '</td>';
       body += '<td style="'+tdL+'">' + (r.date||'') + '</td>';
       body += '<td style="'+tdL+';font-weight:600">' + (r.name||'') + '</td>';
+      body += '<td style="'+tdL+'">' + (r.firstName||'') + '</td>';
+      body += '<td style="'+tdL+'">' + (r.lastName||'') + '</td>';
       body += '<td style="'+td+'">' + fc(r.tithes) + '</td>';
       body += '<td style="'+td+'">' + fc(r.ss)     + '</td>';
       body += '<td style="'+td+'">' + fc(r.youth)  + '</td>';
@@ -6925,7 +6943,7 @@ function renderGiveifyReport(data, s1, s2, rptWin) {
     // Totals row
     var tf = 'padding:4px 5px;background:#0F2744;color:#fbbf24;border:1px solid #334155;font-size:9px;font-weight:700;text-align:right';
     body += '<tr>';
-    body += '<td colspan="3" style="'+tf+';text-align:left">TOTALS (' + rows.length + ' records)</td>';
+    body += '<td colspan="5" style="'+tf+';text-align:left">TOTALS (' + rows.length + ' records)</td>';
     ['tithes','ss','youth','bldg','benv','yedu','offer','anniv'].forEach(function(k){
       body += '<td style="'+tf+'">' + fct(totals[k]||0) + '</td>';
     });
@@ -8218,6 +8236,8 @@ function gdEditRow(id) {
   openSessionEditModal({ fields: [
     {key:'date',     label:'Date',               type:'date',  value:r.date},
     {key:'donor',    label:'Donor',              type:'text',  value:r.donor},
+    {key:'first',    label:'First Name',         type:'text',  value:r.firstName},
+    {key:'last',     label:'Last Name',          type:'text',  value:r.lastName},
     {key:'ss',       label:'Sunday School',      type:'number',value:r.ss,       min:0, step:'0.01'},
     {key:'bldg',     label:'Building Fund',      type:'number',value:r.bldg,     min:0, step:'0.01'},
     {key:'benv',     label:'Benevolent',         type:'number',value:r.benv,     min:0, step:'0.01'},
@@ -8228,19 +8248,21 @@ function gdEditRow(id) {
     {key:'anniv',    label:'Church Anniversary', type:'number',value:r.anniv,    min:0, step:'0.01'},
     {key:'rcvd',     label:'Received By',        type:'text',  value:r.rcvd}
   ], onSave: function() {
-    r.date=fvs('date'); r.donor=fvs('donor'); r.ss=fv('ss'); r.bldg=fv('bldg');
+    r.date=fvs('date'); r.donor=fvs('donor'); r.firstName=fvs('first'); r.lastName=fvs('last');
+    r.ss=fv('ss'); r.bldg=fv('bldg');
     r.benv=fv('benv'); r.tithes=fv('tithes'); r.youth=fv('youth');
     r.offering=fv('offering'); r.yedu=fv('yedu'); r.anniv=fv('anniv'); r.rcvd=fvs('rcvd');
     r.total = r.ss+r.bldg+r.benv+r.tithes+r.youth+r.offering+r.yedu+r.anniv;
     if (rowEl) {
       var c = rowEl.cells;
       c[1].textContent=r.date; c[2].textContent=r.donor;
-      c[3].textContent=fmtCurrency(r.ss);       c[4].textContent=fmtCurrency(r.bldg);
-      c[5].textContent=fmtCurrency(r.benv);     c[6].textContent=fmtCurrency(r.tithes);
-      c[7].textContent=fmtCurrency(r.youth);    c[8].textContent=fmtCurrency(r.offering);
-      c[9].textContent=fmtCurrency(r.yedu);     c[10].textContent=fmtCurrency(r.anniv);
-      c[11].innerHTML='<strong style="color:var(--blue)">'+fmtCurrency(r.total)+'</strong>';
-      c[12].textContent=r.rcvd;
+      c[3].textContent=(r.firstName||'—'); c[4].textContent=(r.lastName||'—');
+      c[5].textContent=fmtCurrency(r.ss);       c[6].textContent=fmtCurrency(r.bldg);
+      c[7].textContent=fmtCurrency(r.benv);     c[8].textContent=fmtCurrency(r.tithes);
+      c[9].textContent=fmtCurrency(r.youth);    c[10].textContent=fmtCurrency(r.offering);
+      c[11].textContent=fmtCurrency(r.yedu);    c[12].textContent=fmtCurrency(r.anniv);
+      c[13].innerHTML='<strong style="color:var(--blue)">'+fmtCurrency(r.total)+'</strong>';
+      c[14].textContent=r.rcvd;
     }
     showToast('✅ giveify entry updated.');
   }});
@@ -10173,10 +10195,10 @@ var ADJ_CFG = {
     action:'getGiveifyRecords', updateAction:'updateGiveify', deleteAction:'deleteGiveify',
     title:'giveify by Donors', contentId:'adj-giveify-content',
     dateField:'date', hasFilter:true,
-    cols:['Date','Donor','Sun School','Bldg Fund','Benevolent','Tithes','Youth','Offering','Youth Edu','Anniversary','Total','Received By','Notes'],
-    fields:['date','donor','sundaySchool','building','benevolent','tithes','youth','offering','youthEdu','anniversary','total','receivedBy','notes'],
-    labels:['Date','Donor Name','Sunday School','Building Fund','Benevolent','Tithes','Youth','Offering','Youth Education','Church Anniversary','Total','Received By','Notes'],
-    types: ['date','text','number','number','number','number','number','number','number','number','number','text','text'],
+    cols:['Date','Donor','First Name','Last Name','Sun School','Bldg Fund','Benevolent','Tithes','Youth','Offering','Youth Edu','Anniversary','Total','Received By','Notes'],
+    fields:['date','donor','firstName','lastName','sundaySchool','building','benevolent','tithes','youth','offering','youthEdu','anniversary','total','receivedBy','notes'],
+    labels:['Date','Donor Name','First Name','Last Name','Sunday School','Building Fund','Benevolent','Tithes','Youth','Offering','Youth Education','Church Anniversary','Total','Received By','Notes'],
+    types: ['date','text','text','text','number','number','number','number','number','number','number','number','number','text','text'],
     idField:'id'
   },
   other: {
