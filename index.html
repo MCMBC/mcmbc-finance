@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.07.26-157</title>
+<title>Mount Calvary M.B. Church Financial System v2026.07.26-158</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -174,7 +174,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.07.26-157</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.07.26-158</span>
     </div>
   </div>
 </div>
@@ -187,7 +187,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.07.26-157</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.07.26-158</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -314,7 +314,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.07.26-157</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.07.26-158</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -621,6 +621,7 @@ nav{flex:1;padding:10px 0;}
         <div style="display:flex;gap:10px;flex-wrap:wrap">
           <button class="bsv" onclick="generateContributionStatement()" style="padding:9px 22px;font-size:.88rem">📊 Generate Statement</button>
           <button class="bcc" onclick="closeContributionPicker()" style="padding:9px 16px;font-size:.88rem">✕ Cancel</button>
+          <button onclick="diagnoseMemberColumns()" style="padding:9px 16px;font-size:.82rem;background:#f1f5f9;border:1.5px solid #cbd5e1;border-radius:8px;cursor:pointer;color:#475569;font-family:inherit">🔍 Diagnose Members Columns</button>
         </div>
       </div>
 
@@ -7081,6 +7082,78 @@ function showContributionPicker() {
 
 function closeContributionPicker() {
   document.getElementById('rpt-contrib-picker').style.display = 'none';
+}
+
+// v158 — Click-to-show diagnostic: fetches the Members-tab headers the backend
+// sees and which columns it chose for first/last/full, so a header-name mismatch
+// is obvious at a glance. No dev tools needed.
+function diagnoseMemberColumns() {
+  var url = localStorage.getItem('mcmbc_sheet_url') || '';
+  if (!url || url.indexOf('script.google.com') === -1) {
+    showToast('No Google Sheets URL saved. Set it on the Dashboard first.');
+    return;
+  }
+  showToast('🔍 Reading Members columns…');
+  var cb = 'diagCb_' + Date.now();
+  var t = setTimeout(function(){ delete window[cb]; showToast('Timed out reaching Google Sheets.'); }, 25000);
+  window[cb] = function(data) {
+    clearTimeout(t); delete window[cb];
+    var dbg = (data && data._debug) || {};
+    var headers = dbg.memberHeaders || [];
+    var chosen = dbg.chosen || {};
+    var sample = dbg.sample || [];
+    var count = (typeof dbg.memberCount === 'number') ? dbg.memberCount : (data && data.members ? data.members.length : 0);
+
+    function colName(i){ return (i != null && i >= 0 && headers[i] != null) ? ('#' + i + '  "' + headers[i] + '"') : 'NOT FOUND'; }
+
+    var w = window.open('', 'diagWin', 'width=640,height=560,scrollbars=yes');
+    var html = '<html><head><title>Members Columns Diagnostic</title>'
+      + '<style>body{font-family:Arial,sans-serif;margin:22px;color:#1e293b;line-height:1.5}'
+      + 'h2{color:#0F2744;margin:0 0 4px}h3{color:#0F2744;margin:18px 0 6px;font-size:.95rem}'
+      + 'table{border-collapse:collapse;margin:6px 0;font-size:.85rem}'
+      + 'td,th{border:1px solid #cbd5e1;padding:5px 10px;text-align:left}'
+      + 'th{background:#0F2744;color:#fff}code{background:#f1f5f9;padding:1px 5px;border-radius:3px}'
+      + '.ok{color:#15803d;font-weight:700}.bad{color:#b91c1c;font-weight:700}</style></head><body>';
+    html += '<h2>Members Columns Diagnostic</h2>';
+    html += '<div style="color:#64748b;font-size:.82rem">This shows exactly what the statement code reads from your Members tab.</div>';
+
+    html += '<h3>1) Column headers found in the Members tab</h3>';
+    if (headers.length) {
+      html += '<table><tr><th>Index</th><th>Header text</th></tr>';
+      headers.forEach(function(h, i){ html += '<tr><td>' + i + '</td><td>' + (h === '' ? '<em>(blank)</em>' : String(h)) + '</td></tr>'; });
+      html += '</table>';
+    } else {
+      html += '<div class="bad">No headers found — is the sheet named exactly "Members"?</div>';
+    }
+
+    html += '<h3>2) Columns the code chose</h3>';
+    html += '<table><tr><th>Role</th><th>Column</th></tr>'
+      + '<tr><td>First name</td><td class="' + (chosen.first>=0?'ok':'bad') + '">' + colName(chosen.first) + '</td></tr>'
+      + '<tr><td>Last name</td><td class="' + (chosen.last>=0?'ok':'bad') + '">' + colName(chosen.last) + '</td></tr>'
+      + '<tr><td>Full name</td><td>' + colName(chosen.full) + '</td></tr>'
+      + '</table>';
+
+    html += '<h3>3) First few dropdown names produced</h3>';
+    html += '<div>Total members: <strong>' + count + '</strong></div>';
+    if (sample.length) { html += '<ul>'; sample.forEach(function(s){ html += '<li>' + String(s) + '</li>'; }); html += '</ul>'; }
+
+    html += '<h3>What to do</h3>';
+    if (chosen.last == null || chosen.last < 0) {
+      html += '<div class="bad">The Last name column was NOT matched.</div>'
+        + '<div>Look at the header text in table 1 for your last-name column and tell me its exact spelling, '
+        + 'or rename that header to <code>LastName</code> (or <code>Last Name</code>) in Google Sheets.</div>';
+    } else {
+      html += '<div class="ok">Both name columns were matched. If the dropdown still looks wrong, the values in those cells may not be what we expect — send a screenshot of the first few Members rows.</div>';
+    }
+    html += '</body></html>';
+    w.document.open(); w.document.write(html); w.document.close();
+  };
+  var s = document.createElement('script');
+  s.onerror = function(){ clearTimeout(t); delete window[cb]; showToast('Could not reach Google Sheets — check URL / redeploy.'); };
+  // startDate=endDate keeps the payload tiny; we only need the _debug block.
+  s.src = url + '?action=getContributionStatement&callback=' + cb + '&startDate=2020-01-01&endDate=2020-01-01';
+  document.head.appendChild(s);
+  setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); }, 27000);
 }
 
 function csPresetYear(yr) {
