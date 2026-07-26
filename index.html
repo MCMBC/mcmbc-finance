@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.07.26-154</title>
+<title>Mount Calvary M.B. Church Financial System v2026.07.26-155</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -174,7 +174,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.07.26-154</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.07.26-155</span>
     </div>
   </div>
 </div>
@@ -187,7 +187,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.07.26-154</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.07.26-155</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -314,7 +314,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.07.26-154</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.07.26-155</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -10234,10 +10234,10 @@ var ADJ_CFG = {
     action:'getGiveifyRecords', updateAction:'updateGiveify', deleteAction:'deleteGiveify',
     title:'giveify by Donors', contentId:'adj-giveify-content',
     dateField:'date', hasFilter:true,
-    cols:['Date','Donor','First Name','Last Name','Sun School','Bldg Fund','Benevolent','Tithes','Youth','Offering','Youth Edu','Anniversary','Total','Received By','Notes'],
-    fields:['date','donor','firstName','lastName','sundaySchool','building','benevolent','tithes','youth','offering','youthEdu','anniversary','total','receivedBy','notes'],
-    labels:['Date','Donor Name','First Name','Last Name','Sunday School','Building Fund','Benevolent','Tithes','Youth','Offering','Youth Education','Church Anniversary','Total','Received By','Notes'],
-    types: ['date','text','text','text','number','number','number','number','number','number','number','number','number','text','text'],
+    cols:['Date','Last Name','First Name','Sun School','Bldg Fund','Benevolent','Tithes','Youth','Offering','Youth Edu','Anniversary','Total','Received By','Notes'],
+    fields:['date','lastName','firstName','sundaySchool','building','benevolent','tithes','youth','offering','youthEdu','anniversary','total','receivedBy','notes'],
+    labels:['Date','Last Name','First Name','Sunday School','Building Fund','Benevolent','Tithes','Youth','Offering','Youth Education','Church Anniversary','Total','Received By','Notes'],
+    types: ['date','text','text','number','number','number','number','number','number','number','number','number','text','text'],
     idField:'id'
   },
   other: {
@@ -10340,6 +10340,16 @@ function loadAdjScreen(type) {
         var td = da - db;
         if (td !== 0) return td;
         return (a.member||'').toLowerCase() < (b.member||'').toLowerCase() ? -1 : 1;
+      });
+    }
+    // Sort giveify by Last Name then First Name (alphabetical)
+    if (type === 'giveify') {
+      ADJ_DATA[type].sort(function(a, b) {
+        var la = (a.lastName||'').toLowerCase(), lb = (b.lastName||'').toLowerCase();
+        if (la !== lb) return la < lb ? -1 : 1;
+        var fa = (a.firstName||'').toLowerCase(), fb = (b.firstName||'').toLowerCase();
+        if (fa !== fb) return fa < fb ? -1 : 1;
+        return 0;
       });
     }
     // v88 — generic filter handling for any type marked hasFilter in ADJ_CFG
