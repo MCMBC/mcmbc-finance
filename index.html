@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.07.26-153</title>
+<title>Mount Calvary M.B. Church Financial System v2026.07.26-154</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -174,7 +174,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.07.26-153</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.07.26-154</span>
     </div>
   </div>
 </div>
@@ -187,7 +187,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.07.26-153</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.07.26-154</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -314,7 +314,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.07.26-153</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.07.26-154</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -4708,11 +4708,20 @@ function loadGDDonors() {
 function populateGDDonors(donors) {
   var sel = document.getElementById('gd-donor');
   sel.innerHTML = '<option value="">Select donor...</option>';
+  // v154 — Show each active donor as "Lastname, Firstname", sorted alphabetically
+  // by that label. The option VALUE stays the donor's original full name so the
+  // saved DonorName (and everything that matches on it) is unchanged.
+  var list = [];
   donors.forEach(function(d) {
     if (d.status === 'Inactive') return;
+    var full = d.fullName || d.id;
+    list.push({ value: full, label: toLastFirst(full) + ' (' + d.id + ')', sort: toLastFirst(full).toLowerCase() });
+  });
+  list.sort(function(a, b){ return a.sort.localeCompare(b.sort); });
+  list.forEach(function(item) {
     var opt = document.createElement('option');
-    opt.value = d.fullName || d.id;
-    opt.textContent = (d.fullName || d.id) + ' (' + d.id + ')';
+    opt.value = item.value;
+    opt.textContent = item.label;
     sel.appendChild(opt);
   });
   var anon = document.createElement('option'); anon.value = 'Anonymous'; anon.textContent = '— Anonymous —'; sel.appendChild(anon);
@@ -4727,6 +4736,19 @@ function gdDonorChange() {
     sel.value = '';
   } else {
     document.getElementById('gd-new-donor-wrap').style.display = 'none';
+    // v154 — Auto-fill First / Last name from the selected donor. Anonymous and
+    // the blank prompt clear the fields. The user can still edit them by hand.
+    var fEl = document.getElementById('gd-first');
+    var lEl = document.getElementById('gd-last');
+    if (fEl && lEl) {
+      if (!sel.value || sel.value === 'Anonymous') {
+        fEl.value = ''; lEl.value = '';
+      } else {
+        var parts = splitName(sel.value);
+        fEl.value = parts.first;
+        lEl.value = parts.last;
+      }
+    }
   }
 }
 
@@ -4743,9 +4765,10 @@ function gdSaveNewDonor() {
   if (!name) { showToast('Donor name is required.'); return; }
   var sel = document.getElementById('gd-donor');
   var addNewOpt = sel.querySelector('option[value="__ADD_NEW__"]');
-  var opt = document.createElement('option'); opt.value = name; opt.textContent = name;
+  var opt = document.createElement('option'); opt.value = name; opt.textContent = toLastFirst(name);
   sel.insertBefore(opt, addNewOpt); sel.value = name;
   gdCancelNewDonor();
+  gdDonorChange(); // fill First / Last from the newly added donor
   showToast('✅ ' + name + ' added to dropdown.');
   var url = localStorage.getItem('mcmbc_sheet_url') || '';
   if (url && url.indexOf('script.google.com') !== -1) {
@@ -6998,6 +7021,22 @@ function toLastFirst(name) {
   if (parts.length < 2) return n;                    // single token
   var last = parts.pop();
   return last + ', ' + parts.join(' ');
+}
+
+// v154 — Split a name into { first, last }. Handles "Last, First" input and
+// plain "First [Middle] Last" (last token = surname). Used to auto-fill the
+// giveify First Name / Last Name inputs from the selected donor.
+function splitName(name) {
+  var n = (name == null ? '' : String(name)).trim();
+  if (!n) return { first: '', last: '' };
+  if (n.indexOf(',') !== -1) {                       // "Last, First [Middle]"
+    var seg = n.split(',');
+    return { last: seg[0].trim(), first: (seg[1] || '').trim() };
+  }
+  var parts = n.split(/\s+/);
+  if (parts.length < 2) return { first: n, last: '' }; // single token
+  var last = parts.pop();
+  return { first: parts.join(' '), last: last };
 }
 
 function showContributionPicker() {
