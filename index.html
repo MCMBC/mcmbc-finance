@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.07.26-158</title>
+<title>Mount Calvary M.B. Church Financial System v2026.07.26-159</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -174,7 +174,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.07.26-158</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.07.26-159</span>
     </div>
   </div>
 </div>
@@ -187,7 +187,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.07.26-158</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.07.26-159</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -314,7 +314,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.07.26-158</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.07.26-159</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -7093,7 +7093,24 @@ function diagnoseMemberColumns() {
     showToast('No Google Sheets URL saved. Set it on the Dashboard first.');
     return;
   }
-  showToast('🔍 Reading Members columns…');
+  var EXPECTED_VERSION = 'v2026.07.26-159';
+  showToast('🔍 Checking deployed version & Members columns…');
+  // First ping the backend to see which code version is actually deployed.
+  var pcb = 'diagPing_' + Date.now();
+  var pt = setTimeout(function(){ delete window[pcb]; runMembersDiag(url, EXPECTED_VERSION, '(no response)'); }, 20000);
+  window[pcb] = function(pdata){
+    clearTimeout(pt); delete window[pcb];
+    var v = (pdata && pdata.version) ? pdata.version : '(none returned)';
+    runMembersDiag(url, EXPECTED_VERSION, v);
+  };
+  var ps = document.createElement('script');
+  ps.onerror = function(){ clearTimeout(pt); delete window[pcb]; runMembersDiag(url, EXPECTED_VERSION, '(unreachable)'); };
+  ps.src = url + '?action=ping&callback=' + pcb;
+  document.head.appendChild(ps);
+  setTimeout(function(){ if(ps.parentNode) ps.parentNode.removeChild(ps); }, 22000);
+}
+
+function runMembersDiag(url, expectedVersion, deployedVersion) {
   var cb = 'diagCb_' + Date.now();
   var t = setTimeout(function(){ delete window[cb]; showToast('Timed out reaching Google Sheets.'); }, 25000);
   window[cb] = function(data) {
@@ -7103,19 +7120,36 @@ function diagnoseMemberColumns() {
     var chosen = dbg.chosen || {};
     var sample = dbg.sample || [];
     var count = (typeof dbg.memberCount === 'number') ? dbg.memberCount : (data && data.members ? data.members.length : 0);
+    var versionMatch = (deployedVersion === expectedVersion);
 
     function colName(i){ return (i != null && i >= 0 && headers[i] != null) ? ('#' + i + '  "' + headers[i] + '"') : 'NOT FOUND'; }
 
-    var w = window.open('', 'diagWin', 'width=640,height=560,scrollbars=yes');
+    var w = window.open('', 'diagWin', 'width=660,height=620,scrollbars=yes');
     var html = '<html><head><title>Members Columns Diagnostic</title>'
       + '<style>body{font-family:Arial,sans-serif;margin:22px;color:#1e293b;line-height:1.5}'
       + 'h2{color:#0F2744;margin:0 0 4px}h3{color:#0F2744;margin:18px 0 6px;font-size:.95rem}'
       + 'table{border-collapse:collapse;margin:6px 0;font-size:.85rem}'
       + 'td,th{border:1px solid #cbd5e1;padding:5px 10px;text-align:left}'
       + 'th{background:#0F2744;color:#fff}code{background:#f1f5f9;padding:1px 5px;border-radius:3px}'
-      + '.ok{color:#15803d;font-weight:700}.bad{color:#b91c1c;font-weight:700}</style></head><body>';
+      + '.ok{color:#15803d;font-weight:700}.bad{color:#b91c1c;font-weight:700}'
+      + '.banner{padding:12px 16px;border-radius:8px;margin:10px 0;font-size:.9rem}'
+      + '.bannerbad{background:#fee2e2;border:1.5px solid #fca5a5;color:#991b1b}'
+      + '.bannerok{background:#dcfce7;border:1.5px solid #86efac;color:#166534}</style></head><body>';
     html += '<h2>Members Columns Diagnostic</h2>';
-    html += '<div style="color:#64748b;font-size:.82rem">This shows exactly what the statement code reads from your Members tab.</div>';
+
+    // Version banner — the most important check
+    html += '<h3>0) Deployed code version</h3>';
+    html += '<table><tr><td>This Dashboard expects</td><td><code>' + expectedVersion + '</code></td></tr>'
+      + '<tr><td>Deployed AppScript reports</td><td><code>' + deployedVersion + '</code></td></tr></table>';
+    if (versionMatch) {
+      html += '<div class="banner bannerok">✅ The deployed AppScript matches this Dashboard.</div>';
+    } else {
+      html += '<div class="banner bannerbad">⛔ MISMATCH: the deployed AppScript is NOT this version. '
+        + 'The web-app URL saved in this Dashboard is pointing at an OLD deployment. This is why the dropdown '
+        + 'still shows first names. Fix: in Apps Script → Deploy → Manage deployments, either update the SAME '
+        + 'deployment whose URL is saved here (Edit → New version), or copy the correct deployment\u2019s /exec URL '
+        + 'into the Dashboard settings. Re-run this diagnostic until both lines above match.</div>';
+    }
 
     html += '<h3>1) Column headers found in the Members tab</h3>';
     if (headers.length) {
@@ -7123,7 +7157,8 @@ function diagnoseMemberColumns() {
       headers.forEach(function(h, i){ html += '<tr><td>' + i + '</td><td>' + (h === '' ? '<em>(blank)</em>' : String(h)) + '</td></tr>'; });
       html += '</table>';
     } else {
-      html += '<div class="bad">No headers found — is the sheet named exactly "Members"?</div>';
+      html += '<div class="bad">No headers returned. If the version above is a mismatch, that\u2019s the cause '
+        + '(the old code doesn\u2019t send this diagnostic). Fix the deployment first, then re-run.</div>';
     }
 
     html += '<h3>2) Columns the code chose</h3>';
@@ -7137,20 +7172,11 @@ function diagnoseMemberColumns() {
     html += '<div>Total members: <strong>' + count + '</strong></div>';
     if (sample.length) { html += '<ul>'; sample.forEach(function(s){ html += '<li>' + String(s) + '</li>'; }); html += '</ul>'; }
 
-    html += '<h3>What to do</h3>';
-    if (chosen.last == null || chosen.last < 0) {
-      html += '<div class="bad">The Last name column was NOT matched.</div>'
-        + '<div>Look at the header text in table 1 for your last-name column and tell me its exact spelling, '
-        + 'or rename that header to <code>LastName</code> (or <code>Last Name</code>) in Google Sheets.</div>';
-    } else {
-      html += '<div class="ok">Both name columns were matched. If the dropdown still looks wrong, the values in those cells may not be what we expect — send a screenshot of the first few Members rows.</div>';
-    }
     html += '</body></html>';
     w.document.open(); w.document.write(html); w.document.close();
   };
   var s = document.createElement('script');
   s.onerror = function(){ clearTimeout(t); delete window[cb]; showToast('Could not reach Google Sheets — check URL / redeploy.'); };
-  // startDate=endDate keeps the payload tiny; we only need the _debug block.
   s.src = url + '?action=getContributionStatement&callback=' + cb + '&startDate=2020-01-01&endDate=2020-01-01';
   document.head.appendChild(s);
   setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); }, 27000);
