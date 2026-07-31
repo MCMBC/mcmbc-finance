@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.07.30-161</title>
+<title>Mount Calvary M.B. Church Financial System v2026.07.30-163</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -174,7 +174,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.07.30-161</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.07.30-163</span>
     </div>
   </div>
 </div>
@@ -187,7 +187,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.07.30-161</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.07.30-163</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -314,7 +314,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.07.30-161</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.07.30-163</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -397,7 +397,13 @@ nav{flex:1;padding:10px 0;}
         <div class="rpt-card" onclick="showContributionPicker()" style="background:#fff;border:2px solid #e2e8f0;border-radius:14px;padding:28px 24px;cursor:pointer;transition:all .2s;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.05)" onmouseover="this.style.borderColor='var(--blue)';this.style.boxShadow='0 6px 24px rgba(15,39,68,.12)'" onmouseout="this.style.borderColor='#e2e8f0';this.style.boxShadow='0 2px 8px rgba(0,0,0,.05)'">
           <div style="font-size:2.4rem;margin-bottom:12px">🙏</div>
           <div style="font-family:'Lora',serif;font-size:1.05rem;font-weight:700;color:var(--blue);margin-bottom:6px">Annual Contribution Statement</div>
-          <div style="font-size:.78rem;color:#64748b">Member and donor giving history</div>
+          <div style="font-size:.78rem;color:#64748b">Member giving from Tithes &amp; Offerings by Members</div>
+        </div>
+
+        <div class="rpt-card" onclick="showGiveifyContribPicker()" style="background:#fff;border:2px solid #e2e8f0;border-radius:14px;padding:28px 24px;cursor:pointer;transition:all .2s;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.05)" onmouseover="this.style.borderColor='var(--blue)';this.style.boxShadow='0 6px 24px rgba(15,39,68,.12)'" onmouseout="this.style.borderColor='#e2e8f0';this.style.boxShadow='0 2px 8px rgba(0,0,0,.05)'">
+          <div style="font-size:2.4rem;margin-bottom:12px">💝</div>
+          <div style="font-family:'Lora',serif;font-size:1.05rem;font-weight:700;color:var(--blue);margin-bottom:6px">giveify Contribution Statement</div>
+          <div style="font-size:.78rem;color:#64748b">Donor giving from giveify by Donors</div>
         </div>
 
         <div class="rpt-card" onclick="showCashFlowDatePicker()" style="background:#fff;border:2px solid #e2e8f0;border-radius:14px;padding:28px 24px;cursor:pointer;transition:all .2s;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.05)" onmouseover="this.style.borderColor='var(--blue)';this.style.boxShadow='0 6px 24px rgba(15,39,68,.12)'" onmouseout="this.style.borderColor='#e2e8f0';this.style.boxShadow='0 2px 8px rgba(0,0,0,.05)'">
@@ -621,6 +627,46 @@ nav{flex:1;padding:10px 0;}
         <div style="display:flex;gap:10px;flex-wrap:wrap">
           <button class="bsv" onclick="generateContributionStatement()" style="padding:9px 22px;font-size:.88rem">📊 Generate Statement</button>
           <button class="bcc" onclick="closeContributionPicker()" style="padding:9px 16px;font-size:.88rem">✕ Cancel</button>
+        </div>
+      </div>
+
+      <!-- giveify Contribution Statement Picker (v163) -->
+      <div id="rpt-giveifycs-picker" style="display:none;margin-top:24px;background:#fdf4ff;border:2px solid #e9d5ff;border-radius:12px;padding:22px 24px">
+        <h3 style="margin:0 0 16px;font-family:'Lora',serif;color:var(--blue);font-size:1rem">💝 giveify Contribution Statement — Select Period &amp; Donor</h3>
+        <div style="display:flex;gap:20px;align-items:flex-end;flex-wrap:wrap;margin-bottom:14px">
+          <div style="display:flex;flex-direction:column;gap:5px">
+            <label style="font-size:.78rem;font-weight:600;color:#475569;text-transform:uppercase;letter-spacing:.04em">Start Date</label>
+            <input type="date" id="gcs-start" style="padding:9px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit">
+          </div>
+          <div style="display:flex;flex-direction:column;gap:5px">
+            <label style="font-size:.78rem;font-weight:600;color:#475569;text-transform:uppercase;letter-spacing:.04em">End Date</label>
+            <input type="date" id="gcs-end" style="padding:9px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit">
+          </div>
+          <div style="display:flex;flex-direction:column;gap:5px;min-width:200px">
+            <label style="font-size:.78rem;font-weight:600;color:#475569;text-transform:uppercase;letter-spacing:.04em">Donor <span style="font-weight:400;text-transform:none;color:#94a3b8">(optional)</span></label>
+            <select id="gcs-member" style="padding:9px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit">
+              <option value="">All Donors</option>
+            </select>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:5px;min-width:240px">
+            <label style="font-size:.78rem;font-weight:600;color:#475569;text-transform:uppercase;letter-spacing:.04em">Statement Type</label>
+            <select id="gcs-type" style="padding:9px 12px;border:1.5px solid #cbd5e1;border-radius:8px;font-size:.88rem;font-family:inherit">
+              <option value="itemized">Itemized Contribution Statement</option>
+              <option value="byfund">Contribution Statement by Funds</option>
+              <option value="summary">Total Summary Contribution Statement</option>
+            </select>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+          <span style="font-size:.75rem;color:#64748b;margin-top:4px">Quick:</span>
+          <button class="bac" onclick="gcsPresetYear(new Date().getFullYear())">This Year</button>
+          <button class="bac" onclick="gcsPresetYear(new Date().getFullYear()-1)">Last Year</button>
+          <button class="bac" onclick="gcsPresetYear(2024)">2024</button>
+          <button class="bac" onclick="gcsPresetYear(2025)">2025</button>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="bsv" onclick="generateGiveifyContribStatement()" style="padding:9px 22px;font-size:.88rem">📊 Generate Statement</button>
+          <button class="bcc" onclick="closeGiveifyContribPicker()" style="padding:9px 16px;font-size:.88rem">✕ Cancel</button>
         </div>
       </div>
 
@@ -6516,7 +6562,7 @@ function showBenevolentPicker() {
   var today = t.toISOString().split('T')[0];
   document.getElementById('benv-start').value = today;
   document.getElementById('benv-end').value   = today;
-  ['rpt-date-picker','rpt-month-picker','rpt-weekly-picker','rpt-contrib-picker','rpt-output'].forEach(function(id){
+  ['rpt-date-picker','rpt-month-picker','rpt-weekly-picker','rpt-contrib-picker','rpt-giveifycs-picker','rpt-output'].forEach(function(id){
     document.getElementById(id).style.display = 'none';
   });
   document.getElementById('rpt-benv-picker').style.display = 'block';
@@ -6620,7 +6666,7 @@ function showTithesReportPicker() {
   var today = new Date().toISOString().split('T')[0];
   document.getElementById('tithes-rpt-start').value = today;
   document.getElementById('tithes-rpt-end').value   = today;
-  ['rpt-disb-picker','rpt-cashflow-picker','rpt-monthly-picker','rpt-weekly-picker','rpt-benv-picker','rpt-contrib-picker'].forEach(function(id){ var el=document.getElementById(id); if(el) el.style.display='none'; });
+  ['rpt-disb-picker','rpt-cashflow-picker','rpt-monthly-picker','rpt-weekly-picker','rpt-benv-picker','rpt-contrib-picker','rpt-giveifycs-picker'].forEach(function(id){ var el=document.getElementById(id); if(el) el.style.display='none'; });
   document.getElementById('rpt-tithes-picker').style.display = 'block';
 }
 function closeTithesReportPicker() { document.getElementById('rpt-tithes-picker').style.display = 'none'; }
@@ -6820,7 +6866,7 @@ function showGiveifyReportPicker() {
   var today = new Date().toISOString().split('T')[0];
   document.getElementById('giveify-rpt-start').value = today;
   document.getElementById('giveify-rpt-end').value   = today;
-  ['rpt-disb-picker','rpt-cashflow-picker','rpt-monthly-picker','rpt-weekly-picker','rpt-benv-picker','rpt-contrib-picker','rpt-tithes-picker'].forEach(function(id){ var el=document.getElementById(id); if(el) el.style.display='none'; });
+  ['rpt-disb-picker','rpt-cashflow-picker','rpt-monthly-picker','rpt-weekly-picker','rpt-benv-picker','rpt-contrib-picker','rpt-giveifycs-picker','rpt-tithes-picker'].forEach(function(id){ var el=document.getElementById(id); if(el) el.style.display='none'; });
   document.getElementById('rpt-giveify-picker').style.display = 'block';
 }
 function closeGiveifyReportPicker() { document.getElementById('rpt-giveify-picker').style.display = 'none'; }
@@ -7043,8 +7089,8 @@ function showContributionPicker() {
   var t = new Date();
   document.getElementById('cs-start').value = new Date(t.getFullYear(), 0, 1).toISOString().split('T')[0];
   document.getElementById('cs-end').value   = new Date(t.getFullYear(), 11, 31).toISOString().split('T')[0];
-  ['rpt-date-picker','rpt-month-picker','rpt-weekly-picker','rpt-output'].forEach(function(id){
-    document.getElementById(id).style.display = 'none';
+  ['rpt-date-picker','rpt-month-picker','rpt-weekly-picker','rpt-giveifycs-picker','rpt-output'].forEach(function(id){
+    var el = document.getElementById(id); if (el) el.style.display = 'none';
   });
   document.getElementById('rpt-contrib-picker').style.display = 'block';
   document.getElementById('rpt-contrib-picker').scrollIntoView({behavior:'smooth', block:'start'});
@@ -7083,6 +7129,128 @@ function showContributionPicker() {
 
 function closeContributionPicker() {
   document.getElementById('rpt-contrib-picker').style.display = 'none';
+}
+
+// ── v163 — giveify Contribution Statement (mirrors the Annual one, but reads
+//    ONLY giveifyByDonors and lists donors from that sheet) ──
+function showGiveifyContribPicker() {
+  var t = new Date();
+  document.getElementById('gcs-start').value = new Date(t.getFullYear(), 0, 1).toISOString().split('T')[0];
+  document.getElementById('gcs-end').value   = new Date(t.getFullYear(), 11, 31).toISOString().split('T')[0];
+  ['rpt-date-picker','rpt-month-picker','rpt-weekly-picker','rpt-contrib-picker','rpt-giveifycs-picker','rpt-output'].forEach(function(id){
+    var el = document.getElementById(id); if (el) el.style.display = 'none';
+  });
+  document.getElementById('rpt-giveifycs-picker').style.display = 'block';
+  document.getElementById('rpt-giveifycs-picker').scrollIntoView({behavior:'smooth', block:'start'});
+  // Load donor list from giveifyByDonors (via getGiveifyContributions with no donor)
+  var url = localStorage.getItem('mcmbc_sheet_url') || '';
+  if (url && url.indexOf('script.google.com') !== -1) {
+    var cb = 'gcsDonorCb_' + Date.now();
+    window[cb] = function(data) {
+      delete window[cb];
+      if (data && data.members) {
+        var sel = document.getElementById('gcs-member');
+        sel.innerHTML = '<option value="">All Donors</option>';
+        // giveify DonorName is stored as "Firstname Lastname"; show it as-is,
+        // sorted. The value equals the stored DonorName so record matching is exact.
+        var list = (data.members || []).slice();
+        list.sort(function(a,b){ return a.toLowerCase().localeCompare(b.toLowerCase()); });
+        list.forEach(function(nm){
+          var o = document.createElement('option');
+          o.value = nm; o.textContent = nm; sel.appendChild(o);
+        });
+      }
+    };
+    var s = document.createElement('script');
+    s.src = url + '?action=getGiveifyContributions&callback=' + cb + '&startDate=2020-01-01&endDate=2020-01-01';
+    document.head.appendChild(s);
+  }
+}
+
+function closeGiveifyContribPicker() {
+  document.getElementById('rpt-giveifycs-picker').style.display = 'none';
+}
+
+function gcsPresetYear(yr) {
+  document.getElementById('gcs-start').value = yr + '-01-01';
+  document.getElementById('gcs-end').value   = yr + '-12-31';
+}
+
+function generateGiveifyContribStatement() {
+  var start  = document.getElementById('gcs-start').value;
+  var end    = document.getElementById('gcs-end').value;
+  var donor  = document.getElementById('gcs-member').value;
+  var csType = (document.getElementById('gcs-type') || {}).value || 'itemized';
+  if (!start || !end) { showToast('Please select both a start and end date.'); return; }
+  if (start > end)    { showToast('Start date must be before end date.'); return; }
+
+  var allDonors = !donor; // empty = every donor, one statement each
+
+  var s1 = new Date(start + 'T00:00:00').toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  var s2 = new Date(end   + 'T00:00:00').toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+
+  closeGiveifyContribPicker();
+  var rptWin = _openRptWin('giveify Contribution Statement - ' + s1 + ' to ' + s2);
+
+  var panel = document.getElementById('rpt-output');
+  var title = document.getElementById('rpt-output-title');
+  title.textContent = '💝 giveify Contribution Statement — ' + s1 + ' to ' + s2;
+  panel.style.display = 'block';
+  panel.scrollIntoView({behavior:'smooth', block:'start'});
+
+  var url = localStorage.getItem('mcmbc_sheet_url') || '';
+  if (!url || url.indexOf('script.google.com') === -1) {
+    rptWin.document.body.innerHTML = '<div style="background:#fef3c7;border-left:4px solid #ca8a04;padding:14px;border-radius:8px;color:#854d0e">⚠️ No Google Sheets URL saved.</div>';
+    return;
+  }
+
+  var cb = 'gcsMemCb_' + Date.now();
+  var t  = setTimeout(function(){ delete window[cb]; rptWin.document.body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Timed out. Try again.</div>'; }, 30000);
+
+  setTimeout(function() {
+    window[cb] = function(data) {
+      clearTimeout(t); delete window[cb];
+      if (!data || data.status !== 'success') {
+        rptWin.document.body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Error: ' + JSON.stringify(data) + '</div>';
+        return;
+      }
+      try {
+        var _csName = (csType === 'itemized' ? 'giveify Itemized Contribution Statement'
+                      : csType === 'byfund' ? 'giveify Contribution Statement by Funds'
+                      : csType === 'summary' ? 'giveify Total Summary Contribution Statement'
+                      : 'giveify Contribution Statement');
+        var html;
+        if (data.allMembers) {
+          var list = data.perMember || [];
+          if (!list.length) {
+            html = '<div style="padding:30px;text-align:center;color:#64748b">No donors had giveify contributions in this period.</div>';
+          } else {
+            html = '';
+            list.forEach(function(memberData, i) {
+              var block = renderMemberStatement(csType, memberData, s1, s2, true);
+              var cls = 'rpt-member-page' + (i === 0 ? ' rpt-member-first' : '');
+              html += '<div class="' + cls + '">' + block + '</div>';
+            });
+          }
+          _csName = 'giveify Contribution Statements — All Donors';
+          _writeRptWin(rptWin, html, _csName, true);
+        } else {
+          html = renderMemberStatement(csType, data, s1, s2);
+          _writeRptWin(rptWin, html, _csName);
+        }
+      } catch(e) {
+        rptWin.document.body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c;font-size:.82rem"><strong>Render error:</strong><br>' + e.message + '</div>';
+      }
+    };
+    var s = document.createElement('script');
+    s.onerror = function(){ clearTimeout(t); delete window[cb]; rptWin.document.body.innerHTML = '<div style="background:#fee2e2;padding:14px;border-radius:8px;color:#b91c1c">⚠️ Could not reach Google Sheets.</div>'; };
+    s.src = url + '?action=getGiveifyContributions&callback=' + cb
+      + '&startDate='   + encodeURIComponent(start)
+      + '&endDate='     + encodeURIComponent(end)
+      + '&memberName='  + encodeURIComponent(allDonors ? '__ALL__' : donor);
+    document.head.appendChild(s);
+    setTimeout(function(){ if(s.parentNode) s.parentNode.removeChild(s); }, 32000);
+  }, 80);
 }
 
 // v158 — Click-to-show diagnostic: fetches the Members-tab headers the backend
