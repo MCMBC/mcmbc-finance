@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.08.04-167</title>
+<title>Mount Calvary M.B. Church Financial System v2026.08.04-168</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -174,7 +174,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.08.04-167</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.08.04-168</span>
     </div>
   </div>
 </div>
@@ -187,7 +187,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.08.04-167</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.08.04-168</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -314,7 +314,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.08.04-167</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.08.04-168</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -7229,7 +7229,7 @@ function generateGiveifyContribStatement() {
           } else {
             html = '';
             list.forEach(function(memberData, i) {
-              var block = renderMemberStatement(csType, memberData, s1, s2, true, true);
+              var block = renderMemberStatement(csType, memberData, s1, s2, true, true, true);
               var cls = 'rpt-member-page' + (i === 0 ? ' rpt-member-first' : '');
               html += '<div class="' + cls + '">' + block + '</div>';
             });
@@ -7237,7 +7237,7 @@ function generateGiveifyContribStatement() {
           _csName = 'giveify Contribution Statements — All Donors';
           _writeRptWin(rptWin, html, _csName, true);
         } else {
-          html = renderMemberStatement(csType, data, s1, s2, false, true);
+          html = renderMemberStatement(csType, data, s1, s2, false, true, true);
           _writeRptWin(rptWin, html, _csName);
         }
       } catch(e) {
@@ -7392,7 +7392,7 @@ function generateContributionStatement() {
 }
 
 // ── v145 — Render the three per-member Annual Contribution Statement types ──
-function renderMemberStatement(type, data, s1, s2, hideBtn, showDisclosure) {
+function renderMemberStatement(type, data, s1, s2, hideBtn, showDisclosure, isGiveify) {
   function fc(v){ return fmtCurrency(v||0); }
   function fmtD(iso){
     if (!iso) return '';
@@ -7423,6 +7423,10 @@ function renderMemberStatement(type, data, s1, s2, hideBtn, showDisclosure) {
   rpt += '<div style="text-align:center;margin-bottom:18px">';
   rpt += '<div style="font-weight:700;font-size:.98rem">Mount Calvary Missionary Baptist Church</div>';
   rpt += '<div>10314 Canal Rd. &nbsp; Gulfport, Ms. 39503</div>';
+  // v168 — giveify statement only: "giveify Donations" two lines after the address.
+  if (isGiveify) {
+    rpt += '<div style="margin-top:14px;font-weight:700">giveify Donations</div>';
+  }
   rpt += '<div style="font-weight:700;margin-top:8px">' + typeTitle + '</div>';
   rpt += '<div style="color:#475569;font-size:.85rem">' + s1 + ' - ' + s2 + '</div>';
   rpt += '</div>';
