@@ -19,7 +19,7 @@
 }
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mount Calvary M.B. Church Financial System v2026.08.04-168</title>
+<title>Mount Calvary M.B. Church Financial System v2026.10.27-169</title>
 <link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--navy:#0f2744;--blue:#2563eb;--gold:#c9a84c;--gold2:#f0d98c;--cream:#faf8f3;--white:#fff;--gray:#64748b;--light:#e8eef8;--sw:235px;--green:#15803d;--green-bg:#dcfce7;--red:#b91c1c;--red-bg:#fee2e2;--yb:#fef9c3;--yd:#854d0e;}
@@ -174,7 +174,7 @@ nav{flex:1;padding:10px 0;}
       <div id="setup-err" style="display:none;font-size:.75rem;color:#b91c1c;margin-top:8px;"></div>
     </div>
     <div style="text-align:center;margin-top:14px">
-      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.08.04-168</span>
+      <span style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.10.27-169</span>
     </div>
   </div>
 </div>
@@ -187,7 +187,7 @@ nav{flex:1;padding:10px 0;}
         <div style="font-size:1.4rem;color:var(--gold)">✝</div>
         <h2 style="margin:0">Church Financial System</h2>
       </div>
-      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.08.04-168</div>
+      <div id="sb-version" style="font-size:.65rem;color:rgba(255,255,255,.4);font-family:monospace;margin-top:3px;letter-spacing:.3px;padding-left:2px;">v2026.10.27-169</div>
     </div>
     <nav>
       <div class="ns">Main</div>
@@ -314,7 +314,7 @@ nav{flex:1;padding:10px 0;}
           <span id="conn-badge" style="font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;background:#fee2e2;color:#b91c1c;">⚫ Not connected</span>
           <button onclick="loadDashboardData()" class="bp" style="font-size:.78rem;padding:7px 14px;">↻ Refresh</button>
         </div>
-          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.08.04-168</span>
+          <span id="sys-version" style="font-size:.68rem;color:#64748b;font-family:monospace;padding:2px 7px;background:#f1f5f9;border-radius:6px;border:1px solid #e2e8f0">v2026.10.27-169</span>
       </div>
 
       <!-- Connection Setup Banner -->
@@ -6749,10 +6749,12 @@ function renderTithesReport(data, s1, s2, rptWin) {
     ['Tithes Total','tithes','#1e40af'],
     ['Tithes Chk','tithesChk','#2563eb','tithesChkCount'],
     ['Tithes Cash','tithesCash','#3b82f6','tithesCashCount'],
+    ['Sun. School','ss','#0891b2'],
     ['Youth','youth','#7c3aed'],['Bldg Fund','bldg','#b45309'],
     ['Benevolent','benv','#be185d'],['Youth Edu','yedu','#0e7490'],['Offering','offer','#15803d'],
+    ['Ch. Anniv','chAnniv','#9333ea'],['Pas. Anniv','psAnniv','#c2410c'],
     ['Special','special','#dc2626'],['Other','other','#475569']
-  ];
+  ];  // v169 — Sun. School + Church/Pastor Anniversary cards added
   body += '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;justify-content:center">';
   cats.forEach(function(cat) {
     if ((totals[cat[1]]||0) > 0) {
@@ -6781,19 +6783,22 @@ function renderTithesReport(data, s1, s2, rptWin) {
   body += '<th style="'+thL+'">Member Name</th>';
   body += '<th style="'+th+';width:32px">Pay</th>';
   body += '<th style="'+th+';width:38px">Check #</th>';
+  body += '<th style="'+th+'">Sun. School</th>';
   body += '<th style="'+th+'">Tithes</th>';
   body += '<th style="'+th+'">Youth</th>';
   body += '<th style="'+th+'">Bldg Fund</th>';
   body += '<th style="'+th+'">Benevolent</th>';
   body += '<th style="'+th+'">Youth Edu</th>';
   body += '<th style="'+th+'">Offering</th>';
+  body += '<th style="'+th+'">Ch. Anniv</th>';
+  body += '<th style="'+th+'">Pas. Anniv</th>';
   body += '<th style="'+th+'">Special</th>';
   body += '<th style="'+th+'">Other</th>';
   body += '<th style="'+th+'">Total</th>';
   body += '</tr></thead><tbody>';
 
   if (rows.length === 0) {
-    body += '<tr><td colspan="13" style="text-align:center;padding:16px;color:#94a3b8;font-style:italic">No records for this period.</td></tr>';
+    body += '<tr><td colspan="17" style="text-align:center;padding:16px;color:#94a3b8;font-style:italic">No records for this period.</td></tr>';
   } else {
     rows.forEach(function(r, i) {
       var bg = i%2===0 ? '#ffffff' : '#f8fafc';
@@ -6806,12 +6811,15 @@ function renderTithesReport(data, s1, s2, rptWin) {
       body += '<td style="'+tdL+';font-weight:600">' + (r.name||'') + '</td>';
       body += '<td style="'+td+';text-align:center">' + (isChk ? '<b>Chk</b>' : 'Cash') + '</td>';
       body += '<td style="'+td+';text-align:center">' + (isChk && r.checkNo ? r.checkNo : '\u2014') + '</td>';
+      body += '<td style="'+td+'">' + fc(r.ss)      + '</td>';
       body += '<td style="'+td+'">' + fc(r.tithes)  + '</td>';
       body += '<td style="'+td+'">' + fc(r.youth)   + '</td>';
       body += '<td style="'+td+'">' + fc(r.bldg)    + '</td>';
       body += '<td style="'+td+'">' + fc(r.benv)    + '</td>';
       body += '<td style="'+td+'">' + fc(r.yedu)    + '</td>';
       body += '<td style="'+td+'">' + fc(r.offer)   + '</td>';
+      body += '<td style="'+td+'">' + fc(r.chAnniv) + '</td>';
+      body += '<td style="'+td+'">' + fc(r.psAnniv) + '</td>';
       body += '<td style="'+td+'">' + fc(r.special) + '</td>';
       body += '<td style="'+td+'">' + fc(r.other)   + '</td>';
       body += '<td style="'+td+';font-weight:700;color:#0F2744">' + fct(r.total) + '</td>';
@@ -6821,7 +6829,7 @@ function renderTithesReport(data, s1, s2, rptWin) {
     var tf = 'padding:4px 5px;background:#0F2744;color:#fbbf24;border:1px solid #334155;font-size:9px;font-weight:700;text-align:right';
     body += '<tr>';
     body += '<td colspan="5" style="'+tf+';text-align:left">TOTALS (' + rows.length + ' records)</td>';
-    ['tithes','youth','bldg','benv','yedu','offer','special','other'].forEach(function(k){
+    ['ss','tithes','youth','bldg','benv','yedu','offer','chAnniv','psAnniv','special','other'].forEach(function(k){
       body += '<td style="'+tf+'">' + fct(totals[k]||0) + '</td>';
     });
     body += '<td style="'+tf+'">' + fct(totals.grand||0) + '</td>';
